@@ -1762,12 +1762,19 @@ it.
    :VISIBILITY: folded
    :END:
 
-You can get the Org-mode document from Github using the following
-shell command:
+You might be able to get the Org-mode document from GitHub using the following
+shell command, which works for me:
 
 #+source: get-from-github
 #+begin_src sh :exports code
   git clone git@github.com:tsdye/org-article.git
+#+end_src
+
+Alternatively, this might work for you:
+
+#+source: get-from-github-alt
+#+begin_src sh :exports code
+  git clone git://github.com/tsdye/org-article.git
 #+end_src
 
 This will create a sub-directory, =org-article=, initialize the git
@@ -1798,20 +1805,20 @@ my OS-X system with the [[http://tug.org/mactex/][MacTeX]] distribution:
 # <<export-setup>>
 There are two ways to setup =org-article.cls= and your choice will
 probably depend on the value of the variable
-=org-export-packages-alist=.  If this variable is nil, then the
+=org-export-latex-packages-alist=.  If this variable is nil, then the
 following setup should work for you.  It asks Org-mode *not* to load
 the default packages, because these are loaded by =org-article.cls=.
-Then, it loads the packages in =org-export-packages-alist=, which
+Then, it loads the packages in =org-export-latex-packages-alist=, which
 should consist of a single entry for the =inputenc= package.  Org-mode
 automatically sets the input encoding based on the status of the
 Org-mode buffer being exported.  Finally, any packages specified
 within the Org-mode buffer are loaded (the [EXTRA] argument).
 
 The =org-article.cls= setup for the case when
-=org-export-packages-alist= is =nil=:
+=org-export-latex-packages-alist= is =nil=:
 
 #+begin_src emacs-lisp :exports code
-  (add-to-list 'org-export-packages-alist
+  (add-to-list 'org-export-latex-packages-alist
                '(("AUTO" "inputenc" t)))
   (add-to-list 'org-export-latex-classes
             '("org-article-section"
@@ -1861,7 +1868,7 @@ The =org-article.cls= setup for the case when
                ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
 #+end_src
 
-If, for some reason, =org-export-packages-alist= is not =nil=, then
+If, for some reason, =org-export-latex-packages-alist= is not =nil=, then
 the following setup should work.
 
 #+begin_src emacs-lisp :exports code
