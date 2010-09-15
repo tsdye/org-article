@@ -672,7 +672,7 @@ You can probably read about the =float= package on your system by
 issuing the following shell command:
 
 #+source: read-float
-#+begin_src latex
+#+begin_src latex :exports code
   texdoc float
 #+end_src
 
@@ -891,8 +891,7 @@ the =nointegrals= option resolves this clash:
 
 #+source: wasysym-options
 #+begin_src org :exports code
-  ,#+LaTeX_CLASS_OPTIONS: [integrals]
-  ,#+LaTeX_CLASS_OPTIONS: [nointegrals]  
+  ,#+LaTeX_CLASS_OPTIONS: [integrals, nointegrals]
 #+end_src
 
 You can probably read the wasysym documentation on your system by
@@ -1751,9 +1750,15 @@ it.
     }%
     {}%
     {\lstdefinelanguage{org}
-      {morecomment=[l]\#}%
+      {morecomment=[l]\#,
+      basicstyle=\footnotesize,
+      stringstyle=\ttfamily}%
     }
-    \lstset{language=org}}%
+    \lstset{%
+      basicstyle=\footnotesize,
+      showstringspaces=false,
+      stringstyle=\ttfamily
+    }}%
   {}%  
 #+end_src
 
