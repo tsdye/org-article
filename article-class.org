@@ -15,7 +15,7 @@
 #+XSLT: 
 #+BABEL: :exports code
 #+LaTeX_CLASS: org-article-subsubsection
-#+LaTeX_CLASS_OPTIONS: [koma,a5paper,landscape,utopia,10pt,listings,listings-color,color,microtype,paralist]
+#+LaTeX_CLASS_OPTIONS: [koma,letterpaper,palatino,11pt,listings-sv,microtype,paralist]
 
 * Org-article class
   :PROPERTIES:
@@ -26,6 +26,18 @@ The class provides all of the LaTeX packages used by the Org-mode
 LaTeX exporter.  The class accepts numerous options, which the user
 can set either in =.emacs=, for default use with all org-article
 exports, or within the Org-mode file using =#+LaTeX_CLASS_OPTIONS:=.
+
+  - Options to keep individual LaTeX packages from loading make it
+  somewhat easier to modify which LaTeX packages are loaded during the
+  processing of LaTeX code exported by Org-mode.
+  - The package also implements several choices of fonts and takes
+  steps to ensure that the fonts don't clash with the symbol font
+  files that Org-mode depends upon to typeset =org-entities=.
+  - The class provides pre-defined themes for formatting source code
+  listings, which can be used as is, or used as a bais for minor
+  modifications.
+  - Facilities to typeset lists with less vertical space and to alter
+    line spacing are also provided.
 
 ** How to use this Org-mode document
    :PROPERTIES:
@@ -187,7 +199,7 @@ In this case, you will need to specify the =inputenc= package in the
 Org-mode file:
 
 #+source: specify-inputenc
-#+begin_src emacs-lisp :exports code
+#+begin_src org :exports code
   ,#+LATEX_HEADER: \usepackage[AUTO]{inputenc} 
 #+end_src
 
@@ -198,9 +210,9 @@ export of this Org-mode file.  In the first, these two lines were
 included at the top of the Org-mode file:
 
 #+source: first-example
-#+begin_src latex :exports code
+#+begin_src org :exports code
 #+LaTeX_CLASS: org-article-subsubsection
-#+LaTeX_CLASS_OPTIONS: [article,letterpaper,times,12pt,listings,color,microtype]
+#+LaTeX_CLASS_OPTIONS: [article,letterpaper,times,12pt,listings-bw,microtype]
 #+end_src
 
 The resulting [[file:article-class-times-art.pdf][pdf file]] is typeset with the standard LaTeX
@@ -215,9 +227,9 @@ In the second example, the following two lines were included in the
 top of the Org-mode file:
 
 #+source: second-example
-#+begin_src latex :exports code
+#+begin_src org :exports code
 #+LaTeX_CLASS: org-article-subsubsection
-#+LaTeX_CLASS_OPTIONS: [koma,a5paper,landscape,utopia,10pt,listings,color,microtype,paralist]
+#+LaTeX_CLASS_OPTIONS: [koma,a5paper,landscape,utopia,10pt,listings-color,microtype,paralist]
 #+end_src
 
 The resulting [[file:article-class-utopia-koma.pdf][pdf file]] is typeset with the KOMA-script =scrartcl.cls=
@@ -267,7 +279,7 @@ this optional argument than there was in the past.  It is omitted here.
 #+begin_src latex :exports code
   % Identification part
   \NeedsTeXFormat{LaTeX2e}
-  \ProvidesClass{org-article}[2010/09/11 0.1 (TSD)]
+  \ProvidesClass{org-article}[2010/09/17 0.1 (TSD)]
   % End of the identification part
   %
 #+end_src
@@ -326,7 +338,7 @@ have to be declared here.
   <<option-setspace>>
   % <<option-topcapt>>
   <<option-listings>>  
-  <<option-color>>
+  %  <<option-color>>
   
   % Base class
   <<pass-to-koma>>
@@ -814,7 +826,7 @@ You can probably read about the =float= package on your system by
 issuing the following shell command:
 
 #+source: read-float
-#+begin_src latex :exports code
+#+begin_src sh :exports code
   texdoc float
 #+end_src
 
@@ -1717,9 +1729,10 @@ it.
     {}
 #+end_src
 
-**** Color
-The =color= package provides facilities for adding color to LaTeX
-output.
+**** Color                                                         :noexport:
+The =xcolor= package provides facilities for adding color to LaTeX
+output.  This package needs additional configuration.  It should take
+options. 
 
 #+source: org-buffer-color
 #+begin_src org :exports code
@@ -1745,51 +1758,85 @@ the two options =draft= and =final=, which the =listings= package is
 configured to pick up itself from options passed to =\documentclass=,
 the other options were introduced to ease debugging or to trigger
 compatibility with earlier versions of the package.  It seems unwise
-to use this mechanism because there is no reason to assume that it
-will be stable.  Instead, options for this package should be processed
-by =org-article.cls= itself using a =key = val= interface that sets values
-using the =listings= package's =lstset= function.
+to use this mechanism to set options fo rthe =listings= package
+because there is no reason to assume that it will be stable.  One
+solution would be to process options for this package using a =key =
+value= interface that sets the values of keys recognized by the
+package's =lstset= function.  This is relatively difficult to do.  An
+easier approach groups package options into themes, which can be
+selected with simple options, rather than =key = value= pairs.  It is
+the approach adopted here.
 
-This package is not loaded by default.  An option is provided to load
-it.
+This package is not loaded by default.  Options are provided to load
+it in its default state, set up for black and white reproduction, and
+set up for color reproduction.
 
 #+source: org-buffer-listings
 #+begin_src org :exports code
-  #+LaTeX_CLASS_OPTIONS: [listings]
+  #+LaTeX_CLASS_OPTIONS: [listings, listings-bw, listings-color]
 #+end_src
  
 #+source: option-listings
 #+begin_src latex :exports none
   \newboolean{listings}
+  \newboolean{color}
   \DeclareOption{listings}{\setboolean{listings}{true}}
   \DeclareOption{listings-bw}{%
-    \ifthenelse{\boolean{listings}}{%
-      \AtBeginDocument{%
-        \lstset{
-          basicstyle=\ttfamily\footnotesize,%
-          frame=lines,%
-          brealines=true%
-        }%
-      }%
-    }{}%
+    \setboolean{listings}{true}%
+    \AtBeginDocument{%
+      \lstset{
+        basicstyle=\ttfamily\footnotesize,%
+        frame=lines,%
+        breaklines=true,%
+        showstringspaces=false}%
+    }%
   }
   \DeclareOption{listings-color}{%
-    \ifthenelse{\boolean{listings}}{%
-      \AtBeginDocument{%
-        \definecolor{keywords}{RGB}{255,0,90}%
-        \definecolor{comments}{RGB}{60,179,113}%
-        \definecolor{back}{RGB}{231,231,231}%
-        \lstset{%
-          keywordstyle=\color{keywords},%
-          commentstyle=\color{comments},%
-          backgroundcolor=\color{back},%
-          basicstyle=\ttfamily\footnotesize,%
-          showstringspaces=false,%
-          frame=lines,%
-          breaklines=true%
-        }%
+    \setboolean{listings}{true}%
+    \setboolean{color}{true}%
+    \AtBeginDocument{%
+      \definecolor{keywords}{RGB}{255,0,90}%
+      \definecolor{comments}{RGB}{60,179,113}%
+      \definecolor{back}{RGB}{231,231,231}%
+      \lstset{%
+        keywordstyle=\color{keywords},%
+        commentstyle=\color{comments},%
+        backgroundcolor=\color{back},%
+        basicstyle=\ttfamily\footnotesize,%
+        showstringspaces=false,%
+        frame=lines,%
+        breaklines=true%
       }%
-    }{}%
+    }%
+  }
+  \DeclareOption{listings-sv}{%
+    \setboolean{listings}{true}%
+    \setboolean{color}{true}%
+    \AtBeginDocument{%
+      \definecolor{...@lstbackground}{RGB}{255,255,204} % light yellow
+      \definecolor{...@lstkeyword}{RGB}{0,0,255} % blue
+      \definecolor{...@lstidentifier}{RGB}{0,0,0} % black
+      \definecolor{...@lstcomment}{RGB}{255,0,0} % red
+      \definecolor{...@lststring}{RGB}{0,128,0} % dark green
+      \lstset{%
+        basicstyle=\ttfamily\scriptsize, % the font that is used for the code
+        tabsize=4, % sets default tabsize to 4 spaces
+        numbers=left, % where to put the line numbers
+        numberstyle=\tiny, % line number font size
+        stepnumber=0, % step between two line numbers
+        breaklines=false, %!! don't break long lines of code
+        showtabs=false, % show tabs within strings adding particular underscores
+        showspaces=false, % show spaces adding particular underscores
+        showstringspaces=false, % underline spaces within strings
+        keywordstyle=\color{...@lstkeyword},
+        identifierstyle=\color{...@lstidentifier},
+        stringstyle=\color{...@lststring},
+        commentstyle=\color{...@lstcomment},
+        backgroundcolor=\color{...@lstbackground}, % sets the background color
+        captionpos=b, % sets the caption position to `bottom'
+        extendedchars=false %!?? workaround for when the listed file is in UTF-8
+      }%
+    }%
   }
 #+end_src
 
@@ -1822,6 +1869,7 @@ it.
    :LOGBOOK:
    - State "STARTED"    from "TODO"       [2010-09-13 Mon 07:26]
    :END:
+   - Inconsolata is nice, modeled on Vera
 ** DONE Add the listings package
    :LOGBOOK:
    - State "DONE"       from "TODO"       [2010-09-13 Mon 08:36]
@@ -1839,4 +1887,42 @@ it.
      throwing warnings (OK) or errors (not OK)?
 \DeclareOption{myoption}{%
    \PassOptionsToPackage{myoption}{other-package}}
-** TODO Hyperref active by default
+** DONE Hyperref active by default
+   :LOGBOOK:
+   - State "DONE"       from "TODO"       [2010-09-17 Fri 07:31]
+   :END:
+** STARTED Sebastian Vauban's settings
+   :LOGBOOK:
+   - State "STARTED"    from "TODO"       [2010-09-17 Fri 08:27]
+   :END:
+#+begin_LaTeX
+% typeset source code listings
+\usepackage{listings} % must be loaded after `babel'
+\lstloadlanguages{C}
+\definecolor{...@lstbackground}{html}{ffffcc} % light yellow
+\definecolor{...@lstkeyword}{html}{0000ff} % blue
+\definecolor{...@lstidentifier}{html}{000000} % black
+\definecolor{...@lstcomment}{html}{ff0000} % red
+\definecolor{...@lststring}{html}{008000} % dark green
+\lstset{%
+    basicstyle=\ttfamily\scriptsize, % the font that is used for the code
+    tabsize=4, % sets default tabsize to 4 spaces
+    numbers=left, % where to put the line numbers
+    numberstyle=\tiny, % line number font size
+    stepnumber=0, % step between two line numbers
+    breaklines=false, %!! don't break long lines of code
+    showtabs=false, % show tabs within strings adding particular underscores
+    showspaces=false, % show spaces adding particular underscores
+    showstringspaces=false, % underline spaces within strings
+    keywordstyle=\color{...@lstkeyword},
+    identifierstyle=\color{...@lstidentifier},
+    stringstyle=\color{...@lststring},
+    commentstyle=\color{...@lstcomment},
+    backgroundcolor=\color{...@lstbackground}, % sets the background color
+    captionpos=b, % sets the caption position to `bottom'
+    extendedchars=false %!?? workaround for when the listed file is in UTF-8
+}
+#+end_LaTeX
+** Color or xcolor?
+   - Check which package is best to use
+   - Troubles with xcolor
