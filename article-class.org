@@ -1,7 +1,7 @@
 #+TITLE:     The Org-article LaTeX class
 #+AUTHOR:    Tom Dye
 #+EMAIL:     tsd at tsdye dot com
-#+DATE:      2010-09-11 Sat
+#+DATE:      2010-09-18 Sat
 #+DESCRIPTION: 
 #+KEYWORDS: 
 #+LANGUAGE:  en
@@ -15,7 +15,8 @@
 #+XSLT: 
 #+BABEL: :exports code
 #+LaTeX_CLASS: org-article-subsubsection
-#+LaTeX_CLASS_OPTIONS: [koma,letterpaper,palatino,11pt,listings-sv,microtype,paralist]
+#+LaTeX_CLASS_OPTIONS: [article,letterpaper,times,12pt,listings-bw,microtype]
+
 
 * Org-article class
   :PROPERTIES:
@@ -78,6 +79,7 @@ my OS-X system with the [[http://tug.org/mactex/][MacTeX]] distribution:
 #+begin_src sh :exports code
   sudo cp org-article.cls /usr/local/texlive/texmf-local/tex/latex/base/
   sudo mktexlsr
+  kpsewhich org-article.cls
 #+end_src
 ** Org-mode LaTeX export setup
    :PROPERTIES:
@@ -86,14 +88,16 @@ my OS-X system with the [[http://tug.org/mactex/][MacTeX]] distribution:
 # <<export-setup>>
 There are two ways to setup =org-article.cls= and your choice will
 probably depend on the value of the variable
-=org-export-latex-packages-alist=.  If this variable is nil, then the
-following setup should work for you.  It asks Org-mode *not* to load
-the default packages, because these are loaded by =org-article.cls=.
-Then, it loads the packages in =org-export-latex-packages-alist=, which
-should consist of a single entry for the =inputenc= package.  Org-mode
+=org-export-latex-packages-alist=.  If this variable is nil (or it
+refers to packages that you always want loaded), then the following
+setup should work for you.  It asks Org-mode *not* to load the default
+packages, because these are loaded by =org-article.cls=.  Then, it
+loads the packages in =org-export-latex-packages-alist=, which should
+consist of a single entry for the =inputenc= package.  Org-mode
 automatically sets the input encoding based on the status of the
-Org-mode buffer being exported.  Finally, any packages specified
-within the Org-mode buffer are loaded (the [EXTRA] argument).
+Org-mode buffer being exported, which it can't do if it is loaded by
+=org-article.cls=.  Finally, any packages specified in the Org-mode
+buffer are loaded (the [EXTRA] argument).
 
 The =org-article.cls= setup for the case when
 =org-export-latex-packages-alist= is =nil=:
@@ -149,7 +153,8 @@ The =org-article.cls= setup for the case when
                ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
 #+end_src
 
-If, for some reason, =org-export-latex-packages-alist= is not =nil=, then
+If, for some reason, =org-export-latex-packages-alist= is not =nil=,
+and it includes packages that you don't want always loaded then
 the following setup should work.
 
 #+begin_src emacs-lisp :exports code
@@ -216,12 +221,10 @@ included at the top of the Org-mode file:
 #+end_src
 
 The resulting [[file:article-class-times-art.pdf][pdf file]] is typeset with the standard LaTeX
-=article.cls= on 8.5 x 11 in. paper, using Times, Helvetica,
-and Courier fonts with a 12 point base size.  Source code listings are
-given in color, and microtypographic justification is applied.  As you
-can see in the resulting [[file:article-class-times-art.pdf][pdf file]], the output is mostly OK but there
-are problems with long lines, mostly in the source code listings, but
-also in the body text with long path names.
+=article.cls= on 8.5 x 11 in. paper, using Times, Helvetica, and
+Courier fonts with a 12 point base size.  Source code listings are
+given in black and white, and microtypographic justification is
+applied.
 
 In the second example, the following two lines were included in the
 top of the Org-mode file:
@@ -229,17 +232,15 @@ top of the Org-mode file:
 #+source: second-example
 #+begin_src org :exports code
 #+LaTeX_CLASS: org-article-subsubsection
-#+LaTeX_CLASS_OPTIONS: [koma,a5paper,landscape,utopia,10pt,listings-color,microtype,paralist]
+#+LaTeX_CLASS_OPTIONS: [koma,a4paper,landscape,twocolumn,utopia,10pt,listings-sv,microtype,paralist]
 #+end_src
 
 The resulting [[file:article-class-utopia-koma.pdf][pdf file]] is typeset with the KOMA-script =scrartcl.cls=
 on 5.8 x 8.3 in. paper in landscape mode, using Utopia, Bera,
 and Incosolata fonts with a 10 point base size.  Source code listings
-are given in color, and microtypographic justification is applied.  As
-you can see in the resulting [[file:article-class-times-art.pdf][pdf file]], the output is better than the
-first example, but there are still a few problems with long lines.  In
+are given in color, and microtypographic justification is applied.  In
 addition, the =paralist= option has been set; compare the tightly-set
-list on page 3 with standard list on page 2 of the first example.
+list immediately below with the standard list of the first example.
 ** The class file
    :PROPERTIES:
    :VISIBILITY: folded
@@ -258,7 +259,7 @@ The LaTeX class file has six standard parts:
    - Main code part :: Usually used to define new commands and structures.
 
 #+source: org-article
-#+begin_src latex :tangle org-article.cls :noweb yes :exports code
+#+begin_src latex :tangle org-article.cls :noweb yes :exports none
   <<identification-part>>
   <<initial-code-part>>
   <<declaration-of-options-part>>
@@ -279,7 +280,7 @@ this optional argument than there was in the past.  It is omitted here.
 #+begin_src latex :exports code
   % Identification part
   \NeedsTeXFormat{LaTeX2e}
-  \ProvidesClass{org-article}[2010/09/17 0.1 (TSD)]
+  \ProvidesClass{org-article}[2010/09/18 0.2 (TSD)]
   % End of the identification part
   %
 #+end_src
@@ -301,10 +302,18 @@ have to be declared here.
 
   % End of initial code part
 #+end_src
-
+  
 *** Declaration of options part
+# <<declaration>>
+The package options are declared here in a code block made up entirely
+of noweb references.  Typically, a package referred to here will also
+appear in the [[package-loading-part][package loading part]].  The [[package-loading-part][package loading part]] also
+consists of noweb references, an arrangement that makes it possible to
+keep all the code specific to a particular package together in the
+[[latex-packages][LaTeX packages]] section.
+
 #+source: declaration-of-options-part
-#+begin_src latex :noweb yes :exports code
+#+begin_src latex :noweb yes :exports none
   % Declaration of options part
   % Org-mode default packages
   <<option-fontenc>>
@@ -351,6 +360,11 @@ have to be declared here.
 #+end_src
 
 *** Execution of options part
+
+The =\ProcessOptions= command reclaims the memory used to store user
+options, so those values are now gone unless something was done with
+them in the [[declaration][declaration of options]] part.
+
 #+source: execution-of-options-part
 #+begin_src latex :exports code
   % Execution of options part
@@ -370,10 +384,16 @@ By default, =org-article.cls= loads all but one of the packages in
 to load this package, which passes as an option the encoding scheme of the
 exported buffer.  The =fontenc= package is loaded with the T1 option
 by default as a prerequisite for the various symbol packages.  There
-is no facility to disable loading =fontenc=.
+is no facility to disable loading =fontenc=, which is unusual among
+LaTeX packages in its ability to be loaded more than once.  This
+functionality is required in the case where two or more fonts with different
+encodings are used.
+
+This code block is implemented as noweb references so that
+package-specific code can be kept together in [[latex-packages][LaTeX packages]].
 
 #+source: package-loading-part
-#+begin_src latex :noweb yes :exports code
+#+begin_src latex :noweb yes :exports none
   % Package loading part
   
   % Base class
@@ -416,8 +436,12 @@ is no facility to disable loading =fontenc=.
 *** Class code part
 # <<class-code-part>>
 
+This part is also implemented with noweb references.  It calls
+package-specific setup routines that are defined in the [[latex-packages][LaTeX packages]]
+section.
+
 #+source: class-code-part
-#+begin_src latex :exports code :noweb yes
+#+begin_src latex :exports none :noweb yes
   % Class code part
   <<setspace-code>>
   <<listings-code>>
@@ -428,6 +452,7 @@ is no facility to disable loading =fontenc=.
    :PROPERTIES:
    :VISIBILITY: folded
    :END:
+# <<latex-packages>>
 
 *** Article base class options
 
@@ -460,34 +485,37 @@ For information on the [[http://www.ctan.org/tex-archive/macros/latex/contrib/ko
 documentation on your system with the following shell command:
 
 #+source: read-koma
-#+begin_src sh
+#+begin_src sh :exports code
   texdoc koma
 #+end_src
 
+
 #+source: option-koma
-#+begin_src latex :exports none
+#+begin_src latex :exports code
   \newboolean{koma}
   \DeclareOption{koma}{\setboolean{koma}{true}}
 #+end_src
 
 #+source: option-article
-#+begin_src latex :exports none
+#+begin_src latex :exports code
   \newboolean{article}
   \DeclareOption{article}{\setboolean{article}{true}}
 #+end_src
 
 #+source: pass-to-koma
-#+begin_src latex :exports none
+#+begin_src latex :exports code
   \DeclareOption*{\PassOptionsToClass{\CurrentOption}{scrartcl}}
 #+end_src
 
 #+source: pass-to-article
-#+begin_src latex :exports none
+#+begin_src latex :exports code
   \DeclareOption*{\PassOptionsToClass{\CurrentOption}{article}}
 #+end_src
 
+The article class is loaded by default.
+
 #+source: load-base-class
-#+begin_src latex :exports none
+#+begin_src latex :exports code
   \ifthenelse{\boolean{koma}}
   {%
     \LoadClass{scrartcl}%
@@ -684,20 +712,20 @@ Note that several of the font packages load =fontenc= themselves.
 These include [[garamond-font][Garamond]], [[palatino-font][Palatino]], [[charter-font][Charter]], and [[utopia-font][Utopia]].
 
 #+source: option-fontenc
-#+begin_src latex :exports none
+#+begin_src latex :exports code
   \newboolean{nofontenc}  
   \DeclareOption{nofontenc}{\setboolean{nofontenc}{true}}
 #+end_src
 
 #+source: load-fontenc
-#+begin_src latex :exports none
+#+begin_src latex :exports code
   \ifthenelse{\boolean{nofontenc}}
   {}
   {\RequirePackage[T1]{fontenc}}
 #+end_src
 
 #+source: options-to-fontenc
-#+begin_src latex :exports none
+#+begin_src latex :exports code
   \DeclareOption*{%
     \PassOptionsToPackage{\CurrentOption}{fontenc}
   }
@@ -712,7 +740,7 @@ You can probably read about =fixltx2e= on your system by issuing the
 following shell command:
 
 #+source: read-fixltx2e
-#+begin_src sh
+#+begin_src sh :exports code
   texdoc fixltx2e
 #+end_src
  
@@ -726,13 +754,13 @@ option is provided to not load it.
 #+end_src
  
 #+source: option-fixltx2e
-#+begin_src latex :exports none
+#+begin_src latex :exports code
   \newboolean{nofixltx2e}
   \DeclareOption{nofixltx2e}{\setboolean{nofixltx2e}{true}}
 #+end_src
 
 #+source: load-fixltx2e
-#+begin_src latex :exports none
+#+begin_src latex :exports code
   \ifthenelse{\boolean{nofixltx2e}}
   {}
   {\RequirePackage{fixltx2e}}
@@ -763,13 +791,13 @@ option is provided to not load it.
 #+end_src
  
 #+source: option-graphicx
-#+begin_src latex :exports none
+#+begin_src latex :exports code
   \newboolean{nographicx}
   \DeclareOption{nographicx}{\setboolean{nographicx}{true}}
 #+end_src
 
 #+source: load-graphicx
-#+begin_src latex :exports none
+#+begin_src latex :exports code
   \ifthenelse{\boolean{nographicx}}
   {}
   {\RequirePackage{graphicx}}
@@ -800,13 +828,13 @@ option is provided to not load it.
 #+end_src
 
 #+source: option-longtable
-#+begin_src latex :exports none
+#+begin_src latex :exports code
   \newboolean{nolongtable}
   \DeclareOption{nolongtable}{\setboolean{nolongtable}{true}}
 #+end_src
 
 #+source: load-longtable
-#+begin_src latex :exports none
+#+begin_src latex :exports code
   \ifthenelse{\boolean{nolongtable}}
   {}
   {\RequirePackage{longtable}}
@@ -840,13 +868,13 @@ option is provided to not load it.
 #+end_src
 
 #+source: option-float
-#+begin_src latex :exports none
+#+begin_src latex :exports code
   \newboolean{nofloat}
   \DeclareOption{nofloat}{\setboolean{nofloat}{true}}
 #+end_src
 
 #+source: load-float
-#+begin_src latex :exports none
+#+begin_src latex :exports code
   \ifthenelse{\boolean{nofloat}}
   {}
   {\RequirePackage{float}}
@@ -879,13 +907,13 @@ option is provided to not load it.
 #+end_src
  
 #+source: option-wrapfig
-#+begin_src latex :exports none
+#+begin_src latex :exports code
   \newboolean{nowrapfig}
   \DeclareOption{nowrapfig}{\setboolean{nowrapfig}{true}}
 #+end_src
 
 #+source: load-wrapfig
-#+begin_src latex :exports none
+#+begin_src latex :exports code
   \ifthenelse{\boolean{nowrapfig}}
   {}
   {\RequirePackage{wrapfig}}
@@ -912,13 +940,13 @@ option is provided to not load it.
 #+end_src
  
 #+source: option-soul
-#+begin_src latex :exports none
+#+begin_src latex :exports code
   \newboolean{nosoul}
   \DeclareOption{nosoul}{\setboolean{nosoul}{true}}
 #+end_src
 
 #+source: load-soul
-#+begin_src latex :exports none
+#+begin_src latex :exports code
   \ifthenelse{\boolean{nosoul}}
   {}
   {\RequirePackage{soul}}
@@ -934,13 +962,13 @@ option is provided to not load it.
 #+end_src
  
 #+source: option-t1enc
-#+begin_src latex :exports none
+#+begin_src latex :exports code
   \newboolean{not1enc} 
   \DeclareOption{not1enc}{\setboolean{not1enc}{true}}
 #+end_src
 
 #+source: load-t1enc
-#+begin_src latex :exports none
+#+begin_src latex :exports code
   \ifthenelse{\boolean{not1enc}}
   {}
   {\RequirePackage{t1enc}}
@@ -961,13 +989,13 @@ option is provided to not load it.
  
 
 #+source: option-textcomp
-#+begin_src latex :exports none
+#+begin_src latex :exports code
   \newboolean{notextcomp}
   \DeclareOption{notextcomp}{\setboolean{notextcomp}{true}}
 #+end_src
 
 #+source: load-textcomp
-#+begin_src latex :exports none
+#+begin_src latex :exports code
   \ifthenelse{\boolean{notextcomp}}
   {}
   {\RequirePackage{textcomp}}
@@ -995,13 +1023,13 @@ option is provided to not load it.
 #+end_src
 
 #+source: option-marvosym
-#+begin_src latex :exports none
+#+begin_src latex :exports code
   \newboolean{nomarvosym}
   \DeclareOption{nomarvosym}{\setboolean{nomarvosym}{true}}
 #+end_src
 
 #+source: load-marvosym
-#+begin_src latex :exports none
+#+begin_src latex :exports code
   \ifthenelse{\boolean{nomarvosym}}
   {}
   {\RequirePackage{marvosym}}
@@ -1036,13 +1064,13 @@ option is provided to not load it.
 #+end_src
  
 #+source: option-wasysym
-#+begin_src latex :exports none
+#+begin_src latex :exports code
   \newboolean{nowasysym}
   \DeclareOption{nowasysym}{\setboolean{nowasysym}{true}}
 #+end_src
 
 #+source: load-wasysym
-#+begin_src latex :exports none
+#+begin_src latex :exports code
   \ifthenelse{\boolean{nowasysym}}
   {}
   {\RequirePackage[nointegrals]{wasysym}}
@@ -1070,13 +1098,13 @@ option is provided to not load it.
 #+end_src
  
 #+source: option-latexsym
-#+begin_src latex :exports none
+#+begin_src latex :exports code
   \newboolean{nolatexsym}
   \DeclareOption{nolatexsym}{\setboolean{nolatexsym}{true}}
 #+end_src
 
 #+source: load-latexsym
-#+begin_src latex :exports none
+#+begin_src latex :exports code
   \ifthenelse{\boolean{nolatexsym}}
   {}
   {\RequirePackage{latexsym}}
@@ -1107,7 +1135,7 @@ option is provided to not load it.
 #+end_src
 
 #+source: option-amssymb
-#+begin_src latex :exports none
+#+begin_src latex :exports code
   \newboolean{noamssymb}
   \DeclareOption{noamssymb}{\setboolean{noamssymb}{true}}
 #+end_src
@@ -1116,7 +1144,7 @@ Isn't loaded if Times, Charter, Utopia, or Garamond are loaded.  These
 use the =mathdesign= package, which apparently supersedes =amssymb=.
 
 #+source: load-amssymb
-#+begin_src latex :exports none
+#+begin_src latex :exports code
   \ifthenelse{\boolean{noamssymb}\or\boolean{utopia}\or\boolean{charter}\or\boolean{garamond}\or\boolean{times}}
   {}
   {\RequirePackage{amssymb}}
@@ -1179,13 +1207,13 @@ option is provided to not load it.
 #+end_src
 
 #+source: option-hyperref
-#+begin_src latex :exports none
+#+begin_src latex :exports code
   \newboolean{nohyperref}
   \DeclareOption{nohyperref}{\setboolean{nohyperref}{true}}
 #+end_src
 
 #+source: load-hyperref
-#+begin_src latex :exports none
+#+begin_src latex :exports code
   \ifthenelse{\boolean{nohyperref}}
   {}
   {\RequirePackage{hyperref}}
@@ -1194,7 +1222,7 @@ option is provided to not load it.
 Options do not include =debug=.
 
 #+source: options-to-hyperref
-#+begin_src latex :exports none
+#+begin_src latex :exports code
 \DeclareOption{anchorcolor}{%
    \PassOptionsToPackage{anchorcolor}{hyperref}}
 \DeclareOption{backref}{%
@@ -1419,13 +1447,16 @@ Kettler in 1955 for use in IBM typewriters.
 #+end_src
 
 #+source: option-times
-#+begin_src latex :exports none
+#+begin_src latex :exports code
   \newboolean{times}
   \DeclareOption{times}{\setboolean{times}{true}}
 #+end_src
 
+Helvetica looks better if it is set slightly smaller than the serif
+font.
+
 #+source: load-times
-#+begin_src latex :exports none
+#+begin_src latex :exports code
   \ifthenelse{\boolean{times}}
   {%
     \ifpdf
@@ -1453,13 +1484,15 @@ font is [[http://en.wikipedia.org/wiki/Inconsolata][Inconsolata]], which was cre
 #+end_src
  
 #+source: option-garamond
-#+begin_src latex :exports none
+#+begin_src latex :exports code
   \newboolean{garamond}
   \DeclareOption{garamond}{\setboolean{garamond}{true}}
 #+end_src
 
+Garamond requires a bit more leading than normal.
+
 #+source: load-garamond
-#+begin_src latex :exports none
+#+begin_src latex :exports code
   \ifthenelse{\boolean{garamond}}
   {%
     \ifpdf
@@ -1486,13 +1519,15 @@ for which it is an alternative.
 #+end_src
 
 #+source: option-palatino
-#+begin_src latex :exports none
+#+begin_src latex :exports code
   \newboolean{palatino}
   \DeclareOption{palatino}{\setboolean{palatino}{true}}
 #+end_src
 
+Palatino gets a bit more leading than normal.
+
 #+source: load-palatino
-#+begin_src latex :exports none
+#+begin_src latex :exports code
   \ifthenelse{\boolean{palatino}}
   {%
     \ifpdf
@@ -1520,13 +1555,13 @@ Note that the utopia font clashes with the =amssymb= package.
 #+end_src
 
 #+source: option-utopia
-#+begin_src latex :exports none
+#+begin_src latex :exports code
   \newboolean{utopia}
   \DeclareOption{utopia}{\setboolean{utopia}{true}}
 #+end_src
 
 #+source: load-utopia
-#+begin_src latex :exports none
+#+begin_src latex :exports code
   \ifthenelse{\boolean{utopia}}
   {%
     \ifpdf
@@ -1553,13 +1588,15 @@ These fonts conflict with the =amssymb= package.
 #+end_src
  
 #+source: option-charter
-#+begin_src latex :exports none
+#+begin_src latex :exports code
   \newboolean{charter}
   \DeclareOption{charter}{\setboolean{charter}{true}}
 #+end_src
 
+Helvetica is set a bit smaller to better match the Charter font.
+
 #+source: load-charter
-#+begin_src latex :exports none
+#+begin_src latex :exports code
   \ifthenelse{\boolean{charter}}
   {%
     \ifpdf
@@ -1576,8 +1613,8 @@ Packages not included in the Org-mode list of default packages are
 made available in =org-article.cls=.  These include facilities to
 apply microtypographic adjustments to suitable fonts, set the line
 spacing of the document to double space, set lists more compactly than
-the standard LaTeX =article.cls=, and typeset source code listings,
-optionally with color.
+the standard LaTeX =article.cls=, and typeset source code listings
+using one of several color or black and white themes.
 
 **** Microtype
 
@@ -1604,13 +1641,13 @@ it.
 #+end_src
 
 #+source: option-microtype
-#+begin_src latex :exports none
+#+begin_src latex :exports code
   \newboolean{microtype}
   \DeclareOption{microtype}{\setboolean{microtype}{true}}
 #+end_src
 
 #+source: load-microtype
-#+begin_src latex :exports none
+#+begin_src latex :exports code
     \ifthenelse{\boolean{microtype}}
   {%
     \ifpdf
@@ -1635,7 +1672,7 @@ it, and to set linespacing to doublespace.
 #+end_src
  
 #+source: option-setspace
-#+begin_src latex :exports none
+#+begin_src latex :exports code
   \newboolean{setspace}
   \newboolean{doublespace}
   \DeclareOption{setspace}{\setboolean{setspace}{true}}
@@ -1643,14 +1680,14 @@ it, and to set linespacing to doublespace.
 #+end_src
 
 #+source: load-setspace
-#+begin_src latex :exports none
+#+begin_src latex :exports code
   \ifthenelse{\boolean{setspace}}
   {\RequirePackage{setspace}}
   {}
 #+end_src
 
 #+source: setspace-code
-#+begin_src latex :exports none
+#+begin_src latex :exports code
   \ifthenelse{\boolean{setspace}}%
   {\ifthenelse{\boolean{doublespace}}%
   {\doublespacing}%
@@ -1683,13 +1720,13 @@ it.
 #+end_src
  
 #+source: option-paralist
-#+begin_src latex :exports none
+#+begin_src latex :exports code
   \newboolean{paralist}
   \DeclareOption{paralist}{\setboolean{paralist}{true}}
 #+end_src
 
 #+source: load-paralist
-#+begin_src latex :exports none
+#+begin_src latex :exports code
   % Set the standard LaTeX list environments to their compact counterparts  
   \ifthenelse{\boolean{paralist}}
     {%
@@ -1717,13 +1754,13 @@ it.
 #+end_src
 
 #+source: option-topcapt
-#+begin_src latex :exports none
+#+begin_src latex :exports code
   \newboolean{topcapt}
   \DeclareOption{topcapt}{\setboolean{topcapt}{true}}
 #+end_src
 
 #+source: load-topcapt
-#+begin_src latex :exports none
+#+begin_src latex :exports code
   \ifthenelse{\boolean{topcapt}}
     {\RequirePackage{topcapt}}
     {}
@@ -1740,13 +1777,13 @@ options.
 #+end_src
 
 #+source: option-color
-#+begin_src latex :exports none
+#+begin_src latex :exports code
   \newboolean{color}
   \DeclareOption{color}{\setboolean{color}{true}}  
 #+end_src
 
 #+source: load-color
-#+begin_src latex :exports none
+#+begin_src latex :exports code
   \ifthenelse{\boolean{color}}
     {\RequirePackage{color}}
     {}
@@ -1776,8 +1813,15 @@ set up for color reproduction.
   #+LaTeX_CLASS_OPTIONS: [listings, listings-bw, listings-color]
 #+end_src
  
+This is where themes are defined for the listings package.  The
+=listings-color= theme was lifted from a post to the Org-mode list by
+Eric Schulte.  The =listings-sv= theme was posted to the list by
+Sebastian Vauban; it has been modified here to work with the =color=
+package, rather than the =xcolor= package used by Sebastian, and to
+allow breaking of long lines.
+
 #+source: option-listings
-#+begin_src latex :exports none
+#+begin_src latex :exports code
   \newboolean{listings}
   \newboolean{color}
   \DeclareOption{listings}{\setboolean{listings}{true}}
@@ -1824,7 +1868,7 @@ set up for color reproduction.
         numbers=left, % where to put the line numbers
         numberstyle=\tiny, % line number font size
         stepnumber=0, % step between two line numbers
-        breaklines=false, %!! don't break long lines of code
+        breaklines=true, %!! do break long lines of code
         showtabs=false, % show tabs within strings adding particular underscores
         showspaces=false, % show spaces adding particular underscores
         showstringspaces=false, % underline spaces within strings
@@ -1841,14 +1885,14 @@ set up for color reproduction.
 #+end_src
 
 #+source: load-listings
-#+begin_src latex :exports none
+#+begin_src latex :exports code
   \ifthenelse{\boolean{listings}}
     {\RequirePackage{listings}}
     {}
 #+end_src
 
 #+source: listings-code
-#+begin_src latex :exports none
+#+begin_src latex :exports code
   \ifthenelse{\boolean{listings}}%
     {\lstdefinelanguage{org}
       {morecomment=[l]\#}%
