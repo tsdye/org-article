@@ -15,30 +15,33 @@
 #+XSLT: 
 #+BABEL: :exports code
 #+LaTeX_CLASS: org-article-subsubsection
-#+LaTeX_CLASS_OPTIONS: [article,letterpaper,times,12pt,listings-bw,microtype]
+#+LaTeX_CLASS_OPTIONS: [koma,a4paper,landscape,twocolumn,utopia,10pt,listings-sv,microtype,paralist]
 
 
 * Org-article class
   :PROPERTIES:
   :VISIBILITY: children
   :END:
-This file uses Babel to tangle a LaTeX class named =org-article.cls=.
+This file uses Babel to tangle a \(LaTeX\) class named =org-article.cls=.
 The class provides all of the LaTeX packages used by the Org-mode
 LaTeX exporter.  The class accepts numerous options, which the user
 can set either in =.emacs=, for default use with all org-article
 exports, or within the Org-mode file using =#+LaTeX_CLASS_OPTIONS:=.
 
-  - Options to keep individual LaTeX packages from loading make it
-  somewhat easier to modify which LaTeX packages are loaded during the
-  processing of LaTeX code exported by Org-mode.
-  - The package also implements several choices of fonts and takes
-  steps to ensure that the fonts don't clash with the symbol font
-  files that Org-mode depends upon to typeset =org-entities=.
-  - The class provides pre-defined themes for formatting source code
-  listings, which can be used as is, or used as a bais for minor
-  modifications.
-  - Facilities to typeset lists with less vertical space and to alter
-    line spacing are also provided.
+  - Default packages :: Options to keep individual LaTeX packages from
+       loading make it somewhat easier to modify which LaTeX packages
+       are loaded during the processing of LaTeX code exported by
+       Org-mode.
+  - Fonts :: The package also implements several choices of fonts and
+             takes steps to ensure that the fonts don't clash with the
+             symbol font files that Org-mode depends upon to typeset
+             =org-entities=.
+  - Listing themes :: The class provides pre-defined themes for
+                      formatting source code listings, which can be
+                      used as is, or used as a basis for minor modifications.
+  - Compact lists :: Facilities to typeset lists with less vertical
+                     space and to alter line spacing are also
+                     provided.
 
 ** How to use this Org-mode document
    :PROPERTIES:
@@ -108,7 +111,6 @@ The =org-article.cls= setup for the case when
   (add-to-list 'org-export-latex-classes
             '("org-article-section"
                "\\documentclass{org-article}
-               \\loadpackage[AUTO]{inputenc}
                [NO-DEFAULT-PACKAGES]
                [PACKAGES]
                [EXTRA]"
@@ -220,7 +222,7 @@ included at the top of the Org-mode file:
 #+LaTeX_CLASS_OPTIONS: [article,letterpaper,times,12pt,listings-bw,microtype]
 #+end_src
 
-The resulting [[file:article-class-times-art.pdf][pdf file]] is typeset with the standard LaTeX
+The resulting [[http://www.tsdye2.com/org-babel/article-class-times-art.pdf][pdf file]] is typeset with the standard LaTeX
 =article.cls= on 8.5 x 11 in. paper, using Times, Helvetica, and
 Courier fonts with a 12 point base size.  Source code listings are
 given in black and white, and microtypographic justification is
@@ -235,7 +237,7 @@ top of the Org-mode file:
 #+LaTeX_CLASS_OPTIONS: [koma,a4paper,landscape,twocolumn,utopia,10pt,listings-sv,microtype,paralist]
 #+end_src
 
-The resulting [[file:article-class-utopia-koma.pdf][pdf file]] is typeset with the KOMA-script =scrartcl.cls=
+The resulting [[http://www.tsdye2.com/org-babel/article-class-utopia-koma.pdf][pdf file]] is typeset with the KOMA-script =scrartcl.cls=
 on 5.8 x 8.3 in. paper in landscape mode, using Utopia, Bera,
 and Incosolata fonts with a 10 point base size.  Source code listings
 are given in color, and microtypographic justification is applied.  In
@@ -280,7 +282,7 @@ this optional argument than there was in the past.  It is omitted here.
 #+begin_src latex :exports code
   % Identification part
   \NeedsTeXFormat{LaTeX2e}
-  \ProvidesClass{org-article}[2010/09/18 0.2 (TSD)]
+  \ProvidesClass{org-article}[2010/09/19 0.2 (TSD)]
   % End of the identification part
   %
 #+end_src
@@ -1067,13 +1069,21 @@ option is provided to not load it.
 #+begin_src latex :exports code
   \newboolean{nowasysym}
   \DeclareOption{nowasysym}{\setboolean{nowasysym}{true}}
+  \newboolean{integrals}
+  \DeclareOption{integrals}{\setboolean{integrals}{true}}
+  \newboolean{nointegrals}
+  \DeclareOption{nointegrals}{\setboolean{nointegrals}{true}}
 #+end_src
 
 #+source: load-wasysym
 #+begin_src latex :exports code
   \ifthenelse{\boolean{nowasysym}}
   {}
-  {\RequirePackage[nointegrals]{wasysym}}
+  {%
+    \ifthenelse{\boolean{integrals}}%
+    {\RequirePackage[integrals]{wasysym}}%
+    {\RequirePackage[nointegrals]{wasysym}}%
+  }
 #+end_src
 
 **** Latexsym
@@ -1795,7 +1805,7 @@ the two options =draft= and =final=, which the =listings= package is
 configured to pick up itself from options passed to =\documentclass=,
 the other options were introduced to ease debugging or to trigger
 compatibility with earlier versions of the package.  It seems unwise
-to use this mechanism to set options fo rthe =listings= package
+to use this mechanism to set options for the =listings= package
 because there is no reason to assume that it will be stable.  One
 solution would be to process options for this package using a =key =
 value= interface that sets the values of keys recognized by the
@@ -1810,7 +1820,7 @@ set up for color reproduction.
 
 #+source: org-buffer-listings
 #+begin_src org :exports code
-  #+LaTeX_CLASS_OPTIONS: [listings, listings-bw, listings-color]
+  #+LaTeX_CLASS_OPTIONS: [listings, listings-bw, listings-color, listings-sv]
 #+end_src
  
 This is where themes are defined for the listings package.  The
