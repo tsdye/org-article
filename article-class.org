@@ -22,7 +22,7 @@
   :PROPERTIES:
   :VISIBILITY: children
   :END:
-This file uses Babel to tangle a \(LaTeX\) class named =org-article.cls=.
+This file uses Babel to tangle a LaTeX class named =org-article.cls=.
 The class provides all of the LaTeX packages used by the Org-mode
 LaTeX exporter.  The class accepts numerous options, which the user
 can set either in =.emacs=, for default use with all org-article
@@ -574,6 +574,31 @@ sub-heads, etc., will be scaled accordingly.
   ,#+LaTeX_CLASS_OPTIONS: [10pt]
   ,#+LaTeX_CLASS_OPTIONS: [11pt]
   ,#+LaTeX_CLASS_OPTIONS: [12pt]
+#+end_src
+
+**** Text block and margins
+With the =koma= option, the size of the text block and the resulting
+margins can be altered using the option =DIV=.  A typical value of
+=DIV= is 9. Smaller text blocks with larger margins result when =DIV=
+takes a smaller value and larger text blocks with smaller margines
+result when =DIV= takes a larger value (fig. \ref{fig:div}).
+
+#+CAPTION: Text block sizes on A4 paper with different values of DIV
+#+LABEL: fig:div
+#+results:
+[[file:../images/text-blocks.png]]
+
+
+The =koma= class can also take into account the part of the page used
+by the binding.  This value is passed to the package with the option
+=BCOR=, which takes any LaTeX length as its argument.
+
+For example, to set the text block large and leave ample space for
+binding with a clip, one might pass the following options to the class
+when using the =koma= option.
+#+source: koma-text-block
+#+begin_src org
+  #+LaTeX_CLASS_OPTIONS: koma,DIV=15,BCOR=15mm
 #+end_src
 
 **** Equations
@@ -1977,6 +2002,47 @@ allow breaking of long lines.
     extendedchars=false %!?? workaround for when the listed file is in UTF-8
 }
 #+end_LaTeX
-** Color or xcolor?
+** DONE Color or xcolor?
+   :LOGBOOK:
+   - State "DONE"       from ""           [2010-09-19 Sun 21:37]
+   :END:
    - Check which package is best to use
    - Troubles with xcolor
+** Explanation of div
+
+#+tblname: koma-div
+| DIV | width_[mm] | height_[mm] | top_[mm] | inner_[mm] |
+|-----+------------+-------------+----------+------------|
+|   6 |     105.00 |      148.50 |    49.50 |      35.00 |
+|   7 |     120.00 |      169.71 |    42.43 |      30.00 |
+|   8 |     131.25 |      185.63 |    37.13 |      26.25 |
+|   9 |     140.00 |      198.00 |    33.00 |      23.33 |
+|  10 |     147.00 |      207.90 |    29.70 |      21.00 |
+|  11 |     152.73 |      216.00 |    27.00 |      19.09 |
+|  12 |     157.50 |      222.75 |    24.75 |      17.50 |
+|  13 |     161.54 |      228.46 |    22.85 |      16.15 |
+|  14 |     165.00 |      233.36 |    21.21 |      15.00 |
+|  15 |     168.00 |      237.60 |    19.80 |      14.00 |
+
+#+begin_src R :session :var x = koma-div :file ../images/text-blocks.png
+  plot(x[,2], x[,3], xlim=c(0,260), ylim=c(0,260), type='n',
+  xlab='Text block width (mm)', ylab='Text block height (mm)')
+  rect(0,0,x[,2],x[,3])
+  text(x=x[,2],y=x[,3],labels=x[,1],pos=3,offset=0.1)
+#+end_src
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
