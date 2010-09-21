@@ -5,7 +5,7 @@
 #+DESCRIPTION: 
 #+KEYWORDS: 
 #+LANGUAGE:  en
-#+OPTIONS:   H:3 num:t toc:t \n:nil @:t ::t |:t ^:nil -:t f:t *:t <:t
+#+OPTIONS:   H:5 num:t toc:t \n:nil @:t ::t |:t ^:nil -:t f:t *:t <:t
 #+OPTIONS:   TeX:t LaTeX:t skip:nil d:nil todo:t pri:nil tags:not-in-toc
 #+INFOJS_OPT: view:nil toc:nil ltoc:t mouse:underline buttons:0 path:http://orgmode.org/org-info.js
 #+EXPORT_SELECT_TAGS: export
@@ -14,8 +14,8 @@
 #+LINK_HOME: 
 #+XSLT: 
 #+BABEL: :exports code
-#+LaTeX_CLASS: org-article-subsubsection
-#+LaTeX_CLASS_OPTIONS: [koma,a4paper,landscape,twocolumn,utopia,10pt,listings-sv,microtype,paralist]
+#+LaTeX_CLASS: org-article
+#+LaTeX_CLASS_OPTIONS: [article,letterpaper,palatino,10pt,listings-sv,microtype,paralist]
 
 
 * Org-article class
@@ -105,45 +105,26 @@ buffer are loaded (the [EXTRA] argument).
 The =org-article.cls= setup for the case when
 =org-export-latex-packages-alist= is =nil=:
 
+The number of heading levels in the LaTeX output is determined by two
+factors: the number of heading levels (section, subsection, etc.)
+defined in =org-export-latex-classes= and the setting of the =H:=
+option in the export header.  The number of heading levels will be the
+smaller of the two values, e.g., if =H: 5= calls for five heading
+levels, but only sections are defined in =org-export-latex-classes=
+then the exported LaTeX file will only contain sections and will lack
+subsections, subsubsections, etc.  Similarly, if headings down to
+subparagraph are defined in =org-export-latex-classes= and =H: 1=,
+then only sections will appear in the LaTeX export.  In a practical
+sense, the only reason to restrict the number of headings specified in
+=org-export-latex-classes= would be to constrain the options available
+to the author of the document.  Thus, =org-article.cls= defines
+headings to the subparagraph level, which is the maximum defined by LaTeX.
 #+begin_src emacs-lisp :exports code
+  (setq org-export-latex-listings t)
   (add-to-list 'org-export-latex-packages-alist
                '(("AUTO" "inputenc" t)))
   (add-to-list 'org-export-latex-classes
-            '("org-article-section"
-               "\\documentclass{org-article}
-               [NO-DEFAULT-PACKAGES]
-               [PACKAGES]
-               [EXTRA]"
-               ("\\section{%s}" . "\\section*{%s}")))
-  (add-to-list 'org-export-latex-classes
-            '("org-article-subsection"
-               "\\documentclass{org-article}
-               [NO-DEFAULT-PACKAGES]
-               [PACKAGES]
-               [EXTRA]"
-               ("\\section{%s}" . "\\section*{%s}")
-               ("\\subsection{%s}" . "\\subsection*{%s}")))
-  (add-to-list 'org-export-latex-classes
-            '("org-article-subsubsection"
-               "\\documentclass{org-article}
-               [NO-DEFAULT-PACKAGES]
-               [PACKAGES]
-               [EXTRA]"
-               ("\\section{%s}" . "\\section*{%s}")
-               ("\\subsection{%s}" . "\\subsection*{%s}")
-               ("\\subsubsection{%s}" . "\\subsubsection*{%s}")))
-  (add-to-list 'org-export-latex-classes
-            '("org-article-paragraph"
-               "\\documentclass{org-article}
-               [NO-DEFAULT-PACKAGES]
-               [PACKAGES]
-               [EXTRA]"
-               ("\\section{%s}" . "\\section*{%s}")
-               ("\\subsection{%s}" . "\\subsection*{%s}")
-               ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-               ("\\paragraph{%s}" . "\\paragraph*{%s}")))
-  (add-to-list 'org-export-latex-classes
-            '("org-article-subparagraph"
+            '("org-article"
                "\\documentclass{org-article}
                [NO-DEFAULT-PACKAGES]
                [PACKAGES]
@@ -160,46 +141,17 @@ and it includes packages that you don't want always loaded then
 the following setup should work.
 
 #+begin_src emacs-lisp :exports code
-      (add-to-list 'org-export-latex-classes
-                '("org-article-section"
-                   "\\documentclass{org-article}
+  (setq org-export-latex-listings t)
+  (add-to-list 'org-export-latex-classes
+               '("org-article"
+                 "\\documentclass{org-article}
                    [NO-DEFAULT-PACKAGES]
                    [EXTRA]"
-                   ("\\section{%s}" . "\\section*{%s}")))
-      (add-to-list 'org-export-latex-classes
-                '("org-article-subsection"
-                   "\\documentclass{org-article}
-                   [NO-DEFAULT-PACKAGES]
-                   [EXTRA]"
-                   ("\\section{%s}" . "\\section*{%s}")
-                   ("\\subsection{%s}" . "\\subsection*{%s}")))
-      (add-to-list 'org-export-latex-classes
-                '("org-article-subsubsection"
-                   "\\documentclass{org-article}
-                   [NO-DEFAULT-PACKAGES]
-                   [EXTRA]"
-                   ("\\section{%s}" . "\\section*{%s}")
-                   ("\\subsection{%s}" . "\\subsection*{%s}")
-                   ("\\subsubsection{%s}" . "\\subsubsection*{%s}")))
-      (add-to-list 'org-export-latex-classes
-                '("org-article-paragraph"
-                   "\\documentclass{org-article}
-                   [NO-DEFAULT-PACKAGES]
-                   [EXTRA]"
-                   ("\\section{%s}" . "\\section*{%s}")
-                   ("\\subsection{%s}" . "\\subsection*{%s}")
-                   ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-                   ("\\paragraph{%s}" . "\\paragraph*{%s}")))
-      (add-to-list 'org-export-latex-classes
-                '("org-article-subparagraph"
-                   "\\documentclass{org-article}
-                   [NO-DEFAULT-PACKAGES]
-                   [EXTRA]"
-                   ("\\section{%s}" . "\\section*{%s}")
-                   ("\\subsection{%s}" . "\\subsection*{%s}")
-                   ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-                   ("\\paragraph{%s}" . "\\paragraph*{%s}")
-                   ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+                 ("\\section{%s}" . "\\section*{%s}")
+                 ("\\subsection{%s}" . "\\subsection*{%s}")
+                 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                 ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                 ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
 #+end_src
 
 In this case, you will need to specify the =inputenc= package in the
@@ -213,12 +165,13 @@ Org-mode file:
 ** Examples
 The functionality of =org-article.cls= can be demonstrated with the
 following two examples of pdf output generated by Org-mode LaTeX
-export of this Org-mode file.  In the first, these two lines were
-included at the top of the Org-mode file:
+export of this Org-mode file.  In the first, these three lines appear
+near the top of the Org-mode file:
 
 #+source: first-example
 #+begin_src org :exports code
-#+LaTeX_CLASS: org-article-subsubsection
+#+OPTIONS:   H:5 num:t toc:t \n:nil @:t ::t |:t ^:nil -:t f:t *:t <:t
+#+LaTeX_CLASS: org-article
 #+LaTeX_CLASS_OPTIONS: [article,letterpaper,times,12pt,listings-bw,microtype]
 #+end_src
 
@@ -228,13 +181,14 @@ Courier fonts with a 12 point base size.  Source code listings are
 given in black and white, and microtypographic justification is
 applied.
 
-In the second example, the following two lines were included in the
-top of the Org-mode file:
+In the second example, these three lines appear near the top of the
+Org-mode file:
 
 #+source: second-example
 #+begin_src org :exports code
-#+LaTeX_CLASS: org-article-subsubsection
-#+LaTeX_CLASS_OPTIONS: [koma,a4paper,landscape,twocolumn,utopia,10pt,listings-sv,microtype,paralist]
+#+OPTIONS:   H:5 num:t toc:t \n:nil @:t ::t |:t ^:nil -:t f:t *:t <:t
+#+LaTeX_CLASS: org-article
+#+LaTeX_CLASS_OPTIONS: [koma,a5paper,landscape,twocolumn,utopia,10pt,listings-sv,microtype,paralist]
 #+end_src
 
 The resulting [[http://www.tsdye2.com/org-babel/article-class-utopia-koma.pdf][pdf file]] is typeset with the KOMA-script =scrartcl.cls=
@@ -243,6 +197,25 @@ and Incosolata fonts with a 10 point base size.  Source code listings
 are given in color, and microtypographic justification is applied.  In
 addition, the =paralist= option has been set; compare the tightly-set
 list immediately below with the standard list of the first example.
+
+In the third example, these three lines appear at the top of the
+Org-mode file:
+
+#+source: third-example
+#+begin_src org :exports code
+  ,#+OPTIONS:   H:5 num:t toc:t \n:nil @:t ::t |:t ^:nil -:t f:t *:t <:t
+  ,#+LaTeX_CLASS: org-article
+  ,#+LaTeX_CLASS_OPTIONS: [koma,a5paper,DIV=15,landscape,utopia,10pt,listings-sv,microtype,paralist]
+#+end_src
+
+The resulting [[http://www.tsdye2.com/org-babel/article-class-koma-div.pdf][pdf file]] is typeset with the KOMA-script =scrartcl.cls=
+on 5.8 x 8.3 in. paper in landscape mode, using Utopia, Bera, and
+Incosolata fonts with a 10 point base size.  The size of the text
+block has been increased by setting =DIV= to a relatively high number.
+Source code listings are given in color, and microtypographic
+justification is applied.  In addition, the =paralist= option has been
+set.
+
 ** The class file
    :PROPERTIES:
    :VISIBILITY: folded
@@ -580,7 +553,7 @@ sub-heads, etc., will be scaled accordingly.
 With the =koma= option, the size of the text block and the resulting
 margins can be altered using the option =DIV=.  A typical value of
 =DIV= is 9. Smaller text blocks with larger margins result when =DIV=
-takes a smaller value and larger text blocks with smaller margines
+takes a smaller value and larger text blocks with smaller margins
 result when =DIV= takes a larger value (fig. \ref{fig:div}).
 
 #+CAPTION: Text block sizes on A4 paper with different values of DIV
@@ -597,9 +570,11 @@ For example, to set the text block large and leave ample space for
 binding with a clip, one might pass the following options to the class
 when using the =koma= option.
 #+source: koma-text-block
-#+begin_src org
+#+begin_src org :exports code
   #+LaTeX_CLASS_OPTIONS: koma,DIV=15,BCOR=15mm
 #+end_src
+
+**** Table of contents
 
 **** Equations
 
@@ -1841,19 +1816,31 @@ the approach adopted here.
 
 This package is not loaded by default.  Options are provided to load
 it in its default state, set up for black and white reproduction, and
-set up for color reproduction.
+with two themes for color reproduction.
 
 #+source: org-buffer-listings
 #+begin_src org :exports code
   #+LaTeX_CLASS_OPTIONS: [listings, listings-bw, listings-color, listings-sv]
 #+end_src
  
-This is where themes are defined for the listings package.  The
+Themes are defined for the listings package.  The
 =listings-color= theme was lifted from a post to the Org-mode list by
 Eric Schulte.  The =listings-sv= theme was posted to the list by
 Sebastian Vauban; it has been modified here to work with the =color=
 package, rather than the =xcolor= package used by Sebastian, and to
 allow breaking of long lines.
+
+Caveat emptor: the line-breaking mechanism in the listings package appears to
+break when =resetmargins = false=.  This means that the listing will
+always be set to =\textwidth=, rather than =\linewidth=.  Thus, care
+should be taken to ensure that listings do not occur in lists.
+Probably the best way to ensure that this doesn't happen is to make
+sure the =H:= option in the export header is set to a suitably high
+level, so source code blocks always occur at an Org-mode headline
+level that exports as a heading, rather than a list, e.g. if source
+code appears in a three-asterisk headline and now lower, then setting
+=H: 3= should ensure that listing margins are always aligned with text
+margins. 
 
 #+source: option-listings
 #+begin_src latex :exports code
@@ -1884,7 +1871,8 @@ allow breaking of long lines.
         basicstyle=\ttfamily\footnotesize,%
         showstringspaces=false,%
         frame=lines,%
-        breaklines=true%
+        breaklines=true,%
+        resetmargins=true%
       }%
     }%
   }
@@ -1912,6 +1900,7 @@ allow breaking of long lines.
         stringstyle=\color{...@lststring},
         commentstyle=\color{...@lstcomment},
         backgroundcolor=\color{...@lstbackground}, % sets the background color
+        resetmargins=true%
         captionpos=b, % sets the caption position to `bottom'
         extendedchars=false %!?? workaround for when the listed file is in UTF-8
       }%
@@ -2009,6 +1998,8 @@ allow breaking of long lines.
    - Check which package is best to use
    - Troubles with xcolor
 ** Explanation of div
+   This table comes from the KOMA-script documentation.  It gives text
+   block and margin sizes on A4 paper with various settings of =DIV=.
 
 #+tblname: koma-div
 | DIV | width_[mm] | height_[mm] | top_[mm] | inner_[mm] |
@@ -2024,12 +2015,17 @@ allow breaking of long lines.
 |  14 |     165.00 |      233.36 |    21.21 |      15.00 |
 |  15 |     168.00 |      237.60 |    19.80 |      14.00 |
 
-#+begin_src R :session :var x = koma-div :file ../images/text-blocks.png
+This R script plots the text block information in the table.
+
+#+begin_src R :var x = koma-div :file ../images/text-blocks.png
   plot(x[,2], x[,3], xlim=c(0,260), ylim=c(0,260), type='n',
   xlab='Text block width (mm)', ylab='Text block height (mm)')
   rect(0,0,x[,2],x[,3])
   text(x=x[,2],y=x[,3],labels=x[,1],pos=3,offset=0.1)
 #+end_src
+
+#+results:
+[[file:../images/text-blocks.png]]
 
 
 
