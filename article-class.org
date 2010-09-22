@@ -5,7 +5,7 @@
 #+DESCRIPTION: 
 #+KEYWORDS: 
 #+LANGUAGE:  en
-#+OPTIONS:   H:5 num:t toc:t \n:nil @:t ::t |:t ^:nil -:t f:t *:t <:t
+#+OPTIONS:   H:3 num:t toc:t \n:nil @:t ::t |:t ^:nil -:t f:t *:t <:t
 #+OPTIONS:   TeX:t LaTeX:t skip:nil d:nil todo:t pri:nil tags:not-in-toc
 #+INFOJS_OPT: view:nil toc:nil ltoc:t mouse:underline buttons:0 path:http://orgmode.org/org-info.js
 #+EXPORT_SELECT_TAGS: export
@@ -15,7 +15,7 @@
 #+XSLT: 
 #+BABEL: :exports code
 #+LaTeX_CLASS: org-article
-#+LaTeX_CLASS_OPTIONS: [article,letterpaper,palatino,10pt,listings-sv,microtype,paralist]
+#+LaTeX_CLASS_OPTIONS: [koma,letterpaper,palatino,10pt,listings-sv,microtype,paralist,tocdepthss]
 
 
 * Org-article class
@@ -255,7 +255,7 @@ this optional argument than there was in the past.  It is omitted here.
 #+begin_src latex :exports code
   % Identification part
   \NeedsTeXFormat{LaTeX2e}
-  \ProvidesClass{org-article}[2010/09/19 0.2 (TSD)]
+  \ProvidesClass{org-article}[2010/09/21 0.2 (TSD)]
   % End of the identification part
   %
 #+end_src
@@ -575,6 +575,58 @@ when using the =koma= option.
 #+end_src
 
 **** Table of contents
+In the default configuration, the Org-mode LaTeX exporter includes a
+function that sandwiches the LaTeX =\tableofcontents= command between
+a command that sets the depth of the headings that appear in the table
+of contents (based on the number of headline levels that will be
+exported as headings, rather than lists) and a command to add some
+vertical space.  Neither of these additions to the =\tableofcontents=
+command is especially desireable.  It is often the case that one wants
+the table of contents depth to differ from the depth to which sections
+are numbered.  In the LaTeX world, the space between the end of one
+element and the start of another is something that is specified within
+a class file, rather than within the document itself.  Formatting with
+the class style exclusively can give the finished document a pleasing
+stylistic uniformity that is difficult to achieve in an ad hoc way.
+Fortunately, the LaTeX exporter is coded in such a way that it is
+possible for the user to alter this behavior relatively easily.
+
+The =org-article.cls= makes it possible to set the depth of headings that
+appear in the table of contents independent of the level to which
+section headings are numbered.  This mechanism will only work if the default behavior of the LaTeX
+exporter is changed.  The following bit of Emacs lisp code can be
+placed in =.emacs=:
+
+#+source: format-toc
+#+begin_src emacs-lisp :exports code
+  (defun org-export-latex-format-toc-org-article (depth)
+    (when depth
+      (format "\\setcounter{secnumdepth}{%s}\n\\tableofcontents\n"
+              depth)))
+  (setq org-export-latex-format-toc-function 'org-export-latex-format-toc-org-article)
+#+end_src
+
+Three choices are available in =org-article.cls=: sections,
+subsections, and subsubsections.  It would be possible to create other
+choices, but it is generally the case that one, two, or three heading
+levels are sufficient for the table of contents.  More levels are
+rarely seen and are perhaps not too desireable.
+
+#+source: toc-depth-text-block
+#+begin_src org :exports code
+  ,#+LaTeX_CLASS_OPTIONS: [tocdepths,tocdepthss,tocdepthsss]
+#+end_src
+
+#+source: option-tocdepth
+#+begin_src latex :exports code
+  \newboolean{tocdepths}
+  \newboolean{tocdepthss}
+  \newboolean{tocdepthsss}  
+  \DeclareOption{tocdepths}{\AtBeginDocument{\setcounter{tocdepth}{1}}}
+  \DeclareOption{tocdepthss}{\AtBeginDocument{\setcounter{tocdepth}{2}}}
+  \DeclareOption{tocdepthsss}{\AtBeginDocument{\setcounter{tocdepth}{3}}}
+#+end_src
+
 
 **** Equations
 
@@ -1997,7 +2049,10 @@ margins.
    :END:
    - Check which package is best to use
    - Troubles with xcolor
-** Explanation of div
+** DONE Explanation of div
+   :LOGBOOK:
+   - State "DONE"       from ""           [2010-09-21 Tue 18:11]
+   :END:
    This table comes from the KOMA-script documentation.  It gives text
    block and margin sizes on A4 paper with various settings of =DIV=.
 
@@ -2042,3 +2097,12 @@ This R script plots the text block information in the table.
 
 
 
+** Format TOC
+#+source: format-toc
+#+begin_src emacs-lisp :exports code
+  (defun org-export-latex-format-toc-org-article (depth)
+    (when depth
+      (format "\\setcounter{secnumdepth}{%s}\n\\tableofcontents\n"
+              depth)))
+  (setq org-export-latex-format-toc-function 'org-export-latex-format-toc-org-article)
+#+end_src
