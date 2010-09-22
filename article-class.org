@@ -15,7 +15,7 @@
 #+XSLT: 
 #+BABEL: :exports code
 #+LaTeX_CLASS: org-article
-#+LaTeX_CLASS_OPTIONS: [koma,letterpaper,palatino,10pt,listings-sv,microtype,paralist,tocdepthss]
+#+LaTeX_CLASS_OPTIONS: [koma,letterpaper,palatino,10pt,listings-sv,microtype,paralist,tocdepthss,secnumss]
 
 
 * Org-article class
@@ -312,9 +312,11 @@ keep all the code specific to a particular package together in the
   <<option-utopia>>
   <<option-charter>>
   
-  % Base class option
+  % Base class options
   <<option-koma>>
   <<option-article>>
+  <<option-tocdepth>>
+  <<option-secnum>>
   
   % Other package options
   <<option-microtype>>
@@ -605,6 +607,10 @@ placed in =.emacs=:
               depth)))
   (setq org-export-latex-format-toc-function 'org-export-latex-format-toc-org-article)
 #+end_src
+This code uses the depth to which Org-mode headlines are exported to
+sections, rather than lists, as the default level to which sections
+are numbered.  This is fine for many applications, but it is possible
+to control this variable separately, as [[section-numbering][shown below]].
 
 Three choices are available in =org-article.cls=: sections,
 subsections, and subsubsections.  It would be possible to create other
@@ -625,6 +631,43 @@ rarely seen and are perhaps not too desireable.
   \DeclareOption{tocdepths}{\AtBeginDocument{\setcounter{tocdepth}{1}}}
   \DeclareOption{tocdepthss}{\AtBeginDocument{\setcounter{tocdepth}{2}}}
   \DeclareOption{tocdepthsss}{\AtBeginDocument{\setcounter{tocdepth}{3}}}
+#+end_src
+
+**** Section numbering
+# <<section-numbering>>
+
+It is possible to set the level to which sections will be numbered
+with =org-article.cls=.  
+
+#+source: format-toc-for-secnum
+#+begin_src emacs-lisp :exports code
+  (defun org-export-latex-format-toc-org-article-sec-num (depth)
+    (when depth
+      (format "%% Org-mode is exporting headings to %s levels.\n\\tableofcontents\n"
+              depth)))
+  (setq org-export-latex-format-toc-function 'org-export-latex-format-toc-org-article-sec-num)
+#+end_src
+
+Five choices are available in =org-article.cls=: sections,
+subsections, subsubsections, paragraphs, and subparagraphs.
+
+#+source: sec-number-text-block
+#+begin_src org :exports code
+  ,#+LaTeX_CLASS_OPTIONS: [secnums,secnumss,secnumsss,secnump,secnumsp]
+#+end_src
+
+#+source: option-secnum
+#+begin_src latex :exports code
+  \newboolean{secnums}
+  \newboolean{secnumss}
+  \newboolean{secnumsss}  
+  \newboolean{secnump}
+  \newboolean{secnumsp}
+  \DeclareOption{secnums}{\AtBeginDocument{\setcounter{secnumdepth}{1}}}
+  \DeclareOption{secnumss}{\AtBeginDocument{\setcounter{secnumdepth}{2}}}
+  \DeclareOption{secnumsss}{\AtBeginDocument{\setcounter{secnumdepth}{3}}}
+  \DeclareOption{secnump}{\AtBeginDocument{\setcounter{secnumdepth}{4}}}
+  \DeclareOption{secnumsp}{\AtBeginDocument{\setcounter{secnumdepth}{5}}}
 #+end_src
 
 
