@@ -561,7 +561,7 @@ result when =DIV= takes a larger value (fig. \ref{fig:div}).
 #+CAPTION: Text block sizes on A4 paper with different values of DIV
 #+LABEL: fig:div
 #+results:
-[[file:../images/text-blocks.png]]
+[[file:../images/org-article-text-blocks.png]]
 
 
 The =koma= class can also take into account the part of the page used
@@ -2013,9 +2013,12 @@ margins.
 #+source: listings-code
 #+begin_src latex :exports code
   \ifthenelse{\boolean{listings}}%
-    {\lstdefinelanguage{org}
-      {morecomment=[l]\#}%
-    }
+  {\lstdefinelanguage{org}%
+    morekeywords={:results, :session, :var, :noweb, :exports},%
+    sensitive=false,%
+    morestring=[b]",%
+    morecomment=[l]{\#}%
+  }%
   {}%  
 #+end_src
 
@@ -2115,7 +2118,7 @@ margins.
 
 This R script plots the text block information in the table.
 
-#+begin_src R :var x = koma-div :file ../images/text-blocks.png
+#+begin_src R :var x = koma-div :file ../images/org-article-text-blocks.png
   plot(x[,2], x[,3], xlim=c(0,260), ylim=c(0,260), type='n',
   xlab='Text block width (mm)', ylab='Text block height (mm)')
   rect(0,0,x[,2],x[,3])
@@ -2123,7 +2126,7 @@ This R script plots the text block information in the table.
 #+end_src
 
 #+results:
-[[file:../images/text-blocks.png]]
+[[file:../images/org-article-text-blocks.png]]
 
 
 
