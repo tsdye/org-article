@@ -15,7 +15,7 @@
 #+XSLT: 
 #+BABEL: :exports code
 #+LaTeX_CLASS: org-article
-#+LaTeX_CLASS_OPTIONS: [koma,letterpaper,palatino,10pt,listings-sv,microtype,paralist,tocdepthss,secnumss]
+#+LaTeX_CLASS_OPTIONS: [koma,letterpaper,utopia,11pt,listings-es,microtype,paralist,tocdepthss,secnums,colorlinks,urlcolor=blue]
 
 
 * Org-article class
@@ -216,7 +216,7 @@ Source code listings are given in color, and microtypographic
 justification is applied.  In addition, the =paralist= option has been
 set.
 
-** The class file
+* The class file
    :PROPERTIES:
    :VISIBILITY: folded
    :END:
@@ -243,7 +243,7 @@ The LaTeX class file has six standard parts:
   <<class-code-part>>
 #+end_src
 
-*** Identification part
+** Identification part
 
 This is a standard identification part.  The =\NeedsTeXFormat= command
 can take an optional argument with a release date for the oldest
@@ -260,7 +260,7 @@ this optional argument than there was in the past.  It is omitted here.
   %
 #+end_src
 
-*** Initial code part
+** Initial code part
 The initial code part loads packages needed to process the class file
 and declares booleans for each of the class options.  Options defined
 by the base class, either the standard =article.cls= or the Koma class
@@ -278,7 +278,7 @@ have to be declared here.
   % End of initial code part
 #+end_src
   
-*** Declaration of options part
+** Declaration of options part
 # <<declaration>>
 The package options are declared here in a code block made up entirely
 of noweb references.  Typically, a package referred to here will also
@@ -336,7 +336,7 @@ keep all the code specific to a particular package together in the
   % End of declaration of options part
 #+end_src
 
-*** Execution of options part
+** Execution of options part
 
 The =\ProcessOptions= command reclaims the memory used to store user
 options, so those values are now gone unless something was done with
@@ -352,7 +352,7 @@ them in the [[declaration][declaration of options]] part.
   % End of execution of options part
 #+end_src
 
-*** Package loading part
+** Package loading part
 # <<package-loading-part>>
 
 By default, =org-article.cls= loads all but one of the packages in
@@ -410,7 +410,7 @@ package-specific code can be kept together in [[latex-packages][LaTeX packages]]
   %
 #+end_src
 
-*** Class code part
+** Class code part
 # <<class-code-part>>
 
 This part is also implemented with noweb references.  It calls
@@ -425,13 +425,13 @@ section.
   % End of class code part  
 #+end_src
 
-** LaTeX packages
+* LaTeX packages
    :PROPERTIES:
    :VISIBILITY: folded
    :END:
 # <<latex-packages>>
 
-*** Article base class options
+** Article base class options
 
 =Org-article.cls= offers a choice of two base classes.  The first is the
 standard LaTeX =article.cls=.  Also available is the [[http://www.ctan.org/tex-archive/macros/latex/contrib/koma-script/][KOMA-script]] 
@@ -502,7 +502,7 @@ The article class is loaded by default.
   }  
 #+end_src
 
-**** Paper size
+*** Paper size
 
 The following paper size options are available for the standard LaTeX
 =article.cls= and the [[http://www.ctan.org/tex-archive/macros/latex/contrib/koma-script/][KOMA-script]] =scrartcl.cls=.  The first three
@@ -536,7 +536,7 @@ replaced by an integer [0, 1, ... 10].
   #+LaTeX_CLASS_OPTIONS: [dXpaper]  
 #+end_src
 
-**** Font size
+*** Font size
 
 There are three base font size options available for the standard
 LaTeX =article.cls= and the [[http://www.ctan.org/tex-archive/macros/latex/contrib/koma-script/][KOMA-script]] =scrartcl.cls=.  This option
@@ -551,7 +551,7 @@ sub-heads, etc., will be scaled accordingly.
   ,#+LaTeX_CLASS_OPTIONS: [12pt]
 #+end_src
 
-**** Text block and margins
+*** Text block and margins
 With the =koma= option, the size of the text block and the resulting
 margins can be altered using the option =DIV=.  A typical value of
 =DIV= is 9. Smaller text blocks with larger margins result when =DIV=
@@ -576,7 +576,7 @@ when using the =koma= option.
   #+LaTeX_CLASS_OPTIONS: koma,DIV=15,BCOR=15mm
 #+end_src
 
-**** Table of contents
+*** Table of contents
 In the default configuration, the Org-mode LaTeX exporter includes a
 function that sandwiches the LaTeX =\tableofcontents= command between
 a command that sets the depth of the headings that appear in the table
@@ -633,7 +633,7 @@ rarely seen and are perhaps not too desireable.
   \DeclareOption{tocdepthsss}{\AtBeginDocument{\setcounter{tocdepth}{3}}}
 #+end_src
 
-**** Section numbering
+*** Section numbering
 # <<section-numbering>>
 
 It is possible to set the level to which sections will be numbered
@@ -671,7 +671,7 @@ subsections, subsubsections, paragraphs, and subparagraphs.
 #+end_src
 
 
-**** Equations
+*** Equations
 
 The standard LaTeX =article.cls= and the [[http://www.ctan.org/tex-archive/macros/latex/contrib/koma-script/][KOMA-script]] =scrartcl.cls=
 both recognize two options that control formatting of equations.  The
@@ -685,7 +685,7 @@ flush left, rather than centered, which is the default
   ,#+LaTeX_CLASS_OPTIONS: [fleqn]
 #+end_src
 
-**** Table captions
+*** Table captions
 
 The standard LaTeX =article.cls= formats captions to appear below the
 captioned item.  However, many document styles require table captions
@@ -702,9 +702,9 @@ place the caption above the table within the =table= environment:
   ,#+LaTeX_CLASS_OPTIONS: [captions=tableheading]
 #+end_src
 
-*** Org-mode default packages
+** Org-mode default packages
 
-**** Inputenc                                                      :noexport:
+*** Inputenc                                                       :noexport:
 
 The input encoding of the document is specified by the =inputenc= package.  It
 takes one of the following options:
@@ -773,13 +773,13 @@ option is provided to not load it.
   }
 #+end_src
 
-**** Inputenc
+*** Inputenc
 The input encoding of the document is specified by the =inputenc=
 package.  Org-mode provides a nifty method for sending options to this
 package, so it is not loaded directly by =org-article.cls=.  See
 [[export-setup][Org-mode LaTeX export setup]].
 
-**** Fontenc
+*** Fontenc
 
 The =fontenc= package specifies the encoding to use with a font.  The
 history of font encodings in LaTeX is a long one; suffice it to say
@@ -828,7 +828,7 @@ These include [[garamond-font][Garamond]], [[palatino-font][Palatino]], [[charte
   }
 #+end_src
 
-**** Fixltx2e
+*** Fixltx2e
 The =fixltx2e= package applies fixes to LaTeX2e that would break older
 documents, so have not been applied to the LaTeX2e kernel.  The
 package doesn't take any options.
@@ -863,7 +863,7 @@ option is provided to not load it.
   {\RequirePackage{fixltx2e}}
 #+end_src
 
-**** Graphicx
+*** Graphicx
 The =graphicx= package is typically configured with *.def files
 because the facilities it specifies are provided by a graphics driver,
 rather than by LaTeX.  For this reason, it is typically loaded without
@@ -900,7 +900,7 @@ option is provided to not load it.
   {\RequirePackage{graphicx}}
 #+end_src
 
-**** Longtable
+*** Longtable
 The =longtable= package defines a new LaTeX environment that can be
 used in place of the =tabular= environment and can be broken by the
 TeX page-breaking algorithm.  It is used, as the name implies, by long
@@ -937,7 +937,7 @@ option is provided to not load it.
   {\RequirePackage{longtable}}
 #+end_src
 
-**** Float
+*** Float
 Tables and figures in LaTeX are treated as floating objects.
 Internally, they are treated as a single (large) glyph, which makes
 them difficult to place on a page of otherwise small glyphs.
@@ -977,7 +977,7 @@ option is provided to not load it.
   {\RequirePackage{float}}
 #+end_src
 
-**** Wrapfig
+*** Wrapfig
 The =wrapfig= package defines two new environments to set a narrow
 float at the edge of the text and wrap the text around it.  Because
 "floats" in these new environments do not float it is sometimes the
@@ -1016,7 +1016,7 @@ option is provided to not load it.
   {\RequirePackage{wrapfig}}
 #+end_src
 
-**** Soul
+*** Soul
 The =soul= package is used primarily for underlining text.  It is
 loaded without options.
 
@@ -1049,7 +1049,7 @@ option is provided to not load it.
   {\RequirePackage{soul}}
 #+end_src
 
-**** T1enc                                                         :noexport:
+*** T1enc                                                          :noexport:
 This is a standard Org-mode package that is loaded by default.  An
 option is provided to not load it.
 
@@ -1071,7 +1071,7 @@ option is provided to not load it.
   {\RequirePackage{t1enc}}
 #+end_src
 
-**** Textcomp
+*** Textcomp
 This package provides support for the Text Companion fonts, which
 provide symbols used by =org-entities=, in particular the Euro
 currency symbol.  It is loaded without options.
@@ -1098,7 +1098,7 @@ option is provided to not load it.
   {\RequirePackage{textcomp}}
 #+end_src
 
-**** MarVoSym
+*** MarVoSym
 The =marvosym= package provides support for Martin Vogel's Symbol
 font, some glyphs from which are required by =org-entities=.  The
 package is loaded without options.
@@ -1132,7 +1132,7 @@ option is provided to not load it.
   {\RequirePackage{marvosym}}
 #+end_src
 
-**** Wasysym
+*** Wasysym
 The =wasysym= package makes available some symbol glyphs from the
 =wasy= fonts.  It is needed to support some of the glyphs in
 =org-entities=.  When it is loaded without options, this package clashes
@@ -1181,7 +1181,7 @@ option is provided to not load it.
   }
 #+end_src
 
-**** Latexsym
+*** Latexsym
 The =latexsym= package provides a few glyphs, one or more of which
 might be required by =org-entities=.  According to the documentation,
 =latexsym= isn't needed if the =amssymb= package is loaded.
@@ -1215,7 +1215,7 @@ option is provided to not load it.
   {\RequirePackage{latexsym}}
 #+end_src
 
-**** Amssymb
+*** Amssymb
 This package provides all the symbols defined in the American
 Mathematical Society's [[http://www.ams.org/publications/authors/tex/amsfonts][symbol fonts]] =msam= and =msbm=.  They are
 required to support =org-entities=.  It is superseded by the
@@ -1255,7 +1255,7 @@ use the =mathdesign= package, which apparently supersedes =amssymb=.
   {\RequirePackage{amssymb}}
 #+end_src
 
-**** Hyperref
+*** Hyperref
 The =hyperref= package turns LaTeX cross-referencing commands into
 hyperlinks, including the table of contents, bibliography, etc.  It is
 typically configured on a site-wide basis with options kept in a file,
@@ -1522,7 +1522,7 @@ Options do not include =debug=.
    \PassOptionsToPackage{xetex}{hyperref}}
 #+end_src
 
-*** Font packages
+** Font packages
 LaTeX documents might need three text fonts, one for the serif
 typeface used for text, the sans-serif typeface often used for heads
 and sub-heads, and the monospace typewriter typeface typically used to
@@ -1530,7 +1530,7 @@ set code examples and the like.  Each of the following options
 specifies all three of the fonts, but takes its name after the serif
 font used to set text.
 
-**** Times
+*** Times
 # <<times-font>>
 
 The =times= option uses URW Nimbus Roman, a Times clone, for the serif
@@ -1573,7 +1573,7 @@ font.
   {}
 #+end_src
 
-**** Garamond
+*** Garamond
 # <<garamond-font>>
 
 [[http://en.wikipedia.org/wiki/Garamond][Garamond]] refers to a group of old-style serif typefaces and is named
@@ -1610,7 +1610,7 @@ Garamond requires a bit more leading than normal.
   {}
 #+end_src
 
-**** Palatino
+*** Palatino
 # <<palatino-font>>
 
 The beautiful, old-style serif font, [[http://en.wikipedia.org/wiki/Palatino][Palatino]], was designed by [[http://en.wikipedia.org/wiki/Herman_Zapf][Herman
@@ -1645,7 +1645,7 @@ Palatino gets a bit more leading than normal.
   {}
 #+end_src
 
-**** Utopia
+*** Utopia
 # <<utopia-font>>
 
 [[http://en.wikipedia.org/wiki/Utopia_(typeface)][Utopia]] is a transitional serif font designed by [[http://en.wikipedia.org/wiki/Robert_Slimbach][Robert Slimbach]] for
@@ -1678,7 +1678,7 @@ Note that the utopia font clashes with the =amssymb= package.
   {}
 #+end_src
 
-**** Charter
+*** Charter
 # <<charter-font>>
 
 [[http://en.wikipedia.org/wiki/Bitstream_Charter][Charter]] was designed to reproduce well on low-resolution 300 dpi
@@ -1713,7 +1713,7 @@ Helvetica is set a bit smaller to better match the Charter font.
   {}
 #+end_src
 
-*** Other packages
+** Other packages
 Packages not included in the Org-mode list of default packages are
 made available in =org-article.cls=.  These include facilities to
 apply microtypographic adjustments to suitable fonts, set the line
@@ -1721,7 +1721,7 @@ spacing of the document to double space, set lists more compactly than
 the standard LaTeX =article.cls=, and typeset source code listings
 using one of several color or black and white themes.
 
-**** Microtype
+*** Microtype
 
 The =microtype= package makes available the micro-typographic
 extensions of pdfTeX.  Prominent among these are font expansion and
@@ -1761,7 +1761,7 @@ it.
   {}
 #+end_src
 
-**** Setspace
+*** Setspace
 
 The =setspace= package is used here for the sole purpose of creating
 double-spaced documents, such as manuscripts submitted to some
@@ -1800,7 +1800,7 @@ it, and to set linespacing to doublespace.
   {}%
 #+end_src
 
-**** Paralist
+*** Paralist
 
 The =paralist= package was designed to meet the widespread request for
 more tightly set lists in the standard LaTeX classes.  If it is
@@ -1843,7 +1843,7 @@ it.
     {}
 #+end_src
 
-**** Topcapt
+*** Topcapt
 The =topcapt= package is needed when it is desired to set the caption
 of a table above the table.  In this case, the =\caption{}= command
 must be moved above the =tabular= environment and the command changed
@@ -1871,7 +1871,7 @@ it.
     {}
 #+end_src
 
-**** Color                                                         :noexport:
+*** Color                                                          :noexport:
 The =xcolor= package provides facilities for adding color to LaTeX
 output.  This package needs additional configuration.  It should take
 options. 
@@ -1894,7 +1894,7 @@ options.
     {}
 #+end_src
 
-**** Listings
+*** Listings
 The =listings= package is a source code printer for LaTeX.  Except for
 the two options =draft= and =final=, which the =listings= package is
 configured to pick up itself from options passed to =\documentclass=,
@@ -1995,9 +1995,34 @@ margins.
         stringstyle=\color{...@lststring},
         commentstyle=\color{...@lstcomment},
         backgroundcolor=\color{...@lstbackground}, % sets the background color
-        resetmargins=true%
+        resetmargins=true,%
         captionpos=b, % sets the caption position to `bottom'
         extendedchars=false %!?? workaround for when the listed file is in UTF-8
+      }%
+    }%
+  }
+  \DeclareOption{listings-es}{%
+    \setboolean{listings}{true}%
+    \setboolean{color}{true}%
+    \AtBeginDocument{%
+      \definecolor{dkgreen}{rgb}{0,0.5,0}%
+      \definecolor{dkred}{rgb}{0.5,0,0}%
+      \definecolor{gray}{rgb}{0.5,0.5,0.5}%
+      \lstset{%
+        basicstyle=\ttfamily\bfseries\scriptsize,
+        keywordstyle=\color{blue},
+        ndkeywordstyle=\color{red},
+        commentstyle=\color{dkred},
+        stringstyle=\color{dkgreen},
+        numbers=left,
+        numberstyle=\ttfamily\footnotesize\color{gray},
+        stepnumber=1,
+        numbersep=10pt,
+        backgroundcolor=\color{white},
+        tabsize=4,
+        showspaces=false,
+        showstringspaces=false,
+        xleftmargin=.23in
       }%
     }%
   }
@@ -2014,10 +2039,17 @@ margins.
 #+begin_src latex :exports code
   \ifthenelse{\boolean{listings}}%
   {\lstdefinelanguage{org}%
-    morekeywords={:results, :session, :var, :noweb, :exports},%
-    sensitive=false,%
-    morestring=[b]",%
-    morecomment=[l]{\#}%
+    {%
+      morekeywords={:results, :session, :var, :noweb, :exports},%
+      sensitive=false,%
+      morestring=[b]",%
+      morecomment=[l]{\#},%
+    }%
+    \lstdefinelanguage{dot}
+    {%
+      morekeywords={graph},
+      sensitive=false,
+    }%
   }%
   {}%  
 #+end_src
