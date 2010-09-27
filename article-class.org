@@ -15,8 +15,8 @@
 #+XSLT: 
 #+BABEL: :exports code
 #+LaTeX_CLASS: org-article
-#+LaTeX_CLASS_OPTIONS: [koma,letterpaper,utopia,11pt,listings-es,microtype,paralist,tocdepthss,secnums,colorlinks,urlcolor=blue]
-
+#+LaTeX_CLASS_OPTIONS: [koma,letterpaper,utopia,11pt,listings-es,microtype,paralist,colorlinks=true,urlcolor=blue,secnums]
+#+LATEX_HEADER: \usepackage[AUTO]{inputenc}
 
 * Org-article class
   :PROPERTIES:
@@ -215,6 +215,21 @@ block has been increased by setting =DIV= to a relatively high number.
 Source code listings are given in color, and microtypographic
 justification is applied.  In addition, the =paralist= option has been
 set.
+
+The fourth example, set out in the listing below, illustrates use of
+the =org-article.cls= section numbering facility.  The option
+=secnums= has been used to number section heads but leave subsection
+and lower level heads unnumbered.  This [[http://www.tsdye2.com/org-babel/article-class-secnum.pdf][results]] in a clean look.  The
+=listings-es= theme has been used for the listings, which uses color
+sparingly and sets code blocks off primarily by numbering and small
+size of the font.
+ 
+#+source: fourth-example
+#+begin_src org :exports code
+  ,#+OPTIONS:   H:5 num:t toc:t \n:nil @:t ::t |:t ^:nil -:t f:t *:t <:t
+  ,#+LaTeX_CLASS: org-article
+  ,#+LaTeX_CLASS_OPTIONS: [koma,letterpaper,utopia,11pt,listings-es,microtype,paralist,colorlinks=true,urlcolor=blue,secnums]
+#+end_src
 
 * The class file
    :PROPERTIES:
@@ -2015,6 +2030,7 @@ margins.
         commentstyle=\color{dkred},
         stringstyle=\color{dkgreen},
         numbers=left,
+        breaklines=true,
         numberstyle=\ttfamily\footnotesize\color{gray},
         stepnumber=1,
         numbersep=10pt,
@@ -2049,6 +2065,10 @@ margins.
     {%
       morekeywords={graph},
       sensitive=false,
+    }%
+    \lstdefinelanguage{ditaa}
+    {%
+      breaklines=false
     }%
   }%
   {}%  
@@ -2175,7 +2195,10 @@ This R script plots the text block information in the table.
 
 
 
-** Format TOC
+** DONE Format TOC
+   :LOGBOOK:
+   - State "DONE"       from ""           [2010-09-26 Sun 11:34]
+   :END:
 #+source: format-toc
 #+begin_src emacs-lisp :exports code
   (defun org-export-latex-format-toc-org-article (depth)
