@@ -339,6 +339,7 @@ keep all the code specific to a particular package together in the
   <<option-setspace>>
   % <<option-topcapt>>
   <<option-listings>>  
+  <<option-minted>>  
   %  <<option-color>>
   
   % Base class
@@ -413,6 +414,7 @@ package-specific code can be kept together in [[latex-packages][LaTeX packages]]
   % <<load-topcapt>>
   <<load-listings>>
   <<load-color>>
+  <<load-minted>>
    
   % Font packages 
   <<load-times>>
@@ -2072,6 +2074,20 @@ margins.
     }%
   }%
   {}%  
+#+end_src
+
+*** Minted
+#+source: option-minted
+#+begin_src latex :exports code
+  \newboolean{minted}
+  \DeclareOption{minted}{\setboolean{minted}{true}}
+#+end_src
+
+#+source: load-minted
+#+begin_src latex :exports code
+  \ifthenelse{\boolean{minted}}
+    {\RequirePackage{minted}}
+    {}
 #+end_src
 
 * Notes                                                            :noexport:
