@@ -49,14 +49,7 @@ exports, or within the Org-mode file using =#+LaTeX_CLASS_OPTIONS:=.
    :END:
 
 You might be able to get the Org-mode document from GitHub using the following
-shell command, which works for me:
-
-#+source: get-from-github
-#+begin_src sh :exports code
-  git clone git@github.com:tsdye/org-article.git
-#+end_src
-
-Alternatively, this might work for you:
+shell command:
 
 #+source: get-from-github-alt
 #+begin_src sh :exports code
