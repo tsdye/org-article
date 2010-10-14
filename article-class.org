@@ -54,14 +54,7 @@ Some of the features include:
    :END:
 
 You might be able to get the Org-mode document from GitHub using the following
-shell command, which works for me:
-
-#+source: get-from-github
-#+begin_src sh :exports code
-  git clone git@github.com:tsdye/org-article.git
-#+end_src
-
-Alternatively, this might work for you:
+shell command:
 
 #+source: get-from-github-alt
 #+begin_src sh :exports code
@@ -344,6 +337,7 @@ keep all the code specific to a particular package together in the
   <<option-setspace>>
   % <<option-topcapt>>
   <<option-listings>>  
+  <<option-minted>>  
   %  <<option-color>>
   
   % Base class
@@ -417,6 +411,7 @@ package-specific code can be kept together in [[latex-packages][LaTeX packages]]
   % <<load-topcapt>>
   <<load-listings>>
   <<load-color>>
+  <<load-minted>>
    
   % Font packages 
   <<load-times>>
@@ -2081,6 +2076,22 @@ margins.
   {}%  
 #+end_src
 
+<<<<<<< HEAD
+=======
+*** Minted
+#+source: option-minted
+#+begin_src latex :exports code
+  \newboolean{minted}
+  \DeclareOption{minted}{\setboolean{minted}{true}}
+#+end_src
+
+#+source: load-minted
+#+begin_src latex :exports code
+  \ifthenelse{\boolean{minted}}
+    {\RequirePackage{minted}}
+    {}
+#+end_src
+>>>>>>> dan
 
 * Notes                                                            :noexport:
 ** DONE fontenc is passed option TI by default
