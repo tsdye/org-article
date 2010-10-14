@@ -15,7 +15,7 @@
 #+XSLT: 
 #+BABEL: :exports code
 #+LaTeX_CLASS: org-article
-#+LaTeX_CLASS_OPTIONS: [koma,letterpaper,utopia,11pt,listings-es,microtype,paralist,colorlinks=true,urlcolor=blue,secnums]
+#+LaTeX_CLASS_OPTIONS: [koma,letterpaper,times,11pt,listings-es,microtype,paralist,colorlinks=true,urlcolor=blue,secnums]
 #+LATEX_HEADER: \usepackage[AUTO]{inputenc}
 
 * Org-article class
@@ -28,6 +28,7 @@ LaTeX exporter.  The class accepts numerous options, which the user
 can set either in =.emacs=, for default use with all org-article
 exports, or within the Org-mode file using =#+LaTeX_CLASS_OPTIONS:=.
 
+Some of the features include:
   - Default packages :: Options to keep individual LaTeX packages from
        loading make it somewhat easier to modify which LaTeX packages
        are loaded during the processing of LaTeX code exported by
@@ -39,9 +40,13 @@ exports, or within the Org-mode file using =#+LaTeX_CLASS_OPTIONS:=.
   - Listing themes :: The class provides pre-defined themes for
                       formatting source code listings, which can be
                       used as is, or used as a basis for minor modifications.
-  - Compact lists :: Facilities to typeset lists with less vertical
-                     space and to alter line spacing are also
-                     provided.
+  - Compact lists :: A facility to typeset lists with less vertical
+                     space is provided.
+  - Double spacing :: An option is provided to set lines double spaced.
+  - Table of contents :: The table of contents depth can be set
+       independently of section numbering depth.
+  - Section numbering :: Section numbering depth can be specified
+       independently of the table of contents depth.
 
 ** How to use this Org-mode document
    :PROPERTIES:
@@ -72,7 +77,7 @@ against the file, either by =M-x org-babel-tangle RET= or =C-c C-v
 
 The resulting =org-article.cls= file should then be moved where LaTeX
 can find it.  In LaTeX setups that conform to the [[http://www.tex.ac.uk/tex-archive/tds/tds.html][Tex Directory
-Structure]], this might be =path/to/texmf-local/tex/latex/base=.  Once
+Structure]], this might be path/to/texmf-local/tex/latex/base.  Once
 the file has been placed in an appropriate directory it is often the
 case that the directory database, such as the one maintained by
 [[http://tug.org/kpathsea/][Kpathsea]], must then be updated. The following shell commands work on
@@ -404,7 +409,6 @@ package-specific code can be kept together in [[latex-packages][LaTeX packages]]
   <<load-wasysym>>  
   <<load-latexsym>>  
   <<load-amssymb>>  
-  <<load-hyperref>>  
   
   % Other packages
   <<load-paralist>>  
@@ -420,6 +424,9 @@ package-specific code can be kept together in [[latex-packages][LaTeX packages]]
   <<load-palatino>>  
   <<load-charter>>  
   <<load-utopia>>  
+
+  % Hyperref asks to be loaded last
+  <<load-hyperref>>  
   
   % End of package loading part
   %
@@ -2073,6 +2080,7 @@ margins.
   }%
   {}%  
 #+end_src
+
 
 * Notes                                                            :noexport:
 ** DONE fontenc is passed option TI by default
