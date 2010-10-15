@@ -15,7 +15,7 @@
 #+XSLT: 
 #+BABEL: :exports code
 #+LaTeX_CLASS: org-article
-#+LaTeX_CLASS_OPTIONS: [koma,letterpaper,times,11pt,listings-es,microtype,paralist,colorlinks=true,urlcolor=blue,secnums]
+#+LaTeX_CLASS_OPTIONS: [koma,letterpaper,times,11pt,listings-es,microtype,paralist,colorlinks=true,urlcolor=blue,secnums,gantt]
 #+LATEX_HEADER: \usepackage[AUTO]{inputenc}
 
 * Org-article class
@@ -339,7 +339,8 @@ keep all the code specific to a particular package together in the
   <<option-listings>>  
   <<option-minted>>  
   %  <<option-color>>
-  
+  <<option-gantt>>
+
   % Base class
   <<pass-to-koma>>
   <<pass-to-article>>  
@@ -412,6 +413,7 @@ package-specific code can be kept together in [[latex-packages][LaTeX packages]]
   <<load-listings>>
   <<load-color>>
   <<load-minted>>
+  <<load-gantt>>
    
   % Font packages 
   <<load-times>>
@@ -439,6 +441,7 @@ section.
   % Class code part
   <<setspace-code>>
   <<listings-code>>
+  <<gantt-code>>
   % End of class code part  
 #+end_src
 
@@ -2076,9 +2079,13 @@ margins.
   {}%  
 #+end_src
 
-<<<<<<< HEAD
-=======
 *** Minted
+
+#+source: org-buffer-minted
+#+begin_src org :exports code
+  #+LaTeX_CLASS_OPTIONS: [minted]
+#+end_src
+
 #+source: option-minted
 #+begin_src latex :exports code
   \newboolean{minted}
@@ -2091,7 +2098,230 @@ margins.
     {\RequirePackage{minted}}
     {}
 #+end_src
->>>>>>> dan
+
+*** GANTT charts
+Eric Fraga wrote this GANTT chart constructor, powered by an Org-mode
+table.
+
+**** GANTT Emacs lisp code
+
+The GANTT Emacs lisp code can either be placed in the buffer with the
+GANTT chart table or it can be installed in the [[http://orgmode.org/manual/Library-of-Babel.html#Library-of-Babel][Library of Babel]].
+Installing local code in the Library of Babel is best accomplished by
+establishing one or more Org-mode files for this purpose and keeping
+them in a place that won't be overwritten when Org-mode is updated.
+For each of these local files, place a line like the following in
+=.emacs= to make the source code blocks accessible to the Library:
+
+#+source: load-local-lob
+#+begin_src emacs-lisp :exports code
+  (org-babel-lob-ingest "~/org/local-lob.org")
+#+end_src
+
+The following source code block was sent to the Org-mode list by Eric
+Fraga.  It should be installed in the Library of Babel.
+
+#+source: elispgantt
+#+begin_src emacs-lisp :var table=gantttesttable :results output raw :exports code
+(defun esf/generate-gantt-chart (table)
+  (let ((dates "")
+	(entries (nthcdr 2 table))
+	(milestones "")
+	(nmilestones 0)
+	(ntasks 0)
+	(projecttime 0)
+	(tasks "")
+	(xlength 1)
+	)
+    (message "Initial: %s\n" table)
+    (message "Entries: %s\n" entries)
+    (while entries
+      (let ((entry (first entries)))
+	(if (listp entry)
+	    (let ((id (first entry))
+		  (type (nth 1 entry))
+		  (label (nth 2 entry))
+		  (task (nth 3 entry))
+		  (dependencies (nth 4 entry))
+		  (start (nth 5 entry))
+		  (duration (nth 6 entry))
+		  (end (nth 7 entry))
+		  (alignment (nth 8 entry))
+		  )
+	      (if (> start projecttime) (setq projecttime start))
+	      (if (string= type "task")
+		  (let ((end (+ start duration))
+			(textposition (+ start (/ duration 2)))
+			(flush "")
+			)
+		    (if (string= alignment "left")
+			(progn
+			  (setq textposition start)
+			  (setq flush "[left]"))
+		      (if (string= alignment "right")
+			  (progn
+			    (setq textposition end)
+			    (setq flush "[right]"))
+			)
+		      )
+		    (setq tasks (format "%s  \\gantttask{%s}{%s}{%d}{%d}{%d}{%s}\n" tasks label task start end textposition flush))
+		    (setq ntasks (+ 1 ntasks))
+		    (if (> end projecttime)
+			(setq projecttime end))
+		    )
+		(if (string= type "milestone")
+		    (progn
+		      (setq milestones (format "%s  \\ganttmilestone{$\\begin{array}{c}\\mbox{%s}\\\\ \\mbox{%s}\\end{array}$}{%d}\n" milestones label task start))
+		      (setq nmilestones (+ 1 nmilestones)))
+		  (if (string= type "date")
+		      (setq dates (format "%s  \\ganttdateline{%s}{%d}\n" dates label start))
+		    (message "Ignoring entry with type %s\n" type)
+		    )
+		  )
+		)
+	      )
+	  (message "Ignoring non-list entry %s\n" entry)
+	  ) ; end if list entry
+	(setq entries (cdr entries))
+	)
+      ) ; end while entries left
+    (format "#+begin_latex
+\\pgfdeclarelayer{background}
+\\pgfdeclarelayer{foreground}
+\\pgfsetlayers{background,foreground}
+\\renewcommand{\\ganttprojecttime}{%d}
+\\renewcommand{\\ganttntasks}{%d}
+\\noindent
+\\begin{tikzpicture}[y=-0.75cm,x=0.75\\textwidth]
+  \\begin{pgfonlayer}{background}
+    \\draw[very thin, red!10!white] (0,1+\\ganttntasks) grid [ystep=0.75cm,xstep=1/\\ganttprojecttime] (1,0);
+    \\draw[\\ganttdatelinecolour] (0,0) -- (1,0);
+    \\draw[\\ganttdatelinecolour] (0,1+\\ganttntasks) -- (1,1+\\ganttntasks);
+  \\end{pgfonlayer}
+%s
+%s
+%s
+\\end{tikzpicture}
+,#+end_latex\n" projecttime ntasks tasks milestones dates)
+    )
+  )
+(esf/generate-gantt-chart table)
+#+end_src
+
+
+The GANTT facility can be loaded by adding the following line to the
+Org-mode buffer.
+
+#+source: org-buffer-gantt
+#+begin_src org :exports code
+  #+LaTeX_CLASS_OPTIONS: [gantt]
+#+end_src
+
+#+tblname: gantttesttable
+    |    | type      | label | activity      | depends | start | duration | end | align |
+    |----+-----------+-------+---------------+---------+-------+----------+-----+-------|
+    |  1 | date      | Start |               |         |     0 |          |   0 |       |
+    |  2 | task      | 1.1   | Lit survey    |         |     0 |        3 |   3 | right |
+    |  3 | task      | 1.2   | Develop model |       2 |     3 |        9 |  12 | right |
+    |  4 | milestone | M1    | model         |       3 |    12 |          |  12 |       |
+    |  5 | task      | 1.3   | Implement     |       3 |    12 |        6 |  18 | left  |
+    |  6 | date      | Y1    |               |         |    12 |          |  12 |       |
+    |  7 | milestone | M2    | software      |       5 |    18 |          |  18 |       |
+    |----+-----------+-------+---------------+---------+-------+----------+-----+-------|
+    |  8 | task      | 2.1   | Surrogate     |       3 |    15 |        6 |  21 | left  |
+    |  9 | task      | 2.2   | Implement     |       7 |    21 |        3 |  24 | left  |
+    | 10 | milestone | M3    | software      |       8 |    24 |          |  24 |       |
+    | 11 | date      | End   |               |         |    24 |          |  24 |       |
+    |----+-----------+-------+---------------+---------+-------+----------+-----+-------|
+    #+TBLFM: $1=1+@-1::$8=$6+$7::@5$6=@-1$+2::@6$6=@-1$+2::@8$6=@-2$+2::@9$6=3+@4$+2::@10$6=@-1$+2
+
+#+call: elispgantt(table=gantttesttable)
+
+#+results: elispgantt(table=gantttesttable)
+
+#+begin_latex
+\pgfdeclarelayer{background}
+\pgfdeclarelayer{foreground}
+\pgfsetlayers{background,foreground}
+\renewcommand{\ganttprojecttime}{24}
+\renewcommand{\ganttntasks}{5}
+\noindent
+\begin{tikzpicture}[y=-0.75cm,x=0.75\textwidth]
+  \begin{pgfonlayer}{background}
+    \draw[very thin, red!10!white] (0,1+\ganttntasks) grid [ystep=0.75cm,xstep=1/\ganttprojecttime] (1,0);
+    \draw[\ganttdatelinecolour] (0,0) -- (1,0);
+    \draw[\ganttdatelinecolour] (0,1+\ganttntasks) -- (1,1+\ganttntasks);
+  \end{pgfonlayer}
+  \gantttask{1.1}{Lit survey}{0}{3}{3}{[right]}
+  \gantttask{1.2}{Develop model}{3}{12}{12}{[right]}
+  \gantttask{1.3}{Implement}{12}{18}{12}{[left]}
+  \gantttask{2.1}{Surrogate}{15}{21}{15}{[left]}
+  \gantttask{2.2}{Implement}{21}{24}{21}{[left]}
+
+  \ganttmilestone{$\begin{array}{c}\mbox{M1}\\ \mbox{model}\end{array}$}{12}
+  \ganttmilestone{$\begin{array}{c}\mbox{M2}\\ \mbox{software}\end{array}$}{18}
+  \ganttmilestone{$\begin{array}{c}\mbox{M3}\\ \mbox{software}\end{array}$}{24}
+
+  \ganttdateline{Start}{0}
+  \ganttdateline{Y1}{12}
+  \ganttdateline{End}{24}
+
+\end{tikzpicture}
+#+end_latex
+
+
+#+source: option-gantt
+#+begin_src latex :exports code
+  \newboolean{gantt}
+  \DeclareOption{gantt}{\setboolean{gantt}{true}}
+#+end_src
+
+#+source: load-gantt
+#+begin_src latex :exports code
+  \ifthenelse{\boolean{gantt}}
+  {\RequirePackage{pgf, pgfarrows, pgfnodes, tikz}}
+  {}
+#+end_src
+
+#+source: gantt-code
+#+begin_src latex :exports code
+  \newcommand\ganttline[4]{% line, tag, start end
+    \node at (0,#1) [anchor=base east] {#2};
+    \fill[black!20!white] (#3/20,#1-.2) rectangle (#4/20,#1+.2);}
+  \newcounter{gantttask}
+  \newcommand{\gantttaskcolour}{blue!50!white}
+  \newcommand{\ganttmilestonecolour}{red!50!white}
+  \newcommand{\ganttdatelinecolour}{black!50!white}
+  \newcommand{\ganttprojecttime}{1}
+  \newcommand{\ganttntasks}{1}
+  \newcommand\gantttask[6]{% label, activity, start, end, labelpos, align
+    \begin{pgfonlayer}{foreground}
+      % \node at (0,\thegantttask) [anchor=base east] {#2};
+      \stepcounter{gantttask}
+      \node [left] at (0,\thegantttask) {#1};
+      \draw[fill=\gantttaskcolour] (#3/\ganttprojecttime,\thegantttask-0.4) rectangle (#4/\ganttprojecttime,\thegantttask +0.4);
+      \node at (#5/\ganttprojecttime,\thegantttask) #6 {#2};
+    \end{pgfonlayer}
+  }
+  \newcommand\ganttpoint[3]{% line, tag, date
+    \node at (0,#1) [anchor=base east] {#2};
+    \fill[black] (#3/\ganttprojecttime,#1) circle (0.1/\ganttprojecttime);
+  }
+  \newcommand\ganttdateline[2]{% tag, date
+    \begin{pgfonlayer}{background}
+      \draw[\ganttdatelinecolour] (#2/\ganttprojecttime,0) -- (#2/\ganttprojecttime,\thegantttask+1);
+      \node at (#2/\ganttprojecttime,0) [above] {#1};
+    \end{pgfonlayer}
+  }
+  \newcommand\ganttmilestone[2]{% tag, date
+    \begin{pgfonlayer}{foreground}
+      \node at (#2/\ganttprojecttime,\thegantttask+1.0) [below] {#1};
+      \draw[black,fill=\ganttmilestonecolour] (#2/\ganttprojecttime-0.1\ganttntasks/\ganttprojecttime,\thegantttask+0.9) rectangle (#2/\ganttprojecttime+0.1\ganttntasks/\ganttprojecttime,\thegantttask+1.1);
+    \end{pgfonlayer}
+  }
+  
+  
+#+end_src
 
 * Notes                                                            :noexport:
 ** DONE fontenc is passed option TI by default
