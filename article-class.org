@@ -2088,7 +2088,8 @@ of software called Pygments that needs to be installed separately.
 
 #+source: org-buffer-minted
 #+begin_src org :exports code
-  #+LaTeX_CLASS_OPTIONS: [minted]
+  #+LaTeX_CLASS_OPTIONS: [minted, monokai, perldoc, borland, colorful,
+murphy, trac, tango, fruity, autumn, vs, bw, emacs, pastie, friendly, native]
 #+end_src
 
 #+source: option-minted
@@ -2102,6 +2103,42 @@ of software called Pygments that needs to be installed separately.
   \ifthenelse{\boolean{minted}}
     {\RequirePackage{minted}}
     {}
+#+end_src
+
+#+source: options-to-minted
+#+begin_src latex :exports code
+\DeclareOption{monokai}{%
+   \PassOptionsToPackage{monokai}{minted}}
+\DeclareOption{manni}{%
+   \PassOptionsToPackage{manni}{minted}}
+\DeclareOption{perldoc}{%
+   \PassOptionsToPackage{perldoc}{minted}}
+\DeclareOption{borland}{%
+   \PassOptionsToPackage{borland}{minted}}
+\DeclareOption{colorful}{%
+   \PassOptionsToPackage{colorful}{minted}}
+\DeclareOption{murphy}{%
+   \PassOptionsToPackage{murphy}{minted}}
+\DeclareOption{trac}{%
+   \PassOptionsToPackage{trac}{minted}}
+\DeclareOption{tango}{%
+   \PassOptionsToPackage{tango}{minted}}
+\DeclareOption{fruity}{%
+   \PassOptionsToPackage{fruity}{minted}}
+\DeclareOption{autumn}{%
+   \PassOptionsToPackage{autumn}{minted}}
+\DeclareOption{vs}{%
+   \PassOptionsToPackage{vs}{minted}}
+\DeclareOption{bw}{%
+   \PassOptionsToPackage{bw}{minted}}
+\DeclareOption{emacs}{%
+   \PassOptionsToPackage{emacs}{minted}}
+\DeclareOption{pastie}{%
+   \PassOptionsToPackage{pastie}{minted}}
+\DeclareOption{friendly}{%
+   \PassOptionsToPackage{friendly}{minted}}
+\DeclareOption{native}{%
+   \PassOptionsToPackage{native}{minted}}
 #+end_src
 
 *** GANTT charts
