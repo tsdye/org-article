@@ -441,8 +441,52 @@ section.
   % Class code part
   <<setspace-code>>
   <<listings-code>>
+  <<path-code>>
   <<gantt-code>>
   % End of class code part  
+#+end_src
+
+* New commands
+=Org-article.cls= defines new LaTeX command to identify semantic
+elements for particular handling in the output file.
+
+Arbitrary semantic markup is implemented by defining a new link type
+in =.emacs=.  The following code block defines a new link type,
+=latex=, whose =path= argument can hold the name of any LaTeX command.
+A link such as =[latex:proglang][Org-mode]= will export
+=\proglang{Org-mode}= to the LaTeX file.  In this way, it is possible
+to make the Org-mode LaTeX exporter conform to the semantic markup
+defined in arbitrary style files.  Org-mode will even complete your
+new link type!
+
+#+source: path-code
+#+begin_src emacs-lisp :exports code
+  (org-add-link-type
+   "latex" nil
+   (lambda (path desc format)
+     (cond
+      ((eq format 'html)
+       (format "<span style=\"color:grey;\">%s</span>" desc))
+      ((eq format 'latex)
+       (format "\\%s{%s}" path desc)))))
+  
+#+end_src
+
+** The \path command
+It is often the case that paths are long and difficult to break
+at the end of a line.  One way to get line breaks right is to wrap a
+path in the =\url{}= command from the =url.sty= package.  However, if the
+hyperref package is loaded, it redefines the =\url{}= command to add a
+hypertext link.  The original behavior of the =\url{}= command is then
+made available with the command =\nolinkurl{}=. Thus, the =\path{}=
+command tests for the presence of the hyperref package to ensure that
+the proper command is used to typeset a path.
+
+#+source: path-command
+#+begin_src latex :exports code
+  \ifthenelse{\boolean{nohyperref}}%
+  {\newcommand{\path}[1]{\url{#1}}}%
+  {\newcommand{\path}[1]{\nolinkurl{#1}}}
 #+end_src
 
 * LaTeX packages
@@ -2426,7 +2470,7 @@ the HTML export.  The chart looks great, Eric!
 #+END_LaTeX
 
 
-
+*** Index
 * Notes                                                            :noexport:
 ** DONE fontenc is passed option TI by default
    :LOGBOOK:
