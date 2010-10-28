@@ -503,7 +503,7 @@ examples are set at a slightly smaller size.
 #+source: progstructs-code
 #+begin_src latex :exports code
   \let\progstruct=\texttt
-  \let\progexample=\texttt\small
+  \newcommand{\progexample}[1]{{\ttfamily\small #1}}
 #+end_src
 
 
