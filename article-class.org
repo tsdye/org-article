@@ -15,28 +15,28 @@
 #+XSLT: 
 #+BABEL: :exports code
 #+LaTeX_CLASS: org-article
-#+LaTeX_CLASS_OPTIONS: [koma,letterpaper,captions=tableheading,utopia,11pt,listings-sv,microtype,paralist,colorlinks=true,urlcolor=blue,secnums,gantt]
+#+LaTeX_CLASS_OPTIONS: [koma,letterpaper,captions=tableheading,utopia,11pt,listings-sv,microtype,paralist,colorlinks=true,urlcolor=blue,secnums]
 #+LATEX_HEADER: \usepackage[AUTO]{inputenc}
 
 * Org-article class
   :PROPERTIES:
   :VISIBILITY: children
   :END:
-This file uses Babel to tangle a LaTeX class named =org-article.cls=.
-The class provides all of the LaTeX packages used by the Org-mode
+This file uses Babel to tangle a LaTeX class named [[latex:classfile][Org-article]].
+The class provides all of the LaTeX packages used by the [[latex:proglang][Org-mode]]
 LaTeX exporter.  The class accepts numerous options, which the user
 can set either in =.emacs=, for default use with all org-article
-exports, or within the Org-mode file using =#+LaTeX_CLASS_OPTIONS:=.
+exports, or within the [[latex:proglang][Org-mode]] file using =#+LaTeX_CLASS_OPTIONS:=.
 
 Some of the features include:
   - Default packages :: Options to keep individual LaTeX packages from
        loading make it somewhat easier to modify which LaTeX packages
        are loaded during the processing of LaTeX code exported by
-       Org-mode.
+       [[latex:proglang][Org-mode]].
   - Fonts :: The package also implements several choices of fonts and
              takes steps to ensure that the fonts don't clash with the
-             symbol font files that Org-mode depends upon to typeset
-             =org-entities=.
+             symbol font files that [[latex:proglang][Org-mode]] depends upon to typeset
+             [[latex:progstruct][org-entities]].
   - Listing themes :: The class provides pre-defined themes for
                       formatting source code listings, which can be
                       used as is, or used as a basis for minor modifications.
@@ -53,7 +53,7 @@ Some of the features include:
    :VISIBILITY: folded
    :END:
 
-You might be able to get the Org-mode document from GitHub using the following
+You might be able to get the [[latex:proglang][Org-mode]] document from GitHub using the following
 shell command:
 
 #+source: get-from-github-alt
@@ -63,8 +63,8 @@ shell command:
 
 This will create a sub-directory, =org-article=, initialize the git
 repository and download the file =article-class.org= as part of the
-repository.  The Org-mode document can be tangled to produce the
-=org-article.cls= file.  This is done by running =org-babel-tangle=
+repository.  The [[latex:proglang][Org-mode]] document can be tangled to produce the
+=org-article.cls= file.  This is done by running [[latex:progstruct][org-babel-tangle]] 
 against the file, either by =M-x org-babel-tangle RET= or =C-c C-v
 [C-]t=.
 
@@ -87,35 +87,35 @@ my OS-X system with the [[http://tug.org/mactex/][MacTeX]] distribution:
    :VISIBILITY: folded
    :END:
 # <<export-setup>>
-There are two ways to setup =org-article.cls= and your choice will
-probably depend on the value of the variable
-=org-export-latex-packages-alist=.  If this variable is nil (or it
-refers to packages that you always want loaded), then the following
-setup should work for you.  It asks Org-mode *not* to load the default
-packages, because these are loaded by =org-article.cls=.  Then, it
-loads the packages in =org-export-latex-packages-alist=, which should
-consist of a single entry for the =inputenc= package.  Org-mode
-automatically sets the input encoding based on the status of the
-Org-mode buffer being exported, which it can't do if it is loaded by
-=org-article.cls=.  Finally, any packages specified in the Org-mode
-buffer are loaded (the [EXTRA] argument).
+There are two ways to setup [[latex:classfile][Org-article]] and your choice will probably
+depend on the value of the variable [[latex:progstruct][org-export-latex-packages-alist]].
+If this variable is nil (or it refers to packages that you always want
+loaded), then the following setup should work for you.  It asks
+[[latex:proglang][Org-mode]] *not* to load the default packages, because these are loaded
+by [[latex:classfile][Org-article]].  Then, it loads the packages in
+[[latex:progstruct][org-export-latex-packages-alist]], which should consist of a single
+entry for the [[latex:package][inputenc]] package.  [[latex:proglang][Org-mode]] automatically sets the
+input encoding based on the status of the [[latex:proglang][Org-mode]] buffer being
+exported, which it can't do if it is loaded by [[latex:classfile][Org-article]].  Finally,
+any packages specified in the [[latex:proglang][Org-mode]] buffer are loaded (the [EXTRA]
+argument).
 
-The =org-article.cls= setup for the case when
-=org-export-latex-packages-alist= is =nil=:
+The [[latex:classfile][Org-article]] setup for the case when
+[[latex:progstruct][org-export-latex-packages-alist]] is [[latex:progstruct][nil]]:
 
 The number of heading levels in the LaTeX output is determined by two
 factors: the number of heading levels (section, subsection, etc.)
-defined in =org-export-latex-classes= and the setting of the =H:=
+defined in [[latex:progstruct][org-export-latex-classes]] and the setting of the [[latex:progstruct][H:]]
 option in the export header.  The number of heading levels will be the
-smaller of the two values, e.g., if =H: 5= calls for five heading
-levels, but only sections are defined in =org-export-latex-classes=
+smaller of the two values, e.g., if [[latex:progexample][H: 5]] calls for five heading
+levels, but only sections are defined in [[latex:progstruct][org-export-latex-classes]]
 then the exported LaTeX file will only contain sections and will lack
 subsections, subsubsections, etc.  Similarly, if headings down to
-subparagraph are defined in =org-export-latex-classes= and =H: 1=,
+subparagraph are defined in [[latex:progstruct][org-export-latex-classes]] and  [[latex:progexample][H: 1]],
 then only sections will appear in the LaTeX export.  In a practical
 sense, the only reason to restrict the number of headings specified in
-=org-export-latex-classes= would be to constrain the options available
-to the author of the document.  Thus, =org-article.cls= defines
+[[latex:progstruct][org-export-latex-classes]] would be to constrain the options available
+to the author of the document.  Thus, [[latex:classfile][Org-article]] defines
 headings to the subparagraph level, which is the maximum defined by LaTeX.
 #+begin_src emacs-lisp :exports code
   (setq org-export-latex-listings t)
@@ -134,7 +134,7 @@ headings to the subparagraph level, which is the maximum defined by LaTeX.
                ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
 #+end_src
 
-If, for some reason, =org-export-latex-packages-alist= is not =nil=,
+If, for some reason, [[latex:progstruct][org-export-latex-packages-alist]] is not [[latex:progstruct][nil]],
 and it includes packages that you don't want always loaded then
 the following setup should work.
 
@@ -152,8 +152,8 @@ the following setup should work.
                  ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
 #+end_src
 
-In this case, you will need to specify the =inputenc= package in the
-Org-mode file:
+In this case, you will need to specify the [[latex:package][inputenc]] package in the
+[[latex:proglang][Org-mode]] file:
 
 #+source: specify-inputenc
 #+begin_src org :exports code
@@ -161,10 +161,10 @@ Org-mode file:
 #+end_src
 
 ** Examples
-The functionality of =org-article.cls= can be demonstrated with the
-following two examples of pdf output generated by Org-mode LaTeX
-export of this Org-mode file.  In the first, these three lines appear
-near the top of the Org-mode file:
+The functionality of [[latex:classfile][Org-article]] can be demonstrated with the
+following two examples of pdf output generated by [[latex:proglang][Org-mode]] LaTeX
+export of this [[latex:proglang][Org-mode]] file.  In the first, these three lines appear
+near the top of the [[latex:proglang][Org-mode]] file:
 
 #+source: first-example
 #+begin_src org :exports code
@@ -174,13 +174,13 @@ near the top of the Org-mode file:
 #+end_src
 
 The resulting [[http://www.tsdye2.com/org-babel/article-class-times-art.pdf][pdf file]] is typeset with the standard LaTeX
-=article.cls= on 8.5 x 11 in. paper, using Times, Helvetica, and
+[[latex:classfile][article]] on 8.5 x 11 in. paper, using Times, Helvetica, and
 Courier fonts with a 12 point base size.  Source code listings are
 given in black and white, and microtypographic justification is
 applied.
 
 In the second example, these three lines appear near the top of the
-Org-mode file:
+[[latex:proglang][Org-mode]] file:
 
 #+source: second-example
 #+begin_src org :exports code
@@ -189,15 +189,15 @@ Org-mode file:
 #+LaTeX_CLASS_OPTIONS: [koma,a5paper,landscape,twocolumn,utopia,10pt,listings-sv,microtype,paralist]
 #+end_src
 
-The resulting [[http://www.tsdye2.com/org-babel/article-class-utopia-koma.pdf][pdf file]] is typeset with the KOMA-script =scrartcl.cls=
+The resulting [[http://www.tsdye2.com/org-babel/article-class-utopia-koma.pdf][pdf file]] is typeset with the KOMA-script [[latex:classfile][scrartcl]]
 on 5.8 x 8.3 in. paper in landscape mode, using Utopia, Bera,
 and Incosolata fonts with a 10 point base size.  Source code listings
 are given in color, and microtypographic justification is applied.  In
-addition, the =paralist= option has been set; compare the tightly-set
+addition, the [[latex:progstruct][paralist]] option has been set; compare the tightly-set
 list immediately below with the standard list of the first example.
 
 In the third example, these three lines appear at the top of the
-Org-mode file:
+[[latex:proglang][Org-mode]] file:
 
 #+source: third-example
 #+begin_src org :exports code
@@ -206,19 +206,19 @@ Org-mode file:
   ,#+LaTeX_CLASS_OPTIONS: [koma,a5paper,DIV=15,landscape,utopia,10pt,listings-sv,microtype,paralist]
 #+end_src
 
-The resulting [[http://www.tsdye2.com/org-babel/article-class-koma-div.pdf][pdf file]] is typeset with the KOMA-script =scrartcl.cls=
+The resulting [[http://www.tsdye2.com/org-babel/article-class-koma-div.pdf][pdf file]] is typeset with the KOMA-script [[latex:classfile][scrartcl]]
 on 5.8 x 8.3 in. paper in landscape mode, using Utopia, Bera, and
 Incosolata fonts with a 10 point base size.  The size of the text
-block has been increased by setting =DIV= to a relatively high number.
+block has been increased by setting [[latex:progstruct][DIV]] to a relatively high number.
 Source code listings are given in color, and microtypographic
-justification is applied.  In addition, the =paralist= option has been
+justification is applied.  In addition, the [[latex:progstruct][paralist]] option has been
 set.
 
 The fourth example, set out in the listing below, illustrates use of
-the =org-article.cls= section numbering facility.  The option
-=secnums= has been used to number section heads but leave subsection
+the [[latex:classfile][Org-article]] section numbering facility.  The option
+[[latex:progstruct][secnums]] has been used to number section heads but leave subsection
 and lower level heads unnumbered.  This [[http://www.tsdye2.com/org-babel/article-class-secnum.pdf][results]] in a clean look.  The
-=listings-es= theme has been used for the listings, which uses color
+[[latex:progstruct][listings-es]] theme has been used for the listings, which uses color
 sparingly and sets code blocks off primarily by numbering and small
 size of the font.
  
@@ -243,7 +243,7 @@ The LaTeX class file has six standard parts:
    - Execution of options part :: Set default values and execute the
         code for the options that have been declared.
    - Package loading part :: Load packages with the options specified
-        in the declaration of options part using =\PassOptionsToPackage=.
+        in the declaration of options part using [[latex:progstruct][PassOptionsToPackage]].
    - Main code part :: Usually used to define new commands and structures.
 
 #+source: org-article
@@ -258,7 +258,7 @@ The LaTeX class file has six standard parts:
 
 ** Identification part
 
-This is a standard identification part.  The =\NeedsTeXFormat= command
+This is a standard identification part.  The [[latex:progstruct][NeedsTeXFormat]] command
 can take an optional argument with a release date for the oldest
 version of LaTeX that can use the class.  Since it is relatively easy
 to update LaTeX installations nowadays there is less reason to use
@@ -276,8 +276,8 @@ this optional argument than there was in the past.  It is omitted here.
 ** Initial code part
 The initial code part loads packages needed to process the class file
 and declares booleans for each of the class options.  Options defined
-by the base class, either the standard =article.cls= or the Koma class
-=srcartcl.cls=, are passed on to those classes by default and don't
+by the base class, either the standard [[latex:classfile][article]] or the Koma class
+[[latex:classfile][scrartcl]], are passed on to those classes by default and don't
 have to be declared here.
 
 #+source: initial-code-part
@@ -353,16 +353,15 @@ keep all the code specific to a particular package together in the
 
 ** Execution of options part
 
-The =\ProcessOptions= command reclaims the memory used to store user
+The [[latex:progstruct][ProcessOptions]] command reclaims the memory used to store user
 options, so those values are now gone unless something was done with
 them in the [[declaration][declaration of options]] part.
 
 #+source: execution-of-options-part
 #+begin_src latex :exports code
   % Execution of options part
-
+  
   \ProcessOptions\relax
-
   
   % End of execution of options part
 #+end_src
@@ -370,16 +369,16 @@ them in the [[declaration][declaration of options]] part.
 ** Package loading part
 # <<package-loading-part>>
 
-By default, =org-article.cls= loads all but one of the packages in
-=org-export-latex-default-packages-alist=.  It does not load
-=inputenc= directly, but instead relies on the Org-mode LaTeX exporter
-to load this package, which passes as an option the encoding scheme of the
-exported buffer.  The =fontenc= package is loaded with the T1 option
+By default, [[latex:classfile][Org-article]] loads all but one of the packages in
+[[latex:progstruct][org-export-latex-default-packages-alist]].  It does not load [[latex:package][inputenc]]
+directly, but instead relies on the [[latex:proglang][Org-mode]] LaTeX exporter to load
+this package, which passes as an option the encoding scheme of the
+exported buffer.  The [[latex:package][fontenc]] package is loaded with the [[latex:progstruct][T1]] option
 by default as a prerequisite for the various symbol packages.  There
-is no facility to disable loading =fontenc=, which is unusual among
+is no facility to disable loading [[latex:package][fontenc]], which is unusual among
 LaTeX packages in its ability to be loaded more than once.  This
-functionality is required in the case where two or more fonts with different
-encodings are used.
+functionality is required in the case where two or more fonts with
+different encodings are used.
 
 This code block is implemented as noweb references so that
 package-specific code can be kept together in [[latex-packages][LaTeX packages]].
@@ -441,25 +440,24 @@ section.
   % Class code part
   <<setspace-code>>
   <<listings-code>>
-  <<path-code>>
-  <<gantt-code>>
+  <<proglangs-code>>
+  <<progstructs-code>>
+%  <<gantt-code>>
   % End of class code part  
 #+end_src
 
-* New commands
-=Org-article.cls= defines new LaTeX command to identify semantic
-elements for particular handling in the output file.
+* Semantic markup
 
-Arbitrary semantic markup is implemented by defining a new link type
-in =.emacs=.  The following code block defines a new link type,
-=latex=, whose =path= argument can hold the name of any LaTeX command.
-A link such as =[latex:proglang][Org-mode]= will export
-=\proglang{Org-mode}= to the LaTeX file.  In this way, it is possible
-to make the Org-mode LaTeX exporter conform to the semantic markup
-defined in arbitrary style files.  Org-mode will even complete your
-new link type!
+Arbitrary semantic markup in [[latex:proglang][Org-mode]] files is implemented by
+defining a new link type in =.emacs=.  The following code block
+defines a new link type, [[latex:progstruct][latex]], whose [[latex:progstruct][path]] argument can hold the
+name of any LaTeX command.  A link such as
+=[latex:proglang][Org-mode]= will export =\proglang{Org-mode}= to the
+LaTeX file.  In this way, it is possible to make the [[latex:proglang][Org-mode]] LaTeX
+exporter conform to the semantic markup defined in arbitrary style
+files.  [[latex:proglang][Org-mode]] will even complete your new link type!
 
-#+source: path-code
+#+source: define-latex-link
 #+begin_src emacs-lisp :exports code
   (org-add-link-type
    "latex" nil
@@ -472,22 +470,43 @@ new link type!
   
 #+end_src
 
-** The \path command
-It is often the case that paths are long and difficult to break
-at the end of a line.  One way to get line breaks right is to wrap a
-path in the =\url{}= command from the =url.sty= package.  However, if the
-hyperref package is loaded, it redefines the =\url{}= command to add a
-hypertext link.  The original behavior of the =\url{}= command is then
-made available with the command =\nolinkurl{}=. Thus, the =\path{}=
-command tests for the presence of the hyperref package to ensure that
-the proper command is used to typeset a path.
+** The path command
+# <<path-command>>
 
-#+source: path-command
+It is often the case that paths are long and difficult to break at the
+end of a line.  One way to get line breaks right is to wrap a path in
+the [[latex:progstruct][path]] command from the [[latex:package][url]] package.  This can be done
+with a link such as this one (abbreviated for obvious reasons)
+=[latex:path][/path/ ...]=, which gets typeset so it will break at the
+end of the line,
+[[latex:path][/path/to/a/file/nested/very/deeply/in/the/directory/structure]].
+
+** Programming languages
+# <<proglangs>>
+
+Semantic markup for programming language names, package names, and
+class file names is provided with the [[latex:progstruct][proglang]], [[latex:progstruct][package]], and [[latex:progstruct][classfile]]
+commands.  [[latex:classfile][Org-article]] currently defines all of these in the same way.
+
+#+source: proglangs-code
 #+begin_src latex :exports code
-  \ifthenelse{\boolean{nohyperref}}%
-  {\newcommand{\path}[1]{\url{#1}}}%
-  {\newcommand{\path}[1]{\nolinkurl{#1}}}
+  \let\proglang=\textsf
+  \let\package=\textsf
+  \let\classfile=\textsf
 #+end_src
+
+** Programming constructs
+Markup for programming constructs is provided with the [[latex:progstruct][progstruct]]
+and [[latex:progstruct][progexample]] commands.  Both are set in monospaced type; the
+examples are set at a slightly smaller size.
+
+#+source: progstructs-code
+#+begin_src latex :exports code
+  \let\progstruct=\texttt
+  \let\progexample=\texttt\small
+#+end_src
+
+
 
 * LaTeX packages
    :PROPERTIES:
@@ -497,16 +516,20 @@ the proper command is used to typeset a path.
 
 ** Article base class options
 
-=Org-article.cls= offers a choice of two base classes.  The first is the
-standard LaTeX =article.cls=.  Also available is the [[http://www.ctan.org/tex-archive/macros/latex/contrib/koma-script/][KOMA-script]] 
-=scrartcl.cls=.  The KOMA-script =scrartcl.cls= is compatible with the
-standard LaTeX article class; input that compiles with =article.cls=
-should also compile with =scrartcl.cls=.  It differs in the layout of
-the page and the styling of page elements, producing a somewhat more
-"modern" design based on principles set out by the typographer and
-book designer [[http://en.wikipedia.org/wiki/Jan_Tschichold][Jan Tschichold]].  
+[[latex:classfile][Org-article]] offers a choice of two base classes.
+The first is the standard LaTeX [[latex:classfile][article]] class.  Also
+available is the
+[[http://www.ctan.org/tex-archive/macros/latex/contrib/koma-script/][KOMA-script]]
+[[latex:classfile][scrartcl]] class.  The KOMA-script
+[[latex:classfile][scrartcl]] is compatible with the standard LaTeX
+article class; input that compiles with [[latex:classfile][article]]
+should also compile with [[latex:classfile][scrartcl]].  It differs in
+the layout of the page and the styling of page elements, producing a
+somewhat more "modern" design based on principles set out by the
+typographer and book designer
+[[http://en.wikipedia.org/wiki/Jan_Tschichold][Jan Tschichold]].
 
-To select the standard LaTeX =article.cls=, put this in your Org-mode
+To select the standard LaTeX [[latex:classfile][article]] class, put this line in your [[latex:proglang][Org-mode]]
 document:
 
 #+source: org-buffer-article
@@ -514,7 +537,7 @@ document:
   #+LaTeX_CLASS_OPTIONS: [article]
 #+end_src
 
-To select the [[http://www.ctan.org/tex-archive/macros/latex/contrib/koma-script/][KOMA-script]] =scrartcl.cls=, put this in your Org-mode document:
+To select the [[http://www.ctan.org/tex-archive/macros/latex/contrib/koma-script/][KOMA-script]] [[latex:classfile][scrartcl]] class, put this line in your [[latex:proglang][Org-mode]] document:
 
 #+source: org-buffer-koma
 #+begin_src org :exports code
@@ -522,8 +545,8 @@ To select the [[http://www.ctan.org/tex-archive/macros/latex/contrib/koma-script
 #+end_src
  
 
-For information on the [[http://www.ctan.org/tex-archive/macros/latex/contrib/koma-script/][KOMA-script]] =scrartcl.cls=, you can probably read the
-documentation on your system with the following shell command:
+For information on [[latex:classfile][scrartcl]], you can probably read the documentation
+on your system with the following shell command:
 
 #+source: read-koma
 #+begin_src sh :exports code
@@ -569,10 +592,10 @@ The article class is loaded by default.
 *** Paper size
 
 The following paper size options are available for the standard LaTeX
-=article.cls= and the [[http://www.ctan.org/tex-archive/macros/latex/contrib/koma-script/][KOMA-script]] =scrartcl.cls=.  The first three
-options are [[http://en.wikipedia.org/wiki/Paper_size#North_American_paper_sizes][North American paper sizes]].  The =a4paper=, =a5paper=, =b4paper=,
-and =b5paper= options are [[http://en.wikipedia.org/wiki/Paper_size#The_international_standard:_ISO_216][international standard ISO 216]].  The
-=landscape= option orients the paper with the long axis horizontal. 
+[[latex:classfile][article]] class and the [[http://www.ctan.org/tex-archive/macros/latex/contrib/koma-script/][KOMA-script]] [[latex:classfile][scrartcl]] class.  The first three
+options are [[http://en.wikipedia.org/wiki/Paper_size#North_American_paper_sizes][North American paper sizes]].  The [[latex:progstruct][a4paper]], [[latex:progstruct][a5paper]], [[latex:progstruct][b4paper]],
+and [[latex:progstruct][b5paper]] options are [[http://en.wikipedia.org/wiki/Paper_size#The_international_standard:_ISO_216][international standard ISO 216]].  The
+[[latex:progstruct][landscape]] option orients the paper with the long axis horizontal. 
 
 #+source: paper-sizes
 #+begin_src org :exports code
@@ -586,11 +609,10 @@ and =b5paper= options are [[http://en.wikipedia.org/wiki/Paper_size#The_internat
   #+LaTeX_CLASS_OPTIONS: [landscape]
 #+end_src
 
-The [[http://www.ctan.org/tex-archive/macros/latex/contrib/koma-script/][KOMA-script]] =scrartcl.cls= has options for a fuller range of the
-[[http://en.wikipedia.org/wiki/Paper_size#The_international_standard:_ISO_216][international standard ISO 216]] paper sizes, in addition to the
-=a4paper=, =a5paper=, =b4paper=, and =b5paper= sizes offered by the
-standard LaTeX =article.cls=.  In the example below, X is
-replaced by an integer [0, 1, ... 10].
+The [[http://www.ctan.org/tex-archive/macros/latex/contrib/koma-script/][KOMA-script]] [[latex:classfile][scrartcl]] class has options for a fuller range of the
+[[http://en.wikipedia.org/wiki/Paper_size#The_international_standard:_ISO_216][international standard ISO 216]] paper sizes, in addition to the sizes
+offered by the standard LaTeX [[latex:classfile][article]] class.  In the example below, X
+is replaced by an integer [0, 1, ... 10].
  
 #+source: koma-paper-sizes
 #+begin_src org :exports code
@@ -603,7 +625,7 @@ replaced by an integer [0, 1, ... 10].
 *** Font size
 
 There are three base font size options available for the standard
-LaTeX =article.cls= and the [[http://www.ctan.org/tex-archive/macros/latex/contrib/koma-script/][KOMA-script]] =scrartcl.cls=.  This option
+LaTeX [[latex:classfile][article]] and the [[http://www.ctan.org/tex-archive/macros/latex/contrib/koma-script/][KOMA-script]] [[latex:classfile][scrartcl]] classes.  This option
 sets the size of the main text in the body of the document.  Other
 fonts used in the document design, such as headers, footers, heads,
 sub-heads, etc., will be scaled accordingly.
@@ -616,11 +638,13 @@ sub-heads, etc., will be scaled accordingly.
 #+end_src
 
 *** Text block and margins
-With the =koma= option, the size of the text block and the resulting
-margins can be altered using the option =DIV=.  A typical value of
-=DIV= is 9. Smaller text blocks with larger margins result when =DIV=
-takes a smaller value and larger text blocks with smaller margins
-result when =DIV= takes a larger value (fig. \ref{fig:div}).
+With the [[latex:progstruct][koma]] option, the size of the text block
+and the resulting margins can be altered using the option
+[[latex:progstruct][DIV]].  A typical value of
+[[latex:progstruct][DIV]] is 9. Smaller text blocks with larger
+margins result when [[latex:progstruct][DIV]] takes a smaller value
+and larger text blocks with smaller margins result when  [[latex:progstruct][DIV]] takes a
+larger value (fig. \ref{fig:div}).
 
 #+CAPTION: Text block sizes on A4 paper with different values of DIV
 #+LABEL: fig:div
@@ -629,20 +653,20 @@ result when =DIV= takes a larger value (fig. \ref{fig:div}).
 [[file:../images/org-article-text-blocks.png]]
 
 
-The =koma= class can also take into account the part of the page used
+The [[latex:progstruct][koma]] class can also take into account the part of the page used
 by the binding.  This value is passed to the package with the option
-=BCOR=, which takes any LaTeX length as its argument.
+[[latex:progstruct][BCOR]], which takes any LaTeX length as its argument.
 
 For example, to set the text block large and leave ample space for
 binding with a clip, one might pass the following options to the class
-when using the =koma= option.
+when using the [[latex:progstruct][koma]] option.
 #+source: koma-text-block
 #+begin_src org :exports code
   #+LaTeX_CLASS_OPTIONS: [koma,DIV=15,BCOR=15mm]
 #+end_src
 
 *** Table of contents
-In the default configuration, the Org-mode LaTeX exporter includes a
+In the default configuration, the [[latex:proglang][Org-mode]] LaTeX exporter includes a
 function that sandwiches the LaTeX =\tableofcontents= command between
 a command that sets the depth of the headings that appear in the table
 of contents (based on the number of headline levels that will be
@@ -658,10 +682,11 @@ stylistic uniformity that is difficult to achieve in an ad hoc way.
 Fortunately, the LaTeX exporter is coded in such a way that it is
 possible for the user to alter this behavior relatively easily.
 
-The =org-article.cls= makes it possible to set the depth of headings that
+[[latex:classfile][Org-article]] makes it possible to set the depth of headings that
 appear in the table of contents independent of the level to which
 section headings are numbered.  This mechanism will only work if the default behavior of the LaTeX
-exporter is changed.  The following bit of Emacs lisp code can be
+exporter is changed.  The following bit of [[latex:proglang][Emacs
+Lisp]] code can be
 placed in =.emacs=:
 
 #+source: format-toc
@@ -672,12 +697,12 @@ placed in =.emacs=:
               depth)))
   (setq org-export-latex-format-toc-function 'org-export-latex-format-toc-org-article)
 #+end_src
-This code uses the depth to which Org-mode headlines are exported to
+This code uses the depth to which [[latex:proglang][Org-mode]] headlines are exported to
 sections, rather than lists, as the default level to which sections
 are numbered.  This is fine for many applications, but it is possible
 to control this variable separately, as [[section-numbering][shown below]].
 
-Three choices are available in =org-article.cls=: sections,
+Three choices are available in [[latex:classfile][Org-article]]: sections,
 subsections, and subsubsections.  It would be possible to create other
 choices, but it is generally the case that one, two, or three heading
 levels are sufficient for the table of contents.  More levels are
@@ -702,7 +727,7 @@ rarely seen and are perhaps not too desireable.
 # <<section-numbering>>
 
 It is possible to set the level to which sections will be numbered
-with =org-article.cls=.  
+with [[latex:classfile][Org-article]].  
 
 #+source: format-toc-for-secnum
 #+begin_src emacs-lisp :exports code
@@ -713,7 +738,7 @@ with =org-article.cls=.
   (setq org-export-latex-format-toc-function 'org-export-latex-format-toc-org-article-sec-num)
 #+end_src
 
-Five choices are available in =org-article.cls=: sections,
+Five choices are available in [[latex:classfile][Org-article]]: sections,
 subsections, subsubsections, paragraphs, and subparagraphs.
 
 #+source: sec-number-text-block
@@ -738,10 +763,10 @@ subsections, subsubsections, paragraphs, and subparagraphs.
 
 *** Equations
 
-The standard LaTeX =article.cls= and the [[http://www.ctan.org/tex-archive/macros/latex/contrib/koma-script/][KOMA-script]] =scrartcl.cls=
+The standard LaTeX [[latex:classfile][article]] class and the [[http://www.ctan.org/tex-archive/macros/latex/contrib/koma-script/][KOMA-script]] [[latex:classfile][scrartcl]] class
 both recognize two options that control formatting of equations.  The
-option =leqno= will number equations on the left, rather than the
-right, which is the default.  The option =fleqn= displays equations
+option [[latex:progstruct][leqno]] will number equations on the left, rather than the
+right, which is the default.  The option [[latex:progstruct][fleqn]] displays equations
 flush left, rather than centered, which is the default
 
 #+source: equations
@@ -752,13 +777,13 @@ flush left, rather than centered, which is the default
 
 *** Table captions
 
-The standard LaTeX =article.cls= formats captions to appear below the
+The standard LaTeX [[latex:classfile][article]] formats captions to appear below the
 captioned item.  However, many document styles require table captions
-above the table.  Users of =article.cls= typically use a package,
-[[http://tug.ctan.org/cgi-bin/ctanPackageInformation.py?id%3Dtopcapt][=topcapt.sty=]], and place the command =\topcaption{}= above the
-captioned item.  With the Org-mode LaTeX exporter, this requires
-changes to the exported LaTeX code.  The [[http://www.ctan.org/tex-archive/macros/latex/contrib/koma-script/][KOMA-script]] =scrartcl.cls=
-provides an option that gets rid of the need for =topcapt.sty=:
+above the table.  Users of [[latex:classfile][article]] typically use a package,
+[[http://tug.ctan.org/cgi-bin/ctanPackageInformation.py?id%3Dtopcapt][topcapt]], and place the command [[latex:progstruct][topcaption]] above the
+captioned item.  With the [[latex:proglang][Org-mode]] LaTeX exporter, this requires
+changes to the exported LaTeX code.  The [[http://www.ctan.org/tex-archive/macros/latex/contrib/koma-script/][KOMA-script]] [[latex:classfile][scrartcl]]
+class provides an option that gets rid of the need for [[latex:package][topcapt]]:
 
 #+source: koma-caption
 #+begin_src org :exports code
@@ -769,7 +794,7 @@ provides an option that gets rid of the need for =topcapt.sty=:
 
 *** Inputenc                                                       :noexport:
 
-The input encoding of the document is specified by the =inputenc= package.  It
+The input encoding of the document is specified by the [[latex:package][inputenc]] package.  It
 takes one of the following options:
 
 #+source: inputenc-options
@@ -800,14 +825,14 @@ takes one of the following options:
 #+end_src
 
 The package documentation describes each of these options.  You can
-probably read the documentation for =inputenc= with the following shell
+probably read the documentation for [[latex:package][inputenc]] with the following shell
 command:
 #+source: read-inputenc
 #+begin_src sh :exports code
   texdoc inputenc
 #+end_src
 
-This is a standard Org-mode package that is loaded by default.  An
+This is a standard [[latex:proglang][Org-mode]] package that is loaded by default.  An
 option is provided to not load it.
 
 #+source: org-buffer-inputenc
@@ -837,22 +862,22 @@ option is provided to not load it.
 #+end_src
 
 *** Inputenc
-The input encoding of the document is specified by the =inputenc=
-package.  Org-mode provides a nifty method for sending options to this
-package, so it is not loaded directly by =org-article.cls=.  See
+The input encoding of the document is specified by the [[latex:package][inputenc]]
+package.  [[latex:proglang][Org-mode]] provides a nifty method for sending options to this
+package, so it is not loaded directly by [[latex:classfile][Org-article]].  See
 [[export-setup][Org-mode LaTeX export setup]].
 
 *** Fontenc
 
-The =fontenc= package specifies the encoding to use with a font.  The
+The [[latex:package][fontenc]] package specifies the encoding to use with a font.  The
 history of font encodings in LaTeX is a long one; suffice it to say
-that the most common option is =T1=, also known as the Cork encoding
+that the most common option is [[latex:progstruct][T1]], also known as the Cork encoding
 because it was formulated at a EuroTeX conference in Ireland's County
-Cork.  The =fontenc= package pretends that it was never loaded so that
+Cork.  The [[latex:package][fontenc]] package pretends that it was never loaded so that
 it can be called several times with different options to load fonts
 that have various encodings.
 
-You can probably read the documentation for =fontenc= on your system
+You can probably read the documentation for [[latex:package][fontenc]] on your system
 with the following shell command:
 
 #+source: read-fontenc
@@ -860,7 +885,7 @@ with the following shell command:
   texdoc fontenc
 #+end_src
 
-This is a standard Org-mode package that is loaded by default.  An
+This is a standard [[latex:proglang][Org-mode]] package that is loaded by default.  An
 option is provided to not load it.
 
 #+source: org-buffer-fontenc
@@ -868,7 +893,7 @@ option is provided to not load it.
   #+LaTeX_CLASS_OPTIONS: [nofontenc]
 #+end_src
  
-Note that several of the font packages load =fontenc= themselves.
+Note that several of the font packages load [[latex:package][fontenc]] themselves.
 These include [[garamond-font][Garamond]], [[palatino-font][Palatino]], [[charter-font][Charter]], and [[utopia-font][Utopia]].
 
 #+source: option-fontenc
@@ -892,11 +917,11 @@ These include [[garamond-font][Garamond]], [[palatino-font][Palatino]], [[charte
 #+end_src
 
 *** Fixltx2e
-The =fixltx2e= package applies fixes to LaTeX2e that would break older
+The [[latex:package][fixltx2e]] package applies fixes to LaTeX2e that would break older
 documents, so have not been applied to the LaTeX2e kernel.  The
 package doesn't take any options.
 
-You can probably read about =fixltx2e= on your system by issuing the
+You can probably read about [[latex:package][fixltx2e]] on your system by issuing the
 following shell command:
 
 #+source: read-fixltx2e
@@ -905,7 +930,7 @@ following shell command:
 #+end_src
  
 
-This is a standard Org-mode package that is loaded by default.  An
+This is a standard [[latex:proglang][Org-mode]] package that is loaded by default.  An
 option is provided to not load it.
 
 #+source: org-buffer-fixltx2e
@@ -927,13 +952,13 @@ option is provided to not load it.
 #+end_src
 
 *** Graphicx
-The =graphicx= package is typically configured with *.def files
+The [[latex:package][graphicx]] package is typically configured with *.def files
 because the facilities it specifies are provided by a graphics driver,
 rather than by LaTeX.  For this reason, it is typically loaded without
 options. 
 
-You should be able to read about =graphicx=, along with its companion
-packages =color= and =graphics= by issuing the following shell
+You should be able to read about [[latex:package][graphicx]], along with its companion
+packages [[latex:package][color]] and [[latex:package][graphics]] by issuing the following shell
 command:
 
 #+source: read-graphicx
@@ -942,7 +967,7 @@ command:
 #+end_src
 
 
-This is a standard Org-mode package that is loaded by default.  An
+This is a standard [[latex:proglang][Org-mode]] package that is loaded by default.  An
 option is provided to not load it.
 
 #+source: org-buffer-graphicx
@@ -964,13 +989,13 @@ option is provided to not load it.
 #+end_src
 
 *** Longtable
-The =longtable= package defines a new LaTeX environment that can be
+The [[latex:package][longtable]] package defines a new LaTeX environment that can be
 used in place of the =tabular= environment and can be broken by the
 TeX page-breaking algorithm.  It is used, as the name implies, by long
 tables that typically won't fit onto a single page.  The package is
 loaded without option.
 
-You should be able to read the =longtable= documentation on your
+You should be able to read the [[latex:package][longtable]] documentation on your
 system by issuing the following shell command:
 
 #+source: read-longtable
@@ -979,7 +1004,7 @@ system by issuing the following shell command:
 #+end_src
 
 
-This is a standard Org-mode package that is loaded by default.  An
+This is a standard [[latex:proglang][Org-mode]] package that is loaded by default.  An
 option is provided to not load it.
 
 #+source: org-buffer-longtable
@@ -1005,12 +1030,12 @@ Tables and figures in LaTeX are treated as floating objects.
 Internally, they are treated as a single (large) glyph, which makes
 them difficult to place on a page of otherwise small glyphs.
 Consequently, they are allowed to "float" until a suitable location is
-found.  The =float= package provides facilities to define new floating
+found.  The [[latex:package][float]] package provides facilities to define new floating
 environments, to restyle the existing float environments, and
-additionally defines a placement parameter, =[H]=, that keeps a float
+additionally defines a placement parameter, [[latex:progstruct][{H}]], that keeps a float
 from floating.  The package is loaded without options.
 
-You can probably read about the =float= package on your system by
+You can probably read about the [[latex:package][float]] package on your system by
 issuing the following shell command:
 
 #+source: read-float
@@ -1019,7 +1044,7 @@ issuing the following shell command:
 #+end_src
 
 
-This is a standard Org-mode package that is loaded by default.  An
+This is a standard [[latex:proglang][Org-mode]] package that is loaded by default.  An
 option is provided to not load it.
 
 #+source: org-buffer-float
@@ -1041,11 +1066,11 @@ option is provided to not load it.
 #+end_src
 
 *** Wrapfig
-The =wrapfig= package defines two new environments to set a narrow
+The [[latex:package][wrapfig]] package defines two new environments to set a narrow
 float at the edge of the text and wrap the text around it.  Because
 "floats" in these new environments do not float it is sometimes the
-case that they appear out of order, e.g. =Figure n= appears before
-=Figure n-1=.  Caveat emptor.
+case that they appear out of order, e.g. Figure n appears before
+Figure n-1.  Caveat emptor.
 
 The package is loaded without options.
 
@@ -1058,7 +1083,7 @@ shell command:
   texdoc wrapfig
 #+end_src
 
-This is a standard Org-mode package that is loaded by default.  An
+This is a standard [[latex:proglang][Org-mode]] package that is loaded by default.  An
 option is provided to not load it.
 
 #+source: org-buffer-wrapfig
@@ -1080,10 +1105,10 @@ option is provided to not load it.
 #+end_src
 
 *** Soul
-The =soul= package is used primarily for underlining text.  It is
+The [[latex:package][soul]] package is used primarily for underlining text.  It is
 loaded without options.
 
-You can probably read the =soul= documentation on your system by
+You can probably read the [[latex:package][soul]] documentation on your system by
 issuing the following shell command:
 
 #+source: read-soul
@@ -1091,7 +1116,7 @@ issuing the following shell command:
   texdoc soul
 #+end_src
 
-This is a standard Org-mode package that is loaded by default.  An
+This is a standard [[latex:proglang][Org-mode]] package that is loaded by default.  An
 option is provided to not load it.
 
 #+source: org-buffer-soul
@@ -1113,7 +1138,7 @@ option is provided to not load it.
 #+end_src
 
 *** T1enc                                                          :noexport:
-This is a standard Org-mode package that is loaded by default.  An
+This is a standard [[latex:proglang][Org-mode]] package that is loaded by default.  An
 option is provided to not load it.
 
 #+source: org-buffer-t1enc
@@ -1136,10 +1161,10 @@ option is provided to not load it.
 
 *** Textcomp
 This package provides support for the Text Companion fonts, which
-provide symbols used by =org-entities=, in particular the Euro
+provide symbols used by [[latex:progstruct][org-entities]], in particular the Euro
 currency symbol.  It is loaded without options.
 
-This is a standard Org-mode package that is loaded by default.  An
+This is a standard [[latex:proglang][Org-mode]] package that is loaded by default.  An
 option is provided to not load it.
 
 #+source: org-buffer-textcomp
@@ -1162,11 +1187,11 @@ option is provided to not load it.
 #+end_src
 
 *** MarVoSym
-The =marvosym= package provides support for Martin Vogel's Symbol
-font, some glyphs from which are required by =org-entities=.  The
+The [[latex:package][marvosym]] package provides support for Martin Vogel's Symbol
+font, some glyphs from which are required by [[latex:progstruct][org-entities]].  The
 package is loaded without options.
 
-You can probably read about the =marvosym= package by issuing the
+You can probably read about the [[latex:package][marvosym]] package by issuing the
 following command in the shell:
 
 #+source: read-marvosym
@@ -1174,7 +1199,7 @@ following command in the shell:
   texdoc marvosym
 #+end_src
 
-This is a standard Org-mode package that is loaded by default.  An
+This is a standard [[latex:proglang][Org-mode]] package that is loaded by default.  An
 option is provided to not load it.
 
 #+source: org-buffer-marvosym
@@ -1196,11 +1221,11 @@ option is provided to not load it.
 #+end_src
 
 *** Wasysym
-The =wasysym= package makes available some symbol glyphs from the
-=wasy= fonts.  It is needed to support some of the glyphs in
-=org-entities=.  When it is loaded without options, this package clashes
-with the American Mathematical Society's =amsmath= package.  Using
-the =nointegrals= option resolves this clash:
+The [[latex:package][wasysym]] package makes available some symbol glyphs from the
+[[latex:package][wasy]] fonts.  It is needed to support some of the glyphs in
+[[latex:progstruct][org-entities]].  When it is loaded without options, this package clashes
+with the American Mathematical Society's [[latex:package][amsmath]] package.  Using
+the [[latex:progstruct][nointegrals]] option resolves this clash:
 
 #+source: wasysym-options
 #+begin_src org :exports code
@@ -1215,7 +1240,7 @@ issuing the following shell command:
   texdoc wasysym
 #+end_src
 
-This is a standard Org-mode package that is loaded by default.  An
+This is a standard [[latex:proglang][Org-mode]] package that is loaded by default.  An
 option is provided to not load it.
 
 #+source: org-buffer-wasysym
@@ -1245,11 +1270,11 @@ option is provided to not load it.
 #+end_src
 
 *** Latexsym
-The =latexsym= package provides a few glyphs, one or more of which
-might be required by =org-entities=.  According to the documentation,
-=latexsym= isn't needed if the =amssymb= package is loaded.
+The [[latex:package][latexsym]] package provides a few glyphs, one or more of which
+might be required by [[latex:progstruct][org-entities]].  According to the documentation,
+[[latex:package][latexsym]] isn't needed if the [[latex:package][amssymb]] package is loaded.
 
-You can probably read about the =latexsym= package on your system by issuing the
+You can probably read about the [[latex:package][latexsym]] package on your system by issuing the
 following shell command:
 
 #+source: read-latexsym
@@ -1257,7 +1282,7 @@ following shell command:
   texdoc latexsym
 #+end_src
 
-This is a standard Org-mode package that is loaded by default.  An
+This is a standard [[latex:proglang][Org-mode]] package that is loaded by default.  An
 option is provided to not load it.
 
 #+source: org-buffer-latexsym
@@ -1281,12 +1306,12 @@ option is provided to not load it.
 *** Amssymb
 This package provides all the symbols defined in the American
 Mathematical Society's [[http://www.ams.org/publications/authors/tex/amsfonts][symbol fonts]] =msam= and =msbm=.  They are
-required to support =org-entities=.  It is superseded by the
+required to support [[latex:progstruct][org-entities]].  It is superseded by the
 =mathdesign= package, which is used by various fonts.  If one of these
-is specified, then the =amssymb= package is not loaded. If the package is
+is specified, then the [[latex:package][amssymb]] package is not loaded. If the package is
 loaded, the it is loaded without options.
 
-You can probably read the =amssymb= package documentation by issuing
+You can probably read the [[latex:package][amssymb]] package documentation by issuing
 the following shell command:
 
 #+source: read-amssymb
@@ -1294,7 +1319,7 @@ the following shell command:
   texdoc amssymb
 #+end_src
 
-This is a standard Org-mode package that is loaded by default.  An
+This is a standard [[latex:proglang][Org-mode]] package that is loaded by default.  An
 option is provided to not load it.
 
 #+source: org-buffer-amssymb
@@ -1309,7 +1334,7 @@ option is provided to not load it.
 #+end_src
 
 Isn't loaded if Times, Charter, Utopia, or Garamond are loaded.  These
-use the =mathdesign= package, which apparently supersedes =amssymb=.
+use the[[latex:package][mathdesign]] package, which apparently supersedes [[latex:package][amssymb]].
 
 #+source: load-amssymb
 #+begin_src latex :exports code
@@ -1319,18 +1344,18 @@ use the =mathdesign= package, which apparently supersedes =amssymb=.
 #+end_src
 
 *** Hyperref
-The =hyperref= package turns LaTeX cross-referencing commands into
+The [[latex:package][hyperref]] package turns LaTeX cross-referencing commands into
 hyperlinks, including the table of contents, bibliography, etc.  It is
 typically configured on a site-wide basis with options kept in a file,
 =hyperref.cfg=.  The LaTeX document loads the package without
-specifying any options.  The =hyperref= package redefines many LaTeX
+specifying any options.  The [[latex:package][hyperref]] package redefines many LaTeX
 commands, so it needs to be loaded at, or near the end of, the [[package-loading-part][package
 loading part]]. 
 
-The =hyperref= package accepts numerous options, which can be given as
+The [[latex:package][hyperref]] package accepts numerous options, which can be given as
 =key = value= pairs.  Boolean options default to =true= when passed
 without a value.  Options are passed in the usual way, and
-=org-article.cls= simply passes them on to =hyperref=.
+[[latex:classfile][Org-article]] simply passes them on to [[latex:package][hyperref]].
 
 #+source: hyperref-options
 #+begin_src org :exports code
@@ -1357,7 +1382,7 @@ without a value.  Options are passed in the usual way, and
 #+end_src
 
 
-You can probably read the =hyperref= documentation by issuing the
+You can probably read the [[latex:package][hyperref]] documentation by issuing the
 following shell command:
 
 #+source: read-hyperref
@@ -1366,8 +1391,10 @@ following shell command:
 #+end_src
 
 
-This is a standard Org-mode package that is loaded by default.  An
-option is provided to not load it.
+This is a standard [[latex:proglang][Org-mode]] package that is loaded by default.  An
+option is provided to not load it.  If the user chooses not to load
+[[latex:package][hyperref]], then the [[latex:package][url]] package is loaded instead to provide
+support for the [[path-command][path]] command.
 
 #+source: org-buffer-hyperref
 #+begin_src org :exports code
@@ -1383,7 +1410,7 @@ option is provided to not load it.
 #+source: load-hyperref
 #+begin_src latex :exports code
   \ifthenelse{\boolean{nohyperref}}
-  {}
+  {\RequirePackage{url}}
   {\RequirePackage{hyperref}}
 #+end_src
 
@@ -1715,7 +1742,7 @@ Palatino gets a bit more leading than normal.
 Adobe in 1989.  It became free software in 2006.  It is paired here
 with Bera and Inconsolata, as is [[garamond-font][Garamond]].
 
-Note that the utopia font clashes with the =amssymb= package.
+Note that the utopia font clashes with the [[latex:package][amssymb]] package.
 
 #+source: org-buffer-utopia
 #+begin_src org :exports code
@@ -1748,7 +1775,7 @@ Note that the utopia font clashes with the =amssymb= package.
 printers.  It is paired here with Helvetica and Courier, like [[times-font][Times]],
 for which it is an alternative.
 
-These fonts conflict with the =amssymb= package.
+These fonts conflict with the [[latex:package][amssymb]] package.
 
 #+source: org-buffer-charter
 #+begin_src org :exports code
@@ -1777,21 +1804,21 @@ Helvetica is set a bit smaller to better match the Charter font.
 #+end_src
 
 ** Other packages
-Packages not included in the Org-mode list of default packages are
-made available in =org-article.cls=.  These include facilities to
+Packages not included in the [[latex:proglang][Org-mode]] list of default packages are
+made available in [[latex:classfile][Org-article]].  These include facilities to
 apply microtypographic adjustments to suitable fonts, set the line
 spacing of the document to double space, set lists more compactly than
-the standard LaTeX =article.cls=, and typeset source code listings
+the standard LaTeX [[latex:classfile][article]], and typeset source code listings
 using one of several color or black and white themes.
 
 *** Microtype
 
-The =microtype= package makes available the micro-typographic
+The [[latex:package][microtype]] package makes available the micro-typographic
 extensions of pdfTeX.  Prominent among these are font expansion and
 character protrusion, which together result in fewer bad line breaks
 and a visually even right margin.  
 
-You can probably read the =microtype= documentation, which runs to
+You can probably read the [[latex:package][microtype]] documentation, which runs to
 more than 200 pages, on your system by issuing the shell command:
 
 #+source: read-microtype
@@ -1826,9 +1853,9 @@ it.
 
 *** Setspace
 
-The =setspace= package is used here for the sole purpose of creating
+The [[latex:package][setspace]] package is used here for the sole purpose of creating
 double-spaced documents, such as manuscripts submitted to some
-publishing houses.  If it is loaded, then the option =doublespace=
+publishing houses.  If it is loaded, then the option [[latex:progstruct][doublespace]]
 will produce a double-spaced document.
 
 This package is not loaded by default.  An option is provided to load
@@ -1865,12 +1892,12 @@ it, and to set linespacing to doublespace.
 
 *** Paralist
 
-The =paralist= package was designed to meet the widespread request for
+The [[latex:package][paralist]] package was designed to meet the widespread request for
 more tightly set lists in the standard LaTeX classes.  If it is
 loaded, then the LaTeX environments =itemize=, =enumerate=, and
 =description= are over-ridden by their paralist counterparts.
 
-You can probably read the =paralist= documentation on your system by
+You can probably read the [[latex:package][paralist]] documentation on your system by
 issuing the shell command:
 
 #+source: read-paralist
@@ -1907,11 +1934,11 @@ it.
 #+end_src
 
 *** Topcapt                                                        :noexport:
-The =topcapt= package is needed when it is desired to set the caption
-of a table above the table.  In this case, the =\caption{}= command
+The [[latex:packgae][topcapt]] package is needed when it is desired to set the caption
+of a table above the table.  In this case, the [[latex:progstruct][caption]] command
 must be moved above the =tabular= environment and the command changed
 to =\topcaption=.  These will be adjustments made to the code produced
-by the Org-mode LaTeX exporter.
+by the [[latex:proglang][Org-mode]] LaTeX exporter.
 
 This package is not loaded by default.  An option is provided to load
 it.
@@ -1958,16 +1985,16 @@ options.
 #+end_src
 
 *** Listings
-The =listings= package is a source code printer for LaTeX.  Except for
-the two options =draft= and =final=, which the =listings= package is
-configured to pick up itself from options passed to =\documentclass=,
+The [[latex:package][listings]] package is a source code printer for LaTeX.  Except for
+the two options =draft= and =final=, which the [[latex:package][listings]] package is
+configured to pick up itself from options passed to [[latex:progstruct][documentclass]],
 the other options were introduced to ease debugging or to trigger
 compatibility with earlier versions of the package.  It seems unwise
-to use this mechanism to set options for the =listings= package
+to use this mechanism to set options for the [[latex:package][listings]] package
 because there is no reason to assume that it will be stable.  One
 solution would be to process options for this package using a =key =
 value= interface that sets the values of keys recognized by the
-package's =lstset= function.  This is relatively difficult to do.  An
+package's [[latex:progstruct][lstset]] function.  This is relatively difficult to do.  An
 easier approach groups package options into themes, which can be
 selected with simple options, rather than =key = value= pairs.  It is
 the approach adopted here.
@@ -1982,19 +2009,19 @@ with two themes for color reproduction.
 #+end_src
  
 Themes are defined for the listings package.  The
-=listings-color= theme was lifted from a post to the Org-mode list by
+=listings-color= theme was lifted from a post to the [[latex:proglang][Org-mode]] list by
 Eric Schulte.  The =listings-sv= theme was posted to the list by
-Sebastian Vauban; it has been modified here to work with the =color=
-package, rather than the =xcolor= package used by Sebastian, and to
+Sebastian Vauban; it has been modified here to work with the [[latex:package][color]]
+package, rather than the [[latex:package][xcolor]] package used by Sebastian, and to
 allow breaking of long lines.
 
 Caveat emptor: the line-breaking mechanism in the listings package appears to
-break when =resetmargins = false=.  This means that the listing will
+break when [[latex:progexample][resetmargins = false]].  This means that the listing will
 always be set to =\textwidth=, rather than =\linewidth=.  Thus, care
 should be taken to ensure that listings do not occur in lists.
 Probably the best way to ensure that this doesn't happen is to make
 sure the =H:= option in the export header is set to a suitably high
-level, so source code blocks always occur at an Org-mode headline
+level, so source code blocks always occur at an [[latex:proglang][Org-mode]] headline
 level that exports as a heading, rather than a list, e.g. if source
 code appears in a three-asterisk headline and now lower, then setting
 =H: 3= should ensure that listing margins are always aligned with text
@@ -2185,8 +2212,8 @@ murphy, trac, tango, fruity, autumn, vs, bw, emacs, pastie, friendly, native]
    \PassOptionsToPackage{native}{minted}}
 #+end_src
 
-*** GANTT charts
-Eric Fraga wrote this GANTT chart constructor, powered by an Org-mode
+*** GANTT charts                                                   :noexport:
+Eric Fraga wrote this GANTT chart constructor, powered by an [[latex:proglang][Org-mode]]
 table.  For everyday use, it requires that some Emacs lisp code be
 installed in the Library of Babel.
 
@@ -2195,8 +2222,8 @@ installed in the Library of Babel.
 The GANTT Emacs lisp code can either be placed in the buffer with the
 GANTT chart table or it can be installed in the [[http://orgmode.org/manual/Library-of-Babel.html#Library-of-Babel][Library of Babel]].
 Installing local code in the Library of Babel is best accomplished by
-establishing one or more Org-mode files for this purpose and keeping
-them in a place that won't be overwritten when Org-mode is updated.
+establishing one or more [[latex:proglang][Org-mode]] files for this purpose and keeping
+them in a place that won't be overwritten when [[latex:proglang][Org-mode]] is updated.
 For each of these local files, place a line like the following in
 =.emacs= to make the source code blocks accessible to the Library:
 
@@ -2205,7 +2232,7 @@ For each of these local files, place a line like the following in
   (org-babel-lob-ingest "~/org/local-lob.org")
 #+end_src
 
-The following source code block sent to the Org-mode list by Eric
+The following source code block sent to the [[latex:proglang][Org-mode]] list by Eric
 Fraga has been modified slightly.  It should be installed in the
 Library of Babel.
 
@@ -2298,7 +2325,7 @@ Library of Babel.
 
 **** The GANTT Option
 The GANTT facility can be loaded by adding the following line to the
-Org-mode buffer.
+[[latex:proglang][Org-mode]] buffer.
 
 #+source: org-buffer-gantt
 #+begin_src org :exports code
@@ -2320,7 +2347,7 @@ The GANTT code requires the [[http://www.ctan.org/tex-archive/help/Catalogue/ent
 #+end_src
 
 Eric wrote several LaTeX commands to make the translation from
-Org-mode table to GANTT chart.
+[[latex:proglang][Org-mode]] table to GANTT chart.
 
 #+source: gantt-code
 #+begin_src latex :exports code
@@ -2364,7 +2391,7 @@ Org-mode table to GANTT chart.
 
 **** Input Table
 
-The Org-mode table that Eric used to test his code is named
+The [[latex:proglang][Org-mode]] table that Eric used to test his code is named
 =ganttesttable=.  Perhaps the best way to understand its structure is
 to compare it to the GANTT chart it produces.
 
@@ -2389,7 +2416,7 @@ to compare it to the GANTT chart it produces.
 
 
 **** Creating the GANTT chart
-In the Org-mode buffer, the call to the code in the Library of Babel
+In the [[latex:proglang][Org-mode]] buffer, the call to the code in the Library of Babel
 passes =ganttesttable= to the function =elispgantt=.  Note that the
 header argument is set in the function call.
 
@@ -2470,7 +2497,7 @@ the HTML export.  The chart looks great, Eric!
 #+END_LaTeX
 
 
-*** Index
+*** Index                                                          :noexport:
 * Notes                                                            :noexport:
 ** DONE fontenc is passed option TI by default
    :LOGBOOK:
@@ -2551,7 +2578,7 @@ the HTML export.  The chart looks great, Eric!
    - State "DONE"       from ""           [2010-09-21 Tue 18:11]
    :END:
    This table comes from the KOMA-script documentation.  It gives text
-   block and margin sizes on A4 paper with various settings of =DIV=.
+   block and margin sizes on A4 paper with various settings of [[latex:progstruct][DIV]].
 
 #+tblname: koma-div
 | DIV | width_[mm] | height_[mm] | top_[mm] | inner_[mm] |
