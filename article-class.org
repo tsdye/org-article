@@ -22,7 +22,7 @@
   :PROPERTIES:
   :VISIBILITY: children
   :END:
-This file uses Babel to tangle a LaTeX class named [[latex:classfile][Org-article]].
+This [[latex:proglang][Org-mode]] file uses Babel to tangle a [[latex:proglang][LaTeX]] class named [[latex:classfile][Org-article]].
 The class provides all of the LaTeX packages used by the [[latex:proglang][Org-mode]]
 LaTeX exporter.  The class accepts numerous options, which the user
 can set either in =.emacs=, for default use with all org-article
@@ -47,6 +47,8 @@ Some of the features include:
        independently of section numbering depth.
   - Section numbering :: Section numbering depth can be specified
        independently of the table of contents depth.
+  - Key=value options :: [[latex:classfile][Org-article]] implements key=value options
+       using [[latex:proglang][pgfkeys]] and [[latex:classfile][pgfopts]].
 
 ** How to use this Org-mode document
    :PROPERTIES:
@@ -274,11 +276,8 @@ this optional argument than there was in the past.  It is omitted here.
 #+end_src
 
 ** Initial code part
-The initial code part loads packages needed to process the class file
-and declares booleans for each of the class options.  Options defined
-by the base class, either the standard [[latex:classfile][article]] or the Koma class
-[[latex:classfile][scrartcl]], are passed on to those classes by default and don't
-have to be declared here.
+The initial code part loads packages needed to process the class file.  
+
 
 #+source: initial-code-part
 #+begin_src latex :noweb yes :exports code
@@ -287,7 +286,8 @@ have to be declared here.
   \RequirePackage{ifthen}
   \RequirePackage{calc}
   \RequirePackage{ifpdf}
-
+  \RequirePackage{remreset}
+  \RequirePackage{pgfopts}
   % End of initial code part
 #+end_src
   
@@ -299,6 +299,10 @@ appear in the [[package-loading-part][package loading part]].  The [[package-loa
 consists of noweb references, an arrangement that makes it possible to
 keep all the code specific to a particular package together in the
 [[latex-packages][LaTeX packages]] section.
+
+Options defined by the base class, either the standard [[latex:classfile][article]] or the
+Koma class [[latex:classfile][scrartcl]], are passed on to those classes by default and
+don't have to be declared here.
 
 #+source: declaration-of-options-part
 #+begin_src latex :noweb yes :exports none
@@ -360,7 +364,8 @@ them in the [[declaration][declaration of options]] part.
 #+source: execution-of-options-part
 #+begin_src latex :exports code
   % Execution of options part
-  
+
+  \ProcessPgfOptions{/ORGART}
   \ProcessOptions\relax
   
   % End of execution of options part
@@ -457,6 +462,9 @@ LaTeX file.  In this way, it is possible to make the [[latex:proglang][Org-mode]
 exporter conform to the semantic markup defined in arbitrary style
 files.  [[latex:proglang][Org-mode]] will even complete your new link type!
 
+Note that the code below assumes a [[latex:proglang][CSS]] stylsheet that defines classes
+with the same names as the corresponding LaTeX macros.
+
 #+source: define-latex-link
 #+begin_src emacs-lisp :exports code
   (org-add-link-type
@@ -464,7 +472,7 @@ files.  [[latex:proglang][Org-mode]] will even complete your new link type!
    (lambda (path desc format)
      (cond
       ((eq format 'html)
-       (format "<span style=\"color:grey;\">%s</span>" desc))
+       (format "<span class=\"%s\">%s</span>" path desc))
       ((eq format 'latex)
        (format "\\%s{%s}" path desc)))))
   
@@ -506,8 +514,6 @@ examples are set at a slightly smaller size.
   \newcommand{\progexample}[1]{{\ttfamily\small #1}}
 #+end_src
 
-
-
 * LaTeX packages
    :PROPERTIES:
    :VISIBILITY: folded
@@ -516,18 +522,14 @@ examples are set at a slightly smaller size.
 
 ** Article base class options
 
-[[latex:classfile][Org-article]] offers a choice of two base classes.
-The first is the standard LaTeX [[latex:classfile][article]] class.  Also
-available is the
-[[http://www.ctan.org/tex-archive/macros/latex/contrib/koma-script/][KOMA-script]]
-[[latex:classfile][scrartcl]] class.  The KOMA-script
-[[latex:classfile][scrartcl]] is compatible with the standard LaTeX
-article class; input that compiles with [[latex:classfile][article]]
-should also compile with [[latex:classfile][scrartcl]].  It differs in
-the layout of the page and the styling of page elements, producing a
-somewhat more "modern" design based on principles set out by the
-typographer and book designer
-[[http://en.wikipedia.org/wiki/Jan_Tschichold][Jan Tschichold]].
+[[latex:classfile][Org-article]] offers a choice of two base classes.  The first is the
+standard LaTeX [[latex:classfile][article]] class.  Also available is the [[http://www.ctan.org/tex-archive/macros/latex/contrib/koma-script/][KOMA-script]]
+[[latex:classfile][scrartcl]] class.  The KOMA-script [[latex:classfile][scrartcl]] is compatible with the
+standard LaTeX article class; input that compiles with [[latex:classfile][article]] should
+also compile with [[latex:classfile][scrartcl]].  It differs in the layout of the page and
+the styling of page elements, producing a somewhat more "modern"
+design based on principles set out by the typographer and book
+designer [[http://en.wikipedia.org/wiki/Jan_Tschichold][Jan Tschichold]].
 
 To select the standard LaTeX [[latex:classfile][article]] class, put this line in your [[latex:proglang][Org-mode]]
 document:
@@ -537,7 +539,8 @@ document:
   #+LaTeX_CLASS_OPTIONS: [article]
 #+end_src
 
-To select the [[http://www.ctan.org/tex-archive/macros/latex/contrib/koma-script/][KOMA-script]] [[latex:classfile][scrartcl]] class, put this line in your [[latex:proglang][Org-mode]] document:
+To select the [[http://www.ctan.org/tex-archive/macros/latex/contrib/koma-script/][KOMA-script]] [[latex:classfile][scrartcl]] class, put this line in your
+[[latex:proglang][Org-mode]] document:
 
 #+source: org-buffer-koma
 #+begin_src org :exports code
@@ -715,9 +718,6 @@ rarely seen and are perhaps not too desireable.
 
 #+source: option-tocdepth
 #+begin_src latex :exports code
-  \newboolean{tocdepths}
-  \newboolean{tocdepthss}
-  \newboolean{tocdepthsss}  
   \DeclareOption{tocdepths}{\AtBeginDocument{\setcounter{tocdepth}{1}}}
   \DeclareOption{tocdepthss}{\AtBeginDocument{\setcounter{tocdepth}{2}}}
   \DeclareOption{tocdepthsss}{\AtBeginDocument{\setcounter{tocdepth}{3}}}
@@ -748,18 +748,12 @@ subsections, subsubsections, paragraphs, and subparagraphs.
 
 #+source: option-secnum
 #+begin_src latex :exports code
-  \newboolean{secnums}
-  \newboolean{secnumss}
-  \newboolean{secnumsss}  
-  \newboolean{secnump}
-  \newboolean{secnumsp}
   \DeclareOption{secnums}{\AtBeginDocument{\setcounter{secnumdepth}{1}}}
   \DeclareOption{secnumss}{\AtBeginDocument{\setcounter{secnumdepth}{2}}}
   \DeclareOption{secnumsss}{\AtBeginDocument{\setcounter{secnumdepth}{3}}}
   \DeclareOption{secnump}{\AtBeginDocument{\setcounter{secnumdepth}{4}}}
   \DeclareOption{secnumsp}{\AtBeginDocument{\setcounter{secnumdepth}{5}}}
 #+end_src
-
 
 *** Equations
 
@@ -898,13 +892,13 @@ These include [[garamond-font][Garamond]], [[palatino-font][Palatino]], [[charte
 
 #+source: option-fontenc
 #+begin_src latex :exports code
-  \newboolean{nofontenc}  
-  \DeclareOption{nofontenc}{\setboolean{nofontenc}{true}}
+  \newboolean{ORGART@nofontenc}  
+  \DeclareOption{nofontenc}{\setboolean{ORGART@nofontenc}{true}}
 #+end_src
 
 #+source: load-fontenc
 #+begin_src latex :exports code
-  \ifthenelse{\boolean{nofontenc}}
+  \ifthenelse{\boolean{ORGART@nofontenc}}
   {}
   {\RequirePackage[T1]{fontenc}}
 #+end_src
@@ -940,13 +934,13 @@ option is provided to not load it.
  
 #+source: option-fixltx2e
 #+begin_src latex :exports code
-  \newboolean{nofixltx2e}
-  \DeclareOption{nofixltx2e}{\setboolean{nofixltx2e}{true}}
+  \newboolean{ORGART@nofixltx2e}
+  \DeclareOption{nofixltx2e}{\setboolean{ORGART@nofixltx2e}{true}}
 #+end_src
 
 #+source: load-fixltx2e
 #+begin_src latex :exports code
-  \ifthenelse{\boolean{nofixltx2e}}
+  \ifthenelse{\boolean{ORGART@nofixltx2e}}
   {}
   {\RequirePackage{fixltx2e}}
 #+end_src
@@ -977,13 +971,13 @@ option is provided to not load it.
  
 #+source: option-graphicx
 #+begin_src latex :exports code
-  \newboolean{nographicx}
-  \DeclareOption{nographicx}{\setboolean{nographicx}{true}}
+  \newboolean{ORGART@nographicx}
+  \DeclareOption{nographicx}{\setboolean{ORGART@nographicx}{true}}
 #+end_src
 
 #+source: load-graphicx
 #+begin_src latex :exports code
-  \ifthenelse{\boolean{nographicx}}
+  \ifthenelse{\boolean{ORGART@nographicx}}
   {}
   {\RequirePackage{graphicx}}
 #+end_src
@@ -1014,13 +1008,13 @@ option is provided to not load it.
 
 #+source: option-longtable
 #+begin_src latex :exports code
-  \newboolean{nolongtable}
-  \DeclareOption{nolongtable}{\setboolean{nolongtable}{true}}
+  \newboolean{ORGART@nolongtable}
+  \DeclareOption{nolongtable}{\setboolean{ORGART@nolongtable}{true}}
 #+end_src
 
 #+source: load-longtable
 #+begin_src latex :exports code
-  \ifthenelse{\boolean{nolongtable}}
+  \ifthenelse{\boolean{ORGART@nolongtable}}
   {}
   {\RequirePackage{longtable}}
 #+end_src
@@ -1054,13 +1048,13 @@ option is provided to not load it.
 
 #+source: option-float
 #+begin_src latex :exports code
-  \newboolean{nofloat}
-  \DeclareOption{nofloat}{\setboolean{nofloat}{true}}
+  \newboolean{ORGART@nofloat}
+  \DeclareOption{nofloat}{\setboolean{ORGART@nofloat}{true}}
 #+end_src
 
 #+source: load-float
 #+begin_src latex :exports code
-  \ifthenelse{\boolean{nofloat}}
+  \ifthenelse{\boolean{ORGART@nofloat}}
   {}
   {\RequirePackage{float}}
 #+end_src
@@ -1093,13 +1087,13 @@ option is provided to not load it.
  
 #+source: option-wrapfig
 #+begin_src latex :exports code
-  \newboolean{nowrapfig}
-  \DeclareOption{nowrapfig}{\setboolean{nowrapfig}{true}}
+  \newboolean{ORGART@nowrapfig}
+  \DeclareOption{nowrapfig}{\setboolean{ORGART@nowrapfig}{true}}
 #+end_src
 
 #+source: load-wrapfig
 #+begin_src latex :exports code
-  \ifthenelse{\boolean{nowrapfig}}
+  \ifthenelse{\boolean{ORGART@nowrapfig}}
   {}
   {\RequirePackage{wrapfig}}
 #+end_src
@@ -1126,13 +1120,13 @@ option is provided to not load it.
  
 #+source: option-soul
 #+begin_src latex :exports code
-  \newboolean{nosoul}
-  \DeclareOption{nosoul}{\setboolean{nosoul}{true}}
+  \newboolean{ORGART@nosoul}
+  \DeclareOption{nosoul}{\setboolean{ORGART@nosoul}{true}}
 #+end_src
 
 #+source: load-soul
 #+begin_src latex :exports code
-  \ifthenelse{\boolean{nosoul}}
+  \ifthenelse{\boolean{ORGART@nosoul}}
   {}
   {\RequirePackage{soul}}
 #+end_src
@@ -1148,13 +1142,13 @@ option is provided to not load it.
  
 #+source: option-t1enc
 #+begin_src latex :exports code
-  \newboolean{not1enc} 
-  \DeclareOption{not1enc}{\setboolean{not1enc}{true}}
+  \newboolean{ORGART@not1enc} 
+  \DeclareOption{not1enc}{\setboolean{ORGART@not1enc}{true}}
 #+end_src
 
 #+source: load-t1enc
 #+begin_src latex :exports code
-  \ifthenelse{\boolean{not1enc}}
+  \ifthenelse{\boolean{ORGART@not1enc}}
   {}
   {\RequirePackage{t1enc}}
 #+end_src
@@ -1175,13 +1169,13 @@ option is provided to not load it.
 
 #+source: option-textcomp
 #+begin_src latex :exports code
-  \newboolean{notextcomp}
-  \DeclareOption{notextcomp}{\setboolean{notextcomp}{true}}
+  \newboolean{ORGART@notextcomp}
+  \DeclareOption{notextcomp}{\setboolean{ORGART@notextcomp}{true}}
 #+end_src
 
 #+source: load-textcomp
 #+begin_src latex :exports code
-  \ifthenelse{\boolean{notextcomp}}
+  \ifthenelse{\boolean{ORGART@notextcomp}}
   {}
   {\RequirePackage{textcomp}}
 #+end_src
@@ -1209,13 +1203,13 @@ option is provided to not load it.
 
 #+source: option-marvosym
 #+begin_src latex :exports code
-  \newboolean{nomarvosym}
-  \DeclareOption{nomarvosym}{\setboolean{nomarvosym}{true}}
+  \newboolean{ORGART@nomarvosym}
+  \DeclareOption{nomarvosym}{\setboolean{ORGART@nomarvosym}{true}}
 #+end_src
 
 #+source: load-marvosym
 #+begin_src latex :exports code
-  \ifthenelse{\boolean{nomarvosym}}
+  \ifthenelse{\boolean{ORGART@nomarvosym}}
   {}
   {\RequirePackage{marvosym}}
 #+end_src
@@ -1250,20 +1244,20 @@ option is provided to not load it.
  
 #+source: option-wasysym
 #+begin_src latex :exports code
-  \newboolean{nowasysym}
-  \DeclareOption{nowasysym}{\setboolean{nowasysym}{true}}
-  \newboolean{integrals}
-  \DeclareOption{integrals}{\setboolean{integrals}{true}}
-  \newboolean{nointegrals}
-  \DeclareOption{nointegrals}{\setboolean{nointegrals}{true}}
+  \newboolean{ORGART@nowasysym}
+  \DeclareOption{nowasysym}{\setboolean{ORGART@nowasysym}{true}}
+  \newboolean{ORGART@integrals}
+  \DeclareOption{integrals}{\setboolean{ORGART@integrals}{true}}
+  \newboolean{ORGART@nointegrals}
+  \DeclareOption{nointegrals}{\setboolean{ORGART@nointegrals}{true}}
 #+end_src
 
 #+source: load-wasysym
 #+begin_src latex :exports code
-  \ifthenelse{\boolean{nowasysym}}
+  \ifthenelse{\boolean{ORGART@nowasysym}}
   {}
   {%
-    \ifthenelse{\boolean{integrals}}%
+    \ifthenelse{\boolean{ORGART@integrals}}%
     {\RequirePackage[integrals]{wasysym}}%
     {\RequirePackage[nointegrals]{wasysym}}%
   }
@@ -1292,13 +1286,13 @@ option is provided to not load it.
  
 #+source: option-latexsym
 #+begin_src latex :exports code
-  \newboolean{nolatexsym}
-  \DeclareOption{nolatexsym}{\setboolean{nolatexsym}{true}}
+  \newboolean{ORGART@nolatexsym}
+  \DeclareOption{nolatexsym}{\setboolean{ORGART@nolatexsym}{true}}
 #+end_src
 
 #+source: load-latexsym
 #+begin_src latex :exports code
-  \ifthenelse{\boolean{nolatexsym}}
+  \ifthenelse{\boolean{ORGART@nolatexsym}}
   {}
   {\RequirePackage{latexsym}}
 #+end_src
@@ -1329,8 +1323,8 @@ option is provided to not load it.
 
 #+source: option-amssymb
 #+begin_src latex :exports code
-  \newboolean{noamssymb}
-  \DeclareOption{noamssymb}{\setboolean{noamssymb}{true}}
+  \newboolean{ORGART@noamssymb}
+  \DeclareOption{noamssymb}{\setboolean{ORGART@noamssymb}{true}}
 #+end_src
 
 Isn't loaded if Times, Charter, Utopia, or Garamond are loaded.  These
@@ -1338,11 +1332,11 @@ use the[[latex:package][mathdesign]] package, which apparently supersedes [[late
 
 #+source: load-amssymb
 #+begin_src latex :exports code
-  \ifthenelse{\boolean{noamssymb}\or\boolean{utopia}\or\boolean{charter}\or\boolean{garamond}\or\boolean{times}}
+  \ifthenelse{\boolean{ORGART@noamssymb}\or\boolean{ORGART@utopia}\or\boolean{ORGART@charter}\or\boolean{ORGART@garamond}\or\boolean{ORGART@times}}
   {}
   {\RequirePackage{amssymb}}
 #+end_src
-
+  
 *** Hyperref
 The [[latex:package][hyperref]] package turns LaTeX cross-referencing commands into
 hyperlinks, including the table of contents, bibliography, etc.  It is
@@ -1403,13 +1397,13 @@ support for the [[path-command][path]] command.
 
 #+source: option-hyperref
 #+begin_src latex :exports code
-  \newboolean{nohyperref}
-  \DeclareOption{nohyperref}{\setboolean{nohyperref}{true}}
+  \newboolean{ORGART@nohyperref}
+  \DeclareOption{nohyperref}{\setboolean{ORGART@nohyperref}{true}}
 #+end_src
 
 #+source: load-hyperref
 #+begin_src latex :exports code
-  \ifthenelse{\boolean{nohyperref}}
+  \ifthenelse{\boolean{ORGART@nohyperref}}
   {\RequirePackage{url}}
   {\RequirePackage{hyperref}}
 #+end_src
@@ -1643,8 +1637,8 @@ Kettler in 1955 for use in IBM typewriters.
 
 #+source: option-times
 #+begin_src latex :exports code
-  \newboolean{times}
-  \DeclareOption{times}{\setboolean{times}{true}}
+  \newboolean{ORGART@times}
+  \DeclareOption{times}{\setboolean{ORGART@times}{true}}
 #+end_src
 
 Helvetica looks better if it is set slightly smaller than the serif
@@ -1652,7 +1646,7 @@ font.
 
 #+source: load-times
 #+begin_src latex :exports code
-  \ifthenelse{\boolean{times}}
+  \ifthenelse{\boolean{ORGART@times}}
   {%
     \ifpdf
     \RequirePackage[T1]{fontenc}
@@ -1680,15 +1674,15 @@ font is [[http://en.wikipedia.org/wiki/Inconsolata][Inconsolata]], which was cre
  
 #+source: option-garamond
 #+begin_src latex :exports code
-  \newboolean{garamond}
-  \DeclareOption{garamond}{\setboolean{garamond}{true}}
+  \newboolean{ORGART@garamond}
+  \DeclareOption{garamond}{\setboolean{ORGART@garamond}{true}}
 #+end_src
 
 Garamond requires a bit more leading than normal.
 
 #+source: load-garamond
 #+begin_src latex :exports code
-  \ifthenelse{\boolean{garamond}}
+  \ifthenelse{\boolean{ORGART@garamond}}
   {%
     \ifpdf
      \RequirePackage[T1]{fontenc} 
@@ -1715,15 +1709,15 @@ for which it is an alternative.
 
 #+source: option-palatino
 #+begin_src latex :exports code
-  \newboolean{palatino}
-  \DeclareOption{palatino}{\setboolean{palatino}{true}}
+  \newboolean{ORGART@palatino}
+  \DeclareOption{palatino}{\setboolean{ORGART@palatino}{true}}
 #+end_src
 
 Palatino gets a bit more leading than normal.
 
 #+source: load-palatino
 #+begin_src latex :exports code
-  \ifthenelse{\boolean{palatino}}
+  \ifthenelse{\boolean{ORGART@palatino}}
   {%
     \ifpdf
     \RequirePackage[T1]{fontenc}
@@ -1751,13 +1745,13 @@ Note that the utopia font clashes with the [[latex:package][amssymb]] package.
 
 #+source: option-utopia
 #+begin_src latex :exports code
-  \newboolean{utopia}
-  \DeclareOption{utopia}{\setboolean{utopia}{true}}
+  \newboolean{ORGART@utopia}
+  \DeclareOption{utopia}{\setboolean{ORGART@utopia}{true}}
 #+end_src
 
 #+source: load-utopia
 #+begin_src latex :exports code
-  \ifthenelse{\boolean{utopia}}
+  \ifthenelse{\boolean{ORGART@utopia}}
   {%
     \ifpdf
      \RequirePackage[T1]{fontenc} 
@@ -1784,15 +1778,15 @@ These fonts conflict with the [[latex:package][amssymb]] package.
  
 #+source: option-charter
 #+begin_src latex :exports code
-  \newboolean{charter}
-  \DeclareOption{charter}{\setboolean{charter}{true}}
+  \newboolean{ORGART@charter}
+  \DeclareOption{charter}{\setboolean{ORGART@charter}{true}}
 #+end_src
 
 Helvetica is set a bit smaller to better match the Charter font.
 
 #+source: load-charter
 #+begin_src latex :exports code
-  \ifthenelse{\boolean{charter}}
+  \ifthenelse{\boolean{ORGART@charter}}
   {%
     \ifpdf
      \RequirePackage[T1]{fontenc} 
@@ -1837,13 +1831,13 @@ it.
 
 #+source: option-microtype
 #+begin_src latex :exports code
-  \newboolean{microtype}
-  \DeclareOption{microtype}{\setboolean{microtype}{true}}
+  \newboolean{ORGART@microtype}
+  \DeclareOption{microtype}{\setboolean{ORGART@microtype}{true}}
 #+end_src
 
 #+source: load-microtype
 #+begin_src latex :exports code
-    \ifthenelse{\boolean{microtype}}
+    \ifthenelse{\boolean{ORGART@microtype}}
   {%
     \ifpdf
      \RequirePackage{microtype}
@@ -1868,23 +1862,23 @@ it, and to set linespacing to doublespace.
  
 #+source: option-setspace
 #+begin_src latex :exports code
-  \newboolean{setspace}
-  \newboolean{doublespace}
-  \DeclareOption{setspace}{\setboolean{setspace}{true}}
-  \DeclareOption{doublespace}{\setboolean{doublespace}{true}}
+  \newboolean{ORGART@setspace}
+  \newboolean{ORGART@doublespace}
+  \DeclareOption{setspace}{\setboolean{ORGART@setspace}{true}}
+  \DeclareOption{doublespace}{\setboolean{ORGART@doublespace}{true}}
 #+end_src
 
 #+source: load-setspace
 #+begin_src latex :exports code
-  \ifthenelse{\boolean{setspace}}
+  \ifthenelse{\boolean{ORGART@setspace}}
   {\RequirePackage{setspace}}
   {}
 #+end_src
 
 #+source: setspace-code
 #+begin_src latex :exports code
-  \ifthenelse{\boolean{setspace}}%
-  {\ifthenelse{\boolean{doublespace}}%
+  \ifthenelse{\boolean{ORGART@setspace}}%
+  {\ifthenelse{\boolean{ORGART@doublespace}}%
   {\doublespacing}%
   {\singlespacing}}%
   {}%
@@ -1916,14 +1910,14 @@ it.
  
 #+source: option-paralist
 #+begin_src latex :exports code
-  \newboolean{paralist}
-  \DeclareOption{paralist}{\setboolean{paralist}{true}}
+  \newboolean{ORGART@paralist}
+  \DeclareOption{paralist}{\setboolean{ORGART@paralist}{true}}
 #+end_src
 
 #+source: load-paralist
 #+begin_src latex :exports code
   % Set the standard LaTeX list environments to their compact counterparts  
-  \ifthenelse{\boolean{paralist}}
+  \ifthenelse{\boolean{ORGART@paralist}}
     {%
       \RequirePackage{paralist}
       \let\itemize\compactitem%
@@ -2496,6 +2490,22 @@ the HTML export.  The chart looks great, Eric!
 \end{tikzpicture}
 #+END_LaTeX
 
+**** Notes                                                         :noexport:
+Org-article users will need to download the style file and install it.
+This command works to grab gantt.sty from Worg (in case, like me, you
+lose track of the back door):
+
+#+source: get-gantt.sty
+#+begin_src sh
+  curl http://repo.or.cz/w/Worg.git/blob_plain/HEAD:/code/latex/gantt.sty > gantt.sty
+#+end_src
+
+What are your plans for the use instructions I saw on the list?  Are
+you going to put them up on Worg?  I'm planning to paraphrase them in
+article-class.org, but will tailor the paraphrase to reflect other
+information available on the web (I'm not keen to link to mailing list
+messages, though this practice seems to be widely accepted in the
+Org-mode community).
 
 *** Index                                                          :noexport:
 * Notes                                                            :noexport:
@@ -2632,3 +2642,81 @@ This R script plots the text block information in the table.
               depth)))
   (setq org-export-latex-format-toc-function 'org-export-latex-format-toc-org-article)
 #+end_src
+** TODO Insert properties in text
+Add macro to insert property values into exported text
+=======================================================
+
+you can use {{{property{NAME}}}} to insert the value of a
+property upon export.
+
+Thanks to David Maus for a patch to this effect.
+
+** umlauts and other characters
+Even better, for the OP, is to switch to the tex input method (M-x
+set-input-method RET tex RET)!  In this case, you can type \"o to get ö.
+Almost all TeX and LaTeX sequences are understood (e.g. \forall to get
+∀, \exists for ∃, \alpha for α, \leftrightharpoons for ⇋, and so on.)
+You can see all the characters with =describe-input-method=.
+
+Will need to let LaTeX know that the input is UTF-8.  It works out of
+the box for HTML.
+** Semantic markup for blocks, Christian Moe
+Use org-special-blocks
+
+On Oct 31, 2010, at 9:47 AM, Magnus Nilsson wrote:
+
+Dear all,
+
+Is there a way to include an abstract that suits both LaTeX export
+and html export?
+
+I am thinking in lines of
+#+BEGIN_ABSTRACT:
+My abstract goes here
+#+END_ABSTRACT:
+and have it interpreted differently depending on the export used.
+
+If I'm not overlooking a hitch, you can do that now with the contributed package org-special-blocks. Just put
+
+(require 'org-special-blocks)
+
+in your .emacs.
+
+The HTML abstract won't look like anything special until you style it, it will just be wrapped in a <div class="abstract"> element. Here are some sample style lines for your org document header (without line wraps):
+
+#+STYLE: <style>.abstract {margin: 1em; padding: 1em; border: 1px solid black}
+#+STYLE: .abstract:before {content: "ABSTRACT: ";}</style>
+
+Thomas S. Dye wrote:
+Alternatively, you could use the existing link syntax for this kind of
+markup. See
+http://orgmode.org/worg/org-tutorials/org-latex-export.php#sec-12
+
+I'm all for using custom links to extend inline markup, but this is block-level, and thus handily extensible with org-special-blocks.
+
+Cheers,
+Christian
+
+** Test conditional export
+
+#+source: test_output
+#+begin_src octave :results value vector :exports (if (and (boundp 'htmlp) htmlp) "none" "results" )
+rand(2)
+#+end_src
+
+#+results: test_output
+| 0.3982018019389448 | 0.3879818701032038 |
+| 0.8053847746148466 | 0.3333630867175288 |
+------------------------------------------------------------
+
+Will export nothing to HTML, and the resulting output to other
+formats.
+
+Values for 'exports' can be 'both', 'none', 'code' or 'results'; and
+there are export flags latexp, htmlp, asciip, docbookp.
+
+I tested the above example, and it "mostly" works. Sometimes not, and
+I don't yet know why.
+
+BR
+.j.
