@@ -15,7 +15,7 @@
 #+XSLT: 
 #+BABEL: :exports code
 #+LaTeX_CLASS: org-article
-#+LaTeX_CLASS_OPTIONS: [koma,letterpaper,captions=tableheading,utopia,11pt,listings-sv,microtype,paralist,colorlinks=true,urlcolor=blue,secnums]
+#+LaTeX_CLASS_OPTIONS: [koma,letterpaper,captions=tableheading,utopia,11pt,listings-sv,microtype,paralist,colorlinks=true,urlcolor=blue,secnums,gantt]
 #+LATEX_HEADER: \usepackage[AUTO]{inputenc}
 
 * Org-article class
@@ -447,7 +447,6 @@ section.
   <<listings-code>>
   <<proglangs-code>>
   <<progstructs-code>>
-%  <<gantt-code>>
   % End of class code part  
 #+end_src
 
@@ -2206,29 +2205,161 @@ murphy, trac, tango, fruity, autumn, vs, bw, emacs, pastie, friendly, native]
    \PassOptionsToPackage{native}{minted}}
 #+end_src
 
-*** GANTT charts                                                   :noexport:
-Eric Fraga wrote this GANTT chart constructor, powered by an [[latex:proglang][Org-mode]]
-table.  For everyday use, it requires that some Emacs lisp code be
-installed in the Library of Babel.
+*** GANTT charts
+Eric Fraga wrote a GANTT chart constructor, powered by an [[latex:proglang][Org-mode]]
+table.  It relies on two pieces of software:
+  - a LaTeX package, [[latex:package][gantt.sty]], which you will need to download and
+    install, and
+  - an [[latex:proglang][Emacs lisp]] source code block in the  [[http://orgmode.org/manual/Library-of-Babel.html#Library-of-Babel][Library of Babel]].
 
-**** GANTT Emacs lisp code
+**** The input table
 
-The GANTT Emacs lisp code can either be placed in the buffer with the
-GANTT chart table or it can be installed in the [[http://orgmode.org/manual/Library-of-Babel.html#Library-of-Babel][Library of Babel]].
-Installing local code in the Library of Babel is best accomplished by
-establishing one or more [[latex:proglang][Org-mode]] files for this purpose and keeping
-them in a place that won't be overwritten when [[latex:proglang][Org-mode]] is updated.
-For each of these local files, place a line like the following in
-=.emacs= to make the source code blocks accessible to the Library:
+  The following table describes the tasks and other relevant
+  information for a project.  Each line is an /entry/ and there are
+  three types of entry allowed in this table:
 
-#+source: load-local-lob
-#+begin_src emacs-lisp :exports code
-  (org-babel-lob-ingest "~/org/local-lob.org")
+  - task :: an actual task that has a start time, a duration and an end time.
+  - milestone :: a specific milestone in the project that has a start
+               time alone
+  - date :: a point in time that will be drawn as a vertical line in the
+          GANTT chart (e.g. start of each year).
+
+  Each element of the chart will be annotated with the content of the
+  /label/ column of each entry.  The first column of the table is
+  ignored but I use it to number the entries.  The last column, titled
+  /align/, is used to determine where to place the /activity/ text for
+  tasks, whether to the left or right of the bar or, if nothing is
+  specified, centred within the bar itself.
+
+#+tblname: gantttesttable
+    |    | type      | label | activity      | depends | start | duration | end | align |
+    |----+-----------+-------+---------------+---------+-------+----------+-----+-------|
+    |  1 | date      | Start |               |         |     0 |          |   0 |       |
+    |  2 | task      | 1.1   | Lit survey    |         |     0 |        3 |   3 | right |
+    |  3 | task      | 1.2   | Develop model |       2 |     3 |        9 |  12 | right |
+    |  4 | milestone | M1    | model         |       3 |    12 |          |  12 |       |
+    |  5 | task      | 1.3   | Implement     |       3 |    12 |        6 |  18 | left  |
+    |  6 | date      | Y1    |               |         |    12 |          |  12 |       |
+    |  7 | milestone | M2    | software      |       5 |    18 |          |  18 |       |
+    |----+-----------+-------+---------------+---------+-------+----------+-----+-------|
+    |  8 | task      | 2.1   | Surrogate     |       3 |    15 |        6 |  21 | left  |
+    |  9 | task      | 2.2   | Implement     |       7 |    21 |        3 |  24 | left  |
+    | 10 | milestone | M3    | software      |       8 |    24 |          |  24 |       |
+    | 11 | date      | End   |               |         |    24 |          |  24 |       |
+    |----+-----------+-------+---------------+---------+-------+----------+-----+-------|
+    #+TBLFM: $1=1+@-1::$8=$6+$7::@5$6=@-1$+2::@6$6=@-1$+2::@8$6=@-2$+2::@9$6=3+@4$+2::@10$6=@-1$+2
+
+**** Creating the GANTT chart
+In the [[latex:proglang][Org-mode]] buffer, the call to the code in the Library of Babel
+passes =ganttesttable= to the function =elispgantt=.  Note that the
+header argument is set in the function call.
+
+#+begin_src org :exports code
+,#+lob: elispgantt(table=gantttesttable) :results output latex
 #+end_src
 
+The results are wrapped in =#+BEGIN_LaTeX= ... =#+END_LaTeX=.  
+
+#+source: elispgantt-output
+#+begin_src org :exports code
+#+BEGIN_LaTeX
+\pgfdeclarelayer{background}
+\pgfdeclarelayer{foreground}
+\pgfsetlayers{background,foreground}
+\renewcommand{\ganttprojecttime}{24}
+\renewcommand{\ganttntasks}{5}
+\noindent
+\begin{tikzpicture}[y=-0.75cm,x=0.75\textwidth]
+  \begin{pgfonlayer}{background}
+    \draw[very thin, red!10!white] (0,1+\ganttntasks) grid [ystep=0.75cm,xstep=1/\ganttprojecttime] (1,0);
+    \draw[\ganttdatelinecolour] (0,0) -- (1,0);
+    \draw[\ganttdatelinecolour] (0,1+\ganttntasks) -- (1,1+\ganttntasks);
+  \end{pgfonlayer}
+  \gantttask{1.1}{Lit survey}{0}{3}{3}{[right]}
+  \gantttask{1.2}{Develop model}{3}{12}{12}{[right]}
+  \gantttask{1.3}{Implement}{12}{18}{12}{[left]}
+  \gantttask{2.1}{Surrogate}{15}{21}{15}{[left]}
+  \gantttask{2.2}{Implement}{21}{24}{21}{[left]}
+
+  \ganttmilestone{$\begin{array}{c}\mbox{M1}\\ \mbox{model}\end{array}$}{12}
+  \ganttmilestone{$\begin{array}{c}\mbox{M2}\\ \mbox{software}\end{array}$}{18}
+  \ganttmilestone{$\begin{array}{c}\mbox{M3}\\ \mbox{software}\end{array}$}{24}
+
+  \ganttdateline{Start}{0}
+  \ganttdateline{Y1}{12}
+  \ganttdateline{End}{24}
+
+\end{tikzpicture}
+#+END_LaTeX
+
+#+end_src
+
+
+The resulting GANTT chart is processed by LaTeX and appears in the PDF
+output without reference to an external file.  Note that the chart
+does not appear in the HTML export.  The chart looks great, Eric!
+
+
+#+BEGIN_LaTeX
+\pgfdeclarelayer{background}
+\pgfdeclarelayer{foreground}
+\pgfsetlayers{background,foreground}
+\renewcommand{\ganttprojecttime}{24}
+\renewcommand{\ganttntasks}{5}
+\noindent
+\begin{tikzpicture}[y=-0.75cm,x=0.75\textwidth]
+  \begin{pgfonlayer}{background}
+    \draw[very thin, red!10!white] (0,1+\ganttntasks) grid [ystep=0.75cm,xstep=1/\ganttprojecttime] (1,0);
+    \draw[\ganttdatelinecolour] (0,0) -- (1,0);
+    \draw[\ganttdatelinecolour] (0,1+\ganttntasks) -- (1,1+\ganttntasks);
+  \end{pgfonlayer}
+  \gantttask{1.1}{Lit survey}{0}{3}{3}{[right]}
+  \gantttask{1.2}{Develop model}{3}{12}{12}{[right]}
+  \gantttask{1.3}{Implement}{12}{18}{12}{[left]}
+  \gantttask{2.1}{Surrogate}{15}{21}{15}{[left]}
+  \gantttask{2.2}{Implement}{21}{24}{21}{[left]}
+
+  \ganttmilestone{$\begin{array}{c}\mbox{M1}\\ \mbox{model}\end{array}$}{12}
+  \ganttmilestone{$\begin{array}{c}\mbox{M2}\\ \mbox{software}\end{array}$}{18}
+  \ganttmilestone{$\begin{array}{c}\mbox{M3}\\ \mbox{software}\end{array}$}{24}
+
+  \ganttdateline{Start}{0}
+  \ganttdateline{Y1}{12}
+  \ganttdateline{End}{24}
+
+\end{tikzpicture}
+#+END_LaTeX
+
+**** The GANTT Option
+
+The [[latex:package][gantt.sty]] package can be loaded by adding the following line to the
+[[latex:proglang][Org-mode]] buffer.
+
+#+source: org-buffer-gantt
+#+begin_src org :exports code
+  #+LaTeX_CLASS_OPTIONS: [gantt]
+#+end_src
+
+#+source: option-gantt
+#+begin_src latex :exports code
+  \newboolean{ORGART@gantt}
+  \DeclareOption{gantt}{\setboolean{ORGART@gantt}{true}}
+#+end_src
+
+
+#+source: load-gantt
+#+begin_src latex :exports code
+  \ifthenelse{\boolean{ORGART@gantt}}
+  {\RequirePackage{gantt}}
+  {}
+#+end_src
+
+
+**** GANTT Emacs lisp source code block
+
 The following source code block sent to the [[latex:proglang][Org-mode]] list by Eric
-Fraga has been modified slightly.  It should be installed in the
-Library of Babel.
+Fraga has been modified slightly.  It is installed in the [[http://orgmode.org/manual/Library-of-Babel.html#Library-of-Babel][Library of
+Babel]].
 
 #+begin_example
 #+source: elispgantt
@@ -2317,195 +2448,14 @@ Library of Babel.
 #+end_src
 #+end_example
 
-**** The GANTT Option
-The GANTT facility can be loaded by adding the following line to the
-[[latex:proglang][Org-mode]] buffer.
-
-#+source: org-buffer-gantt
-#+begin_src org :exports code
-  #+LaTeX_CLASS_OPTIONS: [gantt]
-#+end_src
-
-#+source: option-gantt
-#+begin_src latex :exports code
-  \newboolean{gantt}
-  \DeclareOption{gantt}{\setboolean{gantt}{true}}
-#+end_src
-
-The GANTT code requires the [[http://www.ctan.org/tex-archive/help/Catalogue/entries/pgf.html][pgf]] LaTeX packages written by Till Tantau.
-#+source: load-gantt
-#+begin_src latex :exports code
-  \ifthenelse{\boolean{gantt}}
-  {\RequirePackage{pgf, pgfarrows, pgfnodes, tikz}}
-  {}
-#+end_src
-
-Eric wrote several LaTeX commands to make the translation from
-[[latex:proglang][Org-mode]] table to GANTT chart.
-
-#+source: gantt-code
-#+begin_src latex :exports code
-  \newcommand\ganttline[4]{% line, tag, start end
-    \node at (0,#1) [anchor=base east] {#2};
-    \fill[black!20!white] (#3/20,#1-.2) rectangle (#4/20,#1+.2);}
-  \newcounter{gantttask}
-  \newcommand{\gantttaskcolour}{blue!50!white}
-  \newcommand{\ganttmilestonecolour}{red!50!white}
-  \newcommand{\ganttdatelinecolour}{black!50!white}
-  \newcommand{\ganttprojecttime}{1}
-  \newcommand{\ganttntasks}{1}
-  \newcommand\gantttask[6]{% label, activity, start, end, labelpos, align
-    \begin{pgfonlayer}{foreground}
-      % \node at (0,\thegantttask) [anchor=base east] {#2};
-      \stepcounter{gantttask}
-      \node [left] at (0,\thegantttask) {#1};
-      \draw[fill=\gantttaskcolour] (#3/\ganttprojecttime,\thegantttask-0.4) rectangle (#4/\ganttprojecttime,\thegantttask +0.4);
-      \node at (#5/\ganttprojecttime,\thegantttask) #6 {#2};
-    \end{pgfonlayer}
-  }
-  \newcommand\ganttpoint[3]{% line, tag, date
-    \node at (0,#1) [anchor=base east] {#2};
-    \fill[black] (#3/\ganttprojecttime,#1) circle (0.1/\ganttprojecttime);
-  }
-  \newcommand\ganttdateline[2]{% tag, date
-    \begin{pgfonlayer}{background}
-      \draw[\ganttdatelinecolour] (#2/\ganttprojecttime,0) -- (#2/\ganttprojecttime,\thegantttask+1);
-      \node at (#2/\ganttprojecttime,0) [above] {#1};
-    \end{pgfonlayer}
-  }
-  \newcommand\ganttmilestone[2]{% tag, date
-    \begin{pgfonlayer}{foreground}
-      \node at (#2/\ganttprojecttime,\thegantttask+1.0) [below] {#1};
-      \draw[black,fill=\ganttmilestonecolour] (#2/\ganttprojecttime-0.1\ganttntasks/\ganttprojecttime,\thegantttask+0.9) rectangle (#2/\ganttprojecttime+0.1\ganttntasks/\ganttprojecttime,\thegantttask+1.1);
-    \end{pgfonlayer}
-  }
-  
-  
-#+end_src
-
-**** Input Table
-
-The [[latex:proglang][Org-mode]] table that Eric used to test his code is named
-=ganttesttable=.  Perhaps the best way to understand its structure is
-to compare it to the GANTT chart it produces.
-
-#+CAPTION: Eric Fraga's GANTT chart input table
-#+tblname: gantttesttable
-    |    | type      | label | activity      | depends | start | duration | end | align |
-    |----+-----------+-------+---------------+---------+-------+----------+-----+-------|
-    |  1 | date      | Start |               |         |     0 |          |   0 |       |
-    |  2 | task      | 1.1   | Lit survey    |         |     0 |        3 |   3 | right |
-    |  3 | task      | 1.2   | Develop model |       2 |     3 |        9 |  12 | right |
-    |  4 | milestone | M1    | model         |       3 |    12 |          |  12 |       |
-    |  5 | task      | 1.3   | Implement     |       3 |    12 |        6 |  18 | left  |
-    |  6 | date      | Y1    |               |         |    12 |          |  12 |       |
-    |  7 | milestone | M2    | software      |       5 |    18 |          |  18 |       |
-    |----+-----------+-------+---------------+---------+-------+----------+-----+-------|
-    |  8 | task      | 2.1   | Surrogate     |       3 |    15 |        6 |  21 | left  |
-    |  9 | task      | 2.2   | Implement     |       7 |    21 |        3 |  24 | left  |
-    | 10 | milestone | M3    | software      |       8 |    24 |          |  24 |       |
-    | 11 | date      | End   |               |         |    24 |          |  24 |       |
-    |----+-----------+-------+---------------+---------+-------+----------+-----+-------|
-    #+TBLFM: $1=1+@-1::$8=$6+$7::@5$6=@-1$+2::@6$6=@-1$+2::@8$6=@-2$+2::@9$6=3+@4$+2::@10$6=@-1$+2
-
-
-**** Creating the GANTT chart
-In the [[latex:proglang][Org-mode]] buffer, the call to the code in the Library of Babel
-passes =ganttesttable= to the function =elispgantt=.  Note that the
-header argument is set in the function call.
-
-#+begin_src org :exports code
-,#+lob: elispgantt(table=gantttesttable) :results output latex
-#+end_src
-
-The results are wrapped in =#+BEGIN_LaTeX= ... =#+END_LaTeX=.  
-
-#+source: elispgantt-output
-#+begin_src org :exports code
-#+BEGIN_LaTeX
-\pgfdeclarelayer{background}
-\pgfdeclarelayer{foreground}
-\pgfsetlayers{background,foreground}
-\renewcommand{\ganttprojecttime}{24}
-\renewcommand{\ganttntasks}{5}
-\noindent
-\begin{tikzpicture}[y=-0.75cm,x=0.75\textwidth]
-  \begin{pgfonlayer}{background}
-    \draw[very thin, red!10!white] (0,1+\ganttntasks) grid [ystep=0.75cm,xstep=1/\ganttprojecttime] (1,0);
-    \draw[\ganttdatelinecolour] (0,0) -- (1,0);
-    \draw[\ganttdatelinecolour] (0,1+\ganttntasks) -- (1,1+\ganttntasks);
-  \end{pgfonlayer}
-  \gantttask{1.1}{Lit survey}{0}{3}{3}{[right]}
-  \gantttask{1.2}{Develop model}{3}{12}{12}{[right]}
-  \gantttask{1.3}{Implement}{12}{18}{12}{[left]}
-  \gantttask{2.1}{Surrogate}{15}{21}{15}{[left]}
-  \gantttask{2.2}{Implement}{21}{24}{21}{[left]}
-
-  \ganttmilestone{$\begin{array}{c}\mbox{M1}\\ \mbox{model}\end{array}$}{12}
-  \ganttmilestone{$\begin{array}{c}\mbox{M2}\\ \mbox{software}\end{array}$}{18}
-  \ganttmilestone{$\begin{array}{c}\mbox{M3}\\ \mbox{software}\end{array}$}{24}
-
-  \ganttdateline{Start}{0}
-  \ganttdateline{Y1}{12}
-  \ganttdateline{End}{24}
-
-\end{tikzpicture}
-#+END_LaTeX
-
-#+end_src
-
-
-The resulting GANTT chart is processed by LaTeX and appears in the PDF
-output without reference to an external file.  The chart does not appear in
-the HTML export.  The chart looks great, Eric!  
-
-
-#+BEGIN_LaTeX
-\pgfdeclarelayer{background}
-\pgfdeclarelayer{foreground}
-\pgfsetlayers{background,foreground}
-\renewcommand{\ganttprojecttime}{24}
-\renewcommand{\ganttntasks}{5}
-\noindent
-\begin{tikzpicture}[y=-0.75cm,x=0.75\textwidth]
-  \begin{pgfonlayer}{background}
-    \draw[very thin, red!10!white] (0,1+\ganttntasks) grid [ystep=0.75cm,xstep=1/\ganttprojecttime] (1,0);
-    \draw[\ganttdatelinecolour] (0,0) -- (1,0);
-    \draw[\ganttdatelinecolour] (0,1+\ganttntasks) -- (1,1+\ganttntasks);
-  \end{pgfonlayer}
-  \gantttask{1.1}{Lit survey}{0}{3}{3}{[right]}
-  \gantttask{1.2}{Develop model}{3}{12}{12}{[right]}
-  \gantttask{1.3}{Implement}{12}{18}{12}{[left]}
-  \gantttask{2.1}{Surrogate}{15}{21}{15}{[left]}
-  \gantttask{2.2}{Implement}{21}{24}{21}{[left]}
-
-  \ganttmilestone{$\begin{array}{c}\mbox{M1}\\ \mbox{model}\end{array}$}{12}
-  \ganttmilestone{$\begin{array}{c}\mbox{M2}\\ \mbox{software}\end{array}$}{18}
-  \ganttmilestone{$\begin{array}{c}\mbox{M3}\\ \mbox{software}\end{array}$}{24}
-
-  \ganttdateline{Start}{0}
-  \ganttdateline{Y1}{12}
-  \ganttdateline{End}{24}
-
-\end{tikzpicture}
-#+END_LaTeX
-
 **** Notes                                                         :noexport:
-Org-article users will need to download the style file and install it.
-This command works to grab gantt.sty from Worg (in case, like me, you
-lose track of the back door):
+[[latex:classfile][Org-article]] users will need to download the style file [[latex:package][gantt.sty]] and install it.
+This command works to grab [[latex:package][gantt.sty]] from Worg:
 
 #+source: get-gantt.sty
 #+begin_src sh
   curl http://repo.or.cz/w/Worg.git/blob_plain/HEAD:/code/latex/gantt.sty > gantt.sty
 #+end_src
-
-What are your plans for the use instructions I saw on the list?  Are
-you going to put them up on Worg?  I'm planning to paraphrase them in
-article-class.org, but will tailor the paraphrase to reflect other
-information available on the web (I'm not keen to link to mailing list
-messages, though this practice seems to be widely accepted in the
-Org-mode community).
 
 *** Index                                                          :noexport:
 * Notes                                                            :noexport:
@@ -2615,7 +2565,6 @@ This R script plots the text block information in the table.
 
 #+results:
 [[file:../images/org-article-text-blocks.png]]
-
 
 
 
