@@ -15,7 +15,7 @@
 #+XSLT: 
 #+BABEL: :exports code
 #+LaTeX_CLASS: org-article
-#+LaTeX_CLASS_OPTIONS: [koma,letterpaper,captions=tableheading,utopia,11pt,listings-sv,microtype,paralist,colorlinks=true,urlcolor=blue,secnums,gantt]
+#+LaTeX_CLASS_OPTIONS: [koma,letterpaper,utopia,11pt,minted,mintedstyle=autumn,microtype,paralist,colorlinks=true,urlcolor=blue,secnums,gantt]
 #+LATEX_HEADER: \usepackage[AUTO]{inputenc}
 
 * Org-article class
@@ -351,7 +351,7 @@ don't have to be declared here.
 
   % Pass options to packages
   <<options-to-hyperref>>
-  
+
   % End of declaration of options part
 #+end_src
 
@@ -447,11 +447,21 @@ section.
   <<listings-code>>
   <<proglangs-code>>
   <<progstructs-code>>
+  <<pgf-mintedstyle-code>>
   % End of class code part  
 #+end_src
 
 * Semantic markup
 
+LaTeX works with semantic markup, where units of meaning are tagged in
+the source file.  A style or class file is responsible for typesetting
+these appropriately.
+
+It is possible to introduce semantic markup in Org-mode files and
+[[latex:classfile][Org-article]] defines a variety of in-line and block-level semantic
+markup conventions.
+
+** In-line markup
 Arbitrary semantic markup in [[latex:proglang][Org-mode]] files is implemented by
 defining a new link type in =.emacs=.  The following code block
 defines a new link type, [[latex:progstruct][latex]], whose [[latex:progstruct][path]] argument can hold the
@@ -477,7 +487,7 @@ with the same names as the corresponding LaTeX macros.
   
 #+end_src
 
-** The path command
+*** The path command
 # <<path-command>>
 
 It is often the case that paths are long and difficult to break at the
@@ -488,7 +498,7 @@ with a link such as this one (abbreviated for obvious reasons)
 end of the line,
 [[latex:path][/path/to/a/file/nested/very/deeply/in/the/directory/structure]].
 
-** Programming languages
+*** Programming languages
 # <<proglangs>>
 
 Semantic markup for programming language names, package names, and
@@ -502,7 +512,7 @@ commands.  [[latex:classfile][Org-article]] currently defines all of these in th
   \let\classfile=\textsf
 #+end_src
 
-** Programming constructs
+*** Programming constructs
 Markup for programming constructs is provided with the [[latex:progstruct][progstruct]]
 and [[latex:progstruct][progexample]] commands.  Both are set in monospaced type; the
 examples are set at a slightly smaller size.
@@ -512,6 +522,8 @@ examples are set at a slightly smaller size.
   \let\progstruct=\texttt
   \newcommand{\progexample}[1]{{\ttfamily\small #1}}
 #+end_src
+
+** TODO Block-level markup
 
 * LaTeX packages
    :PROPERTIES:
@@ -2142,7 +2154,7 @@ margins.
   {}%  
 #+end_src
 
-*** Minted                                                         :noexport:
+*** Minted
 
 Minted is a LaTeX package for formatting source code.  It is an
 alternative to the listings package.  It relies on an external piece
@@ -2150,10 +2162,64 @@ of software called Pygments that needs to be installed separately.
 
 **** Installing Pygments
 
+**** Org-mode setup
+
+You will need to ensure that Org-mode doesn't output for the [[latex:package][listings]]
+package and that it recognizes that the [[latex:package][minted]] package is being used,
+instead. 
+
+#+source: minted-setup
+#+begin_src emacs-lisp :exports code :results silent
+  (setq org-export-latex-listings nil)
+  (setq org-export-latex-minted t)
+  (setq org-export-latex-minted-with-line-numbers t)
+  (add-to-list 'org-export-latex-minted-langs
+               '(org "text")
+               '(sh "bash"))
+  (setq org-latex-to-pdf-process
+        '("pdflatex --shell-escape -interaction nonstopmode %s"))
+#+end_src
+
+
+**** Using minted
+
+To use minted to typeset source code blocks, add the following option.
 #+source: org-buffer-minted
 #+begin_src org :exports code
-  #+LaTeX_CLASS_OPTIONS: [minted, monokai, perldoc, borland, colorful,
-murphy, trac, tango, fruity, autumn, vs, bw, emacs, pastie, friendly, native]
+  #+LaTeX_CLASS_OPTIONS: [minted] 
+#+end_src
+
+Minted defines styles, which are color schemes used in semantic markup
+of code.  Minted styles are accessible with a key=value interface with
+the option [[latex:progstruct][mintedstyle]].
+
+#+source: org-buffer-mintedstyle
+#+begin_src org :exports code
+  #+LaTeX_CLASS_OPTIONS: [mintedstyle=[monokai|perldoc|borland|colorful|murphy|trac|tango|fruity|autumn|vs|bw|emacs|pastie|friendly|native]]
+#+end_src
+
+#+source: pgf-mintedstyle-code
+#+begin_src latex :exports code
+  \pgfkeys{ 
+    /ORGART/.cd, 
+    mintedstyle/.is choice,
+    mintedstyle/monokai/.code={\usemintedstyle{monokai}},
+    mintedstyle/manni/.code={\usemintedstyle{manni}},
+    mintedstyle/perldoc/.code={\usemintedstyle{perldoc}},
+    mintedstyle/borland/.code={\usemintedstyle{borland}},
+    mintedstyle/colorful/.code={\usemintedstyle{colorful}},
+    mintedstyle/murphy/.code={\usemintedstyle{murphy}},
+    mintedstyle/trac/.code={\usemintedstyle{trac}},
+    mintedstyle/tango/.code={\usemintedstyle{tango}},
+    mintedstyle/fruity/.code={\usemintedstyle{fruity}},
+    mintedstyle/autumn/.code={\usemintedstyle{autumn}},
+    mintedstyle/vs/.code={\usemintedstyle{vs}},
+    mintedstyle/bw/.code={\usemintedstyle{bw}},
+    mintedstyle/emacs/.code={\usemintedstyle{emacs}},
+    mintedstyle/pastie/.code={\usemintedstyle{pastie}},
+    mintedstyle/friendly/.code={\usemintedstyle{friendly}},
+    mintedstyle/native/.code={\usemintedstyle{native}},
+  } 
 #+end_src
 
 #+source: option-minted
@@ -2167,42 +2233,6 @@ murphy, trac, tango, fruity, autumn, vs, bw, emacs, pastie, friendly, native]
   \ifthenelse{\boolean{minted}}
     {\RequirePackage{minted}}
     {}
-#+end_src
-
-#+source: options-to-minted
-#+begin_src latex :exports code
-\DeclareOption{monokai}{%
-   \PassOptionsToPackage{monokai}{minted}}
-\DeclareOption{manni}{%
-   \PassOptionsToPackage{manni}{minted}}
-\DeclareOption{perldoc}{%
-   \PassOptionsToPackage{perldoc}{minted}}
-\DeclareOption{borland}{%
-   \PassOptionsToPackage{borland}{minted}}
-\DeclareOption{colorful}{%
-   \PassOptionsToPackage{colorful}{minted}}
-\DeclareOption{murphy}{%
-   \PassOptionsToPackage{murphy}{minted}}
-\DeclareOption{trac}{%
-   \PassOptionsToPackage{trac}{minted}}
-\DeclareOption{tango}{%
-   \PassOptionsToPackage{tango}{minted}}
-\DeclareOption{fruity}{%
-   \PassOptionsToPackage{fruity}{minted}}
-\DeclareOption{autumn}{%
-   \PassOptionsToPackage{autumn}{minted}}
-\DeclareOption{vs}{%
-   \PassOptionsToPackage{vs}{minted}}
-\DeclareOption{bw}{%
-   \PassOptionsToPackage{bw}{minted}}
-\DeclareOption{emacs}{%
-   \PassOptionsToPackage{emacs}{minted}}
-\DeclareOption{pastie}{%
-   \PassOptionsToPackage{pastie}{minted}}
-\DeclareOption{friendly}{%
-   \PassOptionsToPackage{friendly}{minted}}
-\DeclareOption{native}{%
-   \PassOptionsToPackage{native}{minted}}
 #+end_src
 
 *** GANTT charts
@@ -2565,7 +2595,6 @@ This R script plots the text block information in the table.
 
 #+results:
 [[file:../images/org-article-text-blocks.png]]
-
 
 
 
