@@ -15,7 +15,7 @@
 #+XSLT: 
 #+BABEL: :exports code
 #+LaTeX_CLASS: org-article
-#+LaTeX_CLASS_OPTIONS: [koma,letterpaper,utopia,11pt,minted,mintedstyle=autumn,microtype,paralist,colorlinks=true,urlcolor=blue,secnums,gantt]
+#+LaTeX_CLASS_OPTIONS: [koma,letterpaper,utopia,11pt,minted,mintedstyle=pastie,mintedbg=lightergray,mintedfontsize=footnotesize,microtype,paralist,colorlinks=true,urlcolor=blue,secnums,gantt]
 #+LATEX_HEADER: \usepackage[AUTO]{inputenc}
 
 * Org-article class
@@ -342,6 +342,7 @@ don't have to be declared here.
   % <<option-topcapt>>
   <<option-listings>>  
   <<option-minted>>  
+  <<pgf-option-mintedstyle>>
   %  <<option-color>>
   <<option-gantt>>
 
@@ -447,7 +448,7 @@ section.
   <<listings-code>>
   <<proglangs-code>>
   <<progstructs-code>>
-  <<pgf-mintedstyle-code>>
+  <<minted-code>>
   % End of class code part  
 #+end_src
 
@@ -2161,18 +2162,19 @@ alternative to the listings package.  It relies on an external piece
 of software called Pygments that needs to be installed separately.
 
 **** Installing Pygments
+On a Debian/Ubuntu linux system this can be done with
+
+#+begin_src sh
+sudo aptitude install python-pygments
+#+end_src
 
 **** Org-mode setup
-
-You will need to ensure that Org-mode doesn't output for the [[latex:package][listings]]
-package and that it recognizes that the [[latex:package][minted]] package is being used,
-instead. 
+You will need to set `org-export-latex-listings' to the special value
+'minted.
 
 #+source: minted-setup
 #+begin_src emacs-lisp :exports code :results silent
-  (setq org-export-latex-listings nil)
-  (setq org-export-latex-minted t)
-  (setq org-export-latex-minted-with-line-numbers t)
+  (setq org-export-latex-listings 'minted)
   (add-to-list 'org-export-latex-minted-langs
                '(org "text")
                '(sh "bash"))
@@ -2198,41 +2200,48 @@ the option [[latex:progstruct][mintedstyle]].
   #+LaTeX_CLASS_OPTIONS: [mintedstyle=[monokai|perldoc|borland|colorful|murphy|trac|tango|fruity|autumn|vs|bw|emacs|pastie|friendly|native]]
 #+end_src
 
-#+source: minted-code
+#+source: minted-bg-code
 #+begin_src latex :exports code
   \definecolor{mintedbackgroundcolor}{rgb}{1,1,1}
 #+end_src
 
-#+source: pgf-mintedstyle-code
+#+source: pgf-option-mintedstyle
 #+begin_src latex :exports code
+  \newif\ifORGART@mintedlinenumbers
   \pgfkeys{ 
     /ORGART/.cd, 
     mintedstyle/.is choice,
-    mintedstyle/monokai/.code={\usemintedstyle{monokai}},
-    mintedstyle/manni/.code={\usemintedstyle{manni}},
-    mintedstyle/perldoc/.code={\usemintedstyle{perldoc}},
-    mintedstyle/borland/.code={\usemintedstyle{borland}},
-    mintedstyle/colorful/.code={\usemintedstyle{colorful}},
-    mintedstyle/murphy/.code={\usemintedstyle{murphy}},
-    mintedstyle/trac/.code={\usemintedstyle{trac}},
-    mintedstyle/tango/.code={\usemintedstyle{tango}},
-    mintedstyle/fruity/.code={\usemintedstyle{fruity}},
-    mintedstyle/autumn/.code={\usemintedstyle{autumn}},
-    mintedstyle/vs/.code={\usemintedstyle{vs}},
-    mintedstyle/bw/.code={\usemintedstyle{bw}},
-    mintedstyle/emacs/.code={\usemintedstyle{emacs}},
-    mintedstyle/pastie/.code={\usemintedstyle{pastie}},
-    mintedstyle/friendly/.code={\usemintedstyle{friendly}},
-    mintedstyle/native/.code={\usemintedstyle{native}},
+    mintedstyle/monokai/.code={\AtBeginDocument{\usemintedstyle{monokai}}},
+    mintedstyle/manni/.code={\AtBeginDocument{\usemintedstyle{manni}}},
+    mintedstyle/perldoc/.code={\AtBeginDocument{\usemintedstyle{perldoc}}},
+    mintedstyle/borland/.code={\AtBeginDocument{\usemintedstyle{borland}}},
+    mintedstyle/colorful/.code={\AtBeginDocument{\usemintedstyle{colorful}}},
+    mintedstyle/murphy/.code={\AtBeginDocument{\usemintedstyle{murphy}}},
+    mintedstyle/trac/.code={\AtBeginDocument{\usemintedstyle{trac}}},
+    mintedstyle/tango/.code={\AtBeginDocument{\usemintedstyle{tango}}},
+    mintedstyle/fruity/.code={\AtBeginDocument{\usemintedstyle{fruity}}},
+    mintedstyle/autumn/.code={\AtBeginDocument{\usemintedstyle{autumn}}},
+    mintedstyle/vs/.code={\AtBeginDocument{\usemintedstyle{vs}}},
+    mintedstyle/bw/.code={\AtBeginDocument{\usemintedstyle{bw}}},
+    mintedstyle/emacs/.code={\AtBeginDocument{\usemintedstyle{emacs}}},
+    mintedstyle/pastie/.code={\AtBeginDocument{\usemintedstyle{pastie}}},
+    mintedstyle/friendly/.code={\AtBeginDocument{\usemintedstyle{friendly}}},
+    mintedstyle/native/.code={\AtBeginDocument{\usemintedstyle{native}}},
     mintedbg/.is choice,
-    mintedbg/lightestgray/.code={\definecolor{mintedbackgroundcolor}{rgb}{0.95,0.95,0.95}}
-    mintedbg/lightergray/.code={\definecolor{mintedbackgroundcolor}{rgb}{0.9,0.9,0.9}}    
-    mintedbg/lightgray/.code={\definecolor{mintedbackgroundcolor}{rgb}{0.85,0.85,0.85}}    
-    mintedfontfamily/.is choice,
-    mintedfontfamily/
-    mintedfontsize/.is choice,
-    mintedframe/.is choice,
-    mintedlinenumbers/.is choice,
+    mintedbg/lightestgray/.code={\AtBeginDocument{\definecolor{mintedbackgroundcolor}{rgb}{0.95,0.95,0.95}}},
+    mintedbg/lightergray/.code={\AtBeginDocument{\definecolor{mintedbackgroundcolor}{rgb}{0.9,0.9,0.9}}},    
+    mintedbg/lightgray/.code={\AtBeginDocument{\definecolor{mintedbackgroundcolor}{rgb}{0.85,0.85,0.85}}},    
+    mintedbg/lightyellow/.code={\AtBeginDocument{\definecolor{mintedbackgroundcolor}{rgb}{255,255,204}}},
+    mintedbg/lighteryellow/.code={\AtBeginDocument{\definecolor{mintedbackgroundcolor}{rgb}{255,255,221}}},
+    mintedbg/lightestyellow/.code={\AtBeginDocument{\definecolor{mintedbackgroundcolor}{rgb}{255,255,238}}},
+    mintedfontfamily/.store in=\ORGART@mintedfontfamily,
+    mintedfontfamily=ttfamily,
+    mintedfontsize/.store in=\ORGART@mintedfontsize,
+    mintedfontsize=normalsize,
+    mintedframe/.store in=\ORGART@mintedframe,
+    mintedframe=none,
+    mintedlinenumbers/.is if=ORGART@mintedlinenumbers,
+    mintedlinenumbers=false,
   } 
 #+end_src
 
@@ -2248,6 +2257,13 @@ the option [[latex:progstruct][mintedstyle]].
     {\RequirePackage{minted}}
     {}
 #+end_src
+
+#+source: minted-code
+#+begin_src latex :exports code :noweb yes
+  <<minted-options-macro>>
+  \ORGARTmintedoptions{mintedbackgroundcolor}{\ORGARTmintedfontfamily}{footnotesize}{\ORGARTmintedframe}{\ifORGARTmintedlinenumbers}
+#+end_src
+
 **** Floating code blocks
 Use the [[latex:package][org-special-blocks]] package to wrap a listings environment
 around a source code block to get a floating listing in the LaTeX
@@ -2264,6 +2280,7 @@ document.
 **** Minted format options
   This is used to set background color, font family, font size, frame,
   line numbers.
+
 #+source: minted-options-macro
 #+begin_src latex :exports code
   \newcommand{\ORGARTmintedoptions}[5]{\newminted{cpp}{bgcolor=#1,fontfamily=#2,fontsize=#3,frame=#4,linenos=#5}
@@ -2272,6 +2289,213 @@ document.
   \newminted{latex}{bgcolor=#1,fontfamily=#2,fontsize=#3,frame=#4,linenos=#5}
   }
 #+end_src
+**** Notes                                                         :noexport:
+***** TODO [0/3] Per language configuration in an Org-mode table
+      - [ ] Write script to output \newminted{} calls
+      - [ ] Configure path to org-article preamble
+      - [ ] Configure path to .tex file that can be used with \input
+***** TODO [0/2] Define little \newmints using an Org-mode table
+      - [ ] One for each language
+      - [ ] Can be inserted with link syntax
+      - [ ] First two columns of table have Org-mode language
+        name/minted language name
+      - [ ] \newmint[#1]{#2}{#3 ...}
+
+***** Concordance
+| Org          | Minted          |
+|--------------+-----------------|
+| asymptote    | asy, asymptote  |
+| C            | c, cpp, c++     |
+| clojure      | clojure, clj    |
+| css          | css             |
+| ditaa        |                 |
+| dot          |                 |
+| emacs-lisp   | common-lisp, cl |
+| gnuplot      | gnuplot         |
+| haskell      | haskell, hs     |
+| js           | js, javascript  |
+| latex        | tex, latex      |
+| ledger       |                 |
+| lisp         | common-lisp, cl |
+| matlab       | matlab          |
+| mscgen       |                 |
+| ocaml        | ocaml           |
+| octave       | octave          |
+| oz (contrib) |                 |
+| perl         | perl, pl        |
+| plantuml     |                 |
+| python       | python, py      |
+| R            |                 |
+| ruby         | rb, ruby        |
+| sass         | sass            |
+| scheme       | scheme, scm     |
+| screen       |                 |
+| sh           | bash, sh, ksh   |
+| sql          | sql             |
+| sqlite       | sqlite3         |
+
+***** Newmint lookup table
+#+tblname: newmint-lookup
+| Org          | Minted      | baselinestretch | bgcolor | firstline | firstnumber | fontfamily | fontseries | fontsize | fontshape | formatcom | frame | framerule | framesep | gobble | lastline | linenos | mathescape | numberblanklines | numbersep | obeytabs | resetmargins | rulecolor | samepage | showspaces | showtabs | stepnumber | tabsize | texcl | xleftmargin | xrightmargin |
+| asymptote    | asymptote   | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
+| C            | c           | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
+| clojure      | clojure     | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
+| css          | css         | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
+| ditaa        | text        | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
+| dot          | text        | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
+| emacs-lisp   | common-lisp | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
+| gnuplot      | gnuplot     | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
+| haskell      | haskell     | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
+| js           | js          | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
+| latex        | latex       | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
+| ledger       | text        | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
+| lisp         | cl          | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
+| matlab       | matlab      | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
+| mscgen       | text        | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
+| ocaml        | ocaml       | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
+| octave       | octave      | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
+| oz (contrib) | text        | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
+| perl         | perl        | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
+| plantuml     | text        | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
+| python       | python      | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
+| R            | text        | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
+| ruby         | ruby        | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
+| sass         | sass        | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
+| scheme       | scheme      | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
+| screen       | text        | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
+| sh           | sh          | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
+| sql          | sql         | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
+| sqlite       | sqlite3     | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
+
+
+***** Newminted lookup table
+#+tblname: newminted-lookup
+| Org          | Minted      | baselinestretch | bgcolor | firstline | firstnumber | fontfamily | fontseries | fontsize | fontshape | formatcom | frame | framerule | framesep | gobble | lastline | linenos | mathescape | numberblanklines | numbersep | obeytabs | resetmargins | rulecolor | samepage | showspaces | showtabs | stepnumber | tabsize | texcl | xleftmargin | xrightmargin |
+| asymptote    | asymptote   | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
+| C            | c           | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
+| clojure      | clojure     | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
+| css          | css         | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
+| ditaa        | text        | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
+| dot          | text        | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
+| emacs-lisp   | common-lisp | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
+| gnuplot      | gnuplot     | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
+| haskell      | haskell     | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
+| js           | js          | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
+| latex        | latex       | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
+| ledger       | text        | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
+| lisp         | cl          | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
+| matlab       | matlab      | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
+| mscgen       | text        | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
+| ocaml        | ocaml       | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
+| octave       | octave      | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
+| oz (contrib) | text        | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
+| perl         | perl        | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
+| plantuml     | text        | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
+| python       | python      | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
+| R            | text        | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
+| ruby         | ruby        | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
+| sass         | sass        | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
+| scheme       | scheme      | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
+| screen       | text        | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
+| sh           | sh          | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
+| sql          | sql         | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
+| sqlite       | sqlite3     | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
+
+***** Make newminted
+
+#+source: make-newminted
+#+begin_src python :var x=newminted-lookup :results output
+  res = ''
+  for y in range(1,30):  
+      s = '\\newminted{'
+      s = s + x[y][1] +'}{' + x[0][2] + '=' + x[y][2]
+      for z in range(3,31):
+          if x[y][z] <> 'nil':
+              s = s + ',' + x[0][z] + '=' + str(x[y][z])
+      res = res + s + '}\n'
+  print res
+#+end_src
+
+#+results: make-newminted
+#+begin_example
+\newminted{asymptote}{baselinestretch=auto,firstline=1,firstnumber=1,fontfamily=tt,fontseries=auto,fontsize=auto,fontshape=auto,frame=none,framerule=0.4pt,framesep=\fboxsep,gobble=0,linenos=false,mathescape=false,numberblanklines=TRUE,numbersep=12pt,obeytabs=false,resetmargins=false,rulecolor=black,samepage=false,showspaces=false,showtabs=false,stepnumber=1,tabsize=8,texcl=false,xleftmargin=0,xrightmargin=0}
+\newminted{c}{baselinestretch=auto,firstline=1,firstnumber=1,fontfamily=tt,fontseries=auto,fontsize=auto,fontshape=auto,frame=none,framerule=0.4pt,framesep=\fboxsep,gobble=0,linenos=false,mathescape=false,numberblanklines=TRUE,numbersep=12pt,obeytabs=false,resetmargins=false,rulecolor=black,samepage=false,showspaces=false,showtabs=false,stepnumber=1,tabsize=8,texcl=false,xleftmargin=0,xrightmargin=0}
+\newminted{clojure}{baselinestretch=auto,firstline=1,firstnumber=1,fontfamily=tt,fontseries=auto,fontsize=auto,fontshape=auto,frame=none,framerule=0.4pt,framesep=\fboxsep,gobble=0,linenos=false,mathescape=false,numberblanklines=TRUE,numbersep=12pt,obeytabs=false,resetmargins=false,rulecolor=black,samepage=false,showspaces=false,showtabs=false,stepnumber=1,tabsize=8,texcl=false,xleftmargin=0,xrightmargin=0}
+\newminted{css}{baselinestretch=auto,firstline=1,firstnumber=1,fontfamily=tt,fontseries=auto,fontsize=auto,fontshape=auto,frame=none,framerule=0.4pt,framesep=\fboxsep,gobble=0,linenos=false,mathescape=false,numberblanklines=TRUE,numbersep=12pt,obeytabs=false,resetmargins=false,rulecolor=black,samepage=false,showspaces=false,showtabs=false,stepnumber=1,tabsize=8,texcl=false,xleftmargin=0,xrightmargin=0}
+\newminted{text}{baselinestretch=auto,firstline=1,firstnumber=1,fontfamily=tt,fontseries=auto,fontsize=auto,fontshape=auto,frame=none,framerule=0.4pt,framesep=\fboxsep,gobble=0,linenos=false,mathescape=false,numberblanklines=TRUE,numbersep=12pt,obeytabs=false,resetmargins=false,rulecolor=black,samepage=false,showspaces=false,showtabs=false,stepnumber=1,tabsize=8,texcl=false,xleftmargin=0,xrightmargin=0}
+\newminted{text}{baselinestretch=auto,firstline=1,firstnumber=1,fontfamily=tt,fontseries=auto,fontsize=auto,fontshape=auto,frame=none,framerule=0.4pt,framesep=\fboxsep,gobble=0,linenos=false,mathescape=false,numberblanklines=TRUE,numbersep=12pt,obeytabs=false,resetmargins=false,rulecolor=black,samepage=false,showspaces=false,showtabs=false,stepnumber=1,tabsize=8,texcl=false,xleftmargin=0,xrightmargin=0}
+\newminted{common-lisp}{baselinestretch=auto,firstline=1,firstnumber=1,fontfamily=tt,fontseries=auto,fontsize=auto,fontshape=auto,frame=none,framerule=0.4pt,framesep=\fboxsep,gobble=0,linenos=false,mathescape=false,numberblanklines=TRUE,numbersep=12pt,obeytabs=false,resetmargins=false,rulecolor=black,samepage=false,showspaces=false,showtabs=false,stepnumber=1,tabsize=8,texcl=false,xleftmargin=0,xrightmargin=0}
+\newminted{gnuplot}{baselinestretch=auto,firstline=1,firstnumber=1,fontfamily=tt,fontseries=auto,fontsize=auto,fontshape=auto,frame=none,framerule=0.4pt,framesep=\fboxsep,gobble=0,linenos=false,mathescape=false,numberblanklines=TRUE,numbersep=12pt,obeytabs=false,resetmargins=false,rulecolor=black,samepage=false,showspaces=false,showtabs=false,stepnumber=1,tabsize=8,texcl=false,xleftmargin=0,xrightmargin=0}
+\newminted{haskell}{baselinestretch=auto,firstline=1,firstnumber=1,fontfamily=tt,fontseries=auto,fontsize=auto,fontshape=auto,frame=none,framerule=0.4pt,framesep=\fboxsep,gobble=0,linenos=false,mathescape=false,numberblanklines=TRUE,numbersep=12pt,obeytabs=false,resetmargins=false,rulecolor=black,samepage=false,showspaces=false,showtabs=false,stepnumber=1,tabsize=8,texcl=false,xleftmargin=0,xrightmargin=0}
+\newminted{js}{baselinestretch=auto,firstline=1,firstnumber=1,fontfamily=tt,fontseries=auto,fontsize=auto,fontshape=auto,frame=none,framerule=0.4pt,framesep=\fboxsep,gobble=0,linenos=false,mathescape=false,numberblanklines=TRUE,numbersep=12pt,obeytabs=false,resetmargins=false,rulecolor=black,samepage=false,showspaces=false,showtabs=false,stepnumber=1,tabsize=8,texcl=false,xleftmargin=0,xrightmargin=0}
+\newminted{latex}{baselinestretch=auto,firstline=1,firstnumber=1,fontfamily=tt,fontseries=auto,fontsize=auto,fontshape=auto,frame=none,framerule=0.4pt,framesep=\fboxsep,gobble=0,linenos=false,mathescape=false,numberblanklines=TRUE,numbersep=12pt,obeytabs=false,resetmargins=false,rulecolor=black,samepage=false,showspaces=false,showtabs=false,stepnumber=1,tabsize=8,texcl=false,xleftmargin=0,xrightmargin=0}
+\newminted{text}{baselinestretch=auto,firstline=1,firstnumber=1,fontfamily=tt,fontseries=auto,fontsize=auto,fontshape=auto,frame=none,framerule=0.4pt,framesep=\fboxsep,gobble=0,linenos=false,mathescape=false,numberblanklines=TRUE,numbersep=12pt,obeytabs=false,resetmargins=false,rulecolor=black,samepage=false,showspaces=false,showtabs=false,stepnumber=1,tabsize=8,texcl=false,xleftmargin=0,xrightmargin=0}
+\newminted{cl}{baselinestretch=auto,firstline=1,firstnumber=1,fontfamily=tt,fontseries=auto,fontsize=auto,fontshape=auto,frame=none,framerule=0.4pt,framesep=\fboxsep,gobble=0,linenos=false,mathescape=false,numberblanklines=TRUE,numbersep=12pt,obeytabs=false,resetmargins=false,rulecolor=black,samepage=false,showspaces=false,showtabs=false,stepnumber=1,tabsize=8,texcl=false,xleftmargin=0,xrightmargin=0}
+\newminted{matlab}{baselinestretch=auto,firstline=1,firstnumber=1,fontfamily=tt,fontseries=auto,fontsize=auto,fontshape=auto,frame=none,framerule=0.4pt,framesep=\fboxsep,gobble=0,linenos=false,mathescape=false,numberblanklines=TRUE,numbersep=12pt,obeytabs=false,resetmargins=false,rulecolor=black,samepage=false,showspaces=false,showtabs=false,stepnumber=1,tabsize=8,texcl=false,xleftmargin=0,xrightmargin=0}
+\newminted{text}{baselinestretch=auto,firstline=1,firstnumber=1,fontfamily=tt,fontseries=auto,fontsize=auto,fontshape=auto,frame=none,framerule=0.4pt,framesep=\fboxsep,gobble=0,linenos=false,mathescape=false,numberblanklines=TRUE,numbersep=12pt,obeytabs=false,resetmargins=false,rulecolor=black,samepage=false,showspaces=false,showtabs=false,stepnumber=1,tabsize=8,texcl=false,xleftmargin=0,xrightmargin=0}
+\newminted{ocaml}{baselinestretch=auto,firstline=1,firstnumber=1,fontfamily=tt,fontseries=auto,fontsize=auto,fontshape=auto,frame=none,framerule=0.4pt,framesep=\fboxsep,gobble=0,linenos=false,mathescape=false,numberblanklines=TRUE,numbersep=12pt,obeytabs=false,resetmargins=false,rulecolor=black,samepage=false,showspaces=false,showtabs=false,stepnumber=1,tabsize=8,texcl=false,xleftmargin=0,xrightmargin=0}
+\newminted{octave}{baselinestretch=auto,firstline=1,firstnumber=1,fontfamily=tt,fontseries=auto,fontsize=auto,fontshape=auto,frame=none,framerule=0.4pt,framesep=\fboxsep,gobble=0,linenos=false,mathescape=false,numberblanklines=TRUE,numbersep=12pt,obeytabs=false,resetmargins=false,rulecolor=black,samepage=false,showspaces=false,showtabs=false,stepnumber=1,tabsize=8,texcl=false,xleftmargin=0,xrightmargin=0}
+\newminted{text}{baselinestretch=auto,firstline=1,firstnumber=1,fontfamily=tt,fontseries=auto,fontsize=auto,fontshape=auto,frame=none,framerule=0.4pt,framesep=\fboxsep,gobble=0,linenos=false,mathescape=false,numberblanklines=TRUE,numbersep=12pt,obeytabs=false,resetmargins=false,rulecolor=black,samepage=false,showspaces=false,showtabs=false,stepnumber=1,tabsize=8,texcl=false,xleftmargin=0,xrightmargin=0}
+\newminted{perl}{baselinestretch=auto,firstline=1,firstnumber=1,fontfamily=tt,fontseries=auto,fontsize=auto,fontshape=auto,frame=none,framerule=0.4pt,framesep=\fboxsep,gobble=0,linenos=false,mathescape=false,numberblanklines=TRUE,numbersep=12pt,obeytabs=false,resetmargins=false,rulecolor=black,samepage=false,showspaces=false,showtabs=false,stepnumber=1,tabsize=8,texcl=false,xleftmargin=0,xrightmargin=0}
+\newminted{text}{baselinestretch=auto,firstline=1,firstnumber=1,fontfamily=tt,fontseries=auto,fontsize=auto,fontshape=auto,frame=none,framerule=0.4pt,framesep=\fboxsep,gobble=0,linenos=false,mathescape=false,numberblanklines=TRUE,numbersep=12pt,obeytabs=false,resetmargins=false,rulecolor=black,samepage=false,showspaces=false,showtabs=false,stepnumber=1,tabsize=8,texcl=false,xleftmargin=0,xrightmargin=0}
+\newminted{python}{baselinestretch=auto,firstline=1,firstnumber=1,fontfamily=tt,fontseries=auto,fontsize=auto,fontshape=auto,frame=none,framerule=0.4pt,framesep=\fboxsep,gobble=0,linenos=false,mathescape=false,numberblanklines=TRUE,numbersep=12pt,obeytabs=false,resetmargins=false,rulecolor=black,samepage=false,showspaces=false,showtabs=false,stepnumber=1,tabsize=8,texcl=false,xleftmargin=0,xrightmargin=0}
+\newminted{text}{baselinestretch=auto,firstline=1,firstnumber=1,fontfamily=tt,fontseries=auto,fontsize=auto,fontshape=auto,frame=none,framerule=0.4pt,framesep=\fboxsep,gobble=0,linenos=false,mathescape=false,numberblanklines=TRUE,numbersep=12pt,obeytabs=false,resetmargins=false,rulecolor=black,samepage=false,showspaces=false,showtabs=false,stepnumber=1,tabsize=8,texcl=false,xleftmargin=0,xrightmargin=0}
+\newminted{ruby}{baselinestretch=auto,firstline=1,firstnumber=1,fontfamily=tt,fontseries=auto,fontsize=auto,fontshape=auto,frame=none,framerule=0.4pt,framesep=\fboxsep,gobble=0,linenos=false,mathescape=false,numberblanklines=TRUE,numbersep=12pt,obeytabs=false,resetmargins=false,rulecolor=black,samepage=false,showspaces=false,showtabs=false,stepnumber=1,tabsize=8,texcl=false,xleftmargin=0,xrightmargin=0}
+\newminted{sass}{baselinestretch=auto,firstline=1,firstnumber=1,fontfamily=tt,fontseries=auto,fontsize=auto,fontshape=auto,frame=none,framerule=0.4pt,framesep=\fboxsep,gobble=0,linenos=false,mathescape=false,numberblanklines=TRUE,numbersep=12pt,obeytabs=false,resetmargins=false,rulecolor=black,samepage=false,showspaces=false,showtabs=false,stepnumber=1,tabsize=8,texcl=false,xleftmargin=0,xrightmargin=0}
+\newminted{scheme}{baselinestretch=auto,firstline=1,firstnumber=1,fontfamily=tt,fontseries=auto,fontsize=auto,fontshape=auto,frame=none,framerule=0.4pt,framesep=\fboxsep,gobble=0,linenos=false,mathescape=false,numberblanklines=TRUE,numbersep=12pt,obeytabs=false,resetmargins=false,rulecolor=black,samepage=false,showspaces=false,showtabs=false,stepnumber=1,tabsize=8,texcl=false,xleftmargin=0,xrightmargin=0}
+\newminted{text}{baselinestretch=auto,firstline=1,firstnumber=1,fontfamily=tt,fontseries=auto,fontsize=auto,fontshape=auto,frame=none,framerule=0.4pt,framesep=\fboxsep,gobble=0,linenos=false,mathescape=false,numberblanklines=TRUE,numbersep=12pt,obeytabs=false,resetmargins=false,rulecolor=black,samepage=false,showspaces=false,showtabs=false,stepnumber=1,tabsize=8,texcl=false,xleftmargin=0,xrightmargin=0}
+\newminted{sh}{baselinestretch=auto,firstline=1,firstnumber=1,fontfamily=tt,fontseries=auto,fontsize=auto,fontshape=auto,frame=none,framerule=0.4pt,framesep=\fboxsep,gobble=0,linenos=false,mathescape=false,numberblanklines=TRUE,numbersep=12pt,obeytabs=false,resetmargins=false,rulecolor=black,samepage=false,showspaces=false,showtabs=false,stepnumber=1,tabsize=8,texcl=false,xleftmargin=0,xrightmargin=0}
+\newminted{sql}{baselinestretch=auto,firstline=1,firstnumber=1,fontfamily=tt,fontseries=auto,fontsize=auto,fontshape=auto,frame=none,framerule=0.4pt,framesep=\fboxsep,gobble=0,linenos=false,mathescape=false,numberblanklines=TRUE,numbersep=12pt,obeytabs=false,resetmargins=false,rulecolor=black,samepage=false,showspaces=false,showtabs=false,stepnumber=1,tabsize=8,texcl=false,xleftmargin=0,xrightmargin=0}
+\newminted{sqlite3}{baselinestretch=auto,firstline=1,firstnumber=1,fontfamily=tt,fontseries=auto,fontsize=auto,fontshape=auto,frame=none,framerule=0.4pt,framesep=\fboxsep,gobble=0,linenos=false,mathescape=false,numberblanklines=TRUE,numbersep=12pt,obeytabs=false,resetmargins=false,rulecolor=black,samepage=false,showspaces=false,showtabs=false,stepnumber=1,tabsize=8,texcl=false,xleftmargin=0,xrightmargin=0}
+
+#+end_example
+***** Make newmint
+#+source: make-newmint
+#+begin_src python :var x=newmint-lookup :results output
+  res = ''
+  for y in range(1,30):  
+      s = '\\newmint{'
+      s = s + x[y][1] +'}{' + x[0][2] + '=' + x[y][2]
+      for z in range(3,31):
+          if x[y][z] <> 'nil':
+              s = s + ',' + x[0][z] + '=' + str(x[y][z])
+      res = res + s + '}\n'
+  print res
+#+end_src
+
+#+results: make-newmint
+#+begin_example
+\newmint{asymptote}{baselinestretch=auto,firstline=1,firstnumber=1,fontfamily=tt,fontseries=auto,fontsize=auto,fontshape=auto,frame=none,framerule=0.4pt,framesep=\fboxsep,gobble=0,linenos=FALSE,mathescape=FALSE,numberblanklines=TRUE,numbersep=12pt,obeytabs=FALSE,resetmargins=FALSE,rulecolor=black,samepage=FALSE,showspaces=FALSE,showtabs=FALSE,stepnumber=1,tabsize=8,texcl=FALSE,xleftmargin=0,xrightmargin=0}
+\newmint{c}{baselinestretch=auto,firstline=1,firstnumber=1,fontfamily=tt,fontseries=auto,fontsize=auto,fontshape=auto,frame=none,framerule=0.4pt,framesep=\fboxsep,gobble=0,linenos=FALSE,mathescape=FALSE,numberblanklines=TRUE,numbersep=12pt,obeytabs=FALSE,resetmargins=FALSE,rulecolor=black,samepage=FALSE,showspaces=FALSE,showtabs=FALSE,stepnumber=1,tabsize=8,texcl=FALSE,xleftmargin=0,xrightmargin=0}
+\newmint{clojure}{baselinestretch=auto,firstline=1,firstnumber=1,fontfamily=tt,fontseries=auto,fontsize=auto,fontshape=auto,frame=none,framerule=0.4pt,framesep=\fboxsep,gobble=0,linenos=FALSE,mathescape=FALSE,numberblanklines=TRUE,numbersep=12pt,obeytabs=FALSE,resetmargins=FALSE,rulecolor=black,samepage=FALSE,showspaces=FALSE,showtabs=FALSE,stepnumber=1,tabsize=8,texcl=FALSE,xleftmargin=0,xrightmargin=0}
+\newmint{css}{baselinestretch=auto,firstline=1,firstnumber=1,fontfamily=tt,fontseries=auto,fontsize=auto,fontshape=auto,frame=none,framerule=0.4pt,framesep=\fboxsep,gobble=0,linenos=FALSE,mathescape=FALSE,numberblanklines=TRUE,numbersep=12pt,obeytabs=FALSE,resetmargins=FALSE,rulecolor=black,samepage=FALSE,showspaces=FALSE,showtabs=FALSE,stepnumber=1,tabsize=8,texcl=FALSE,xleftmargin=0,xrightmargin=0}
+\newmint{text}{baselinestretch=auto,firstline=1,firstnumber=1,fontfamily=tt,fontseries=auto,fontsize=auto,fontshape=auto,frame=none,framerule=0.4pt,framesep=\fboxsep,gobble=0,linenos=FALSE,mathescape=FALSE,numberblanklines=TRUE,numbersep=12pt,obeytabs=FALSE,resetmargins=FALSE,rulecolor=black,samepage=FALSE,showspaces=FALSE,showtabs=FALSE,stepnumber=1,tabsize=8,texcl=FALSE,xleftmargin=0,xrightmargin=0}
+\newmint{text}{baselinestretch=auto,firstline=1,firstnumber=1,fontfamily=tt,fontseries=auto,fontsize=auto,fontshape=auto,frame=none,framerule=0.4pt,framesep=\fboxsep,gobble=0,linenos=FALSE,mathescape=FALSE,numberblanklines=TRUE,numbersep=12pt,obeytabs=FALSE,resetmargins=FALSE,rulecolor=black,samepage=FALSE,showspaces=FALSE,showtabs=FALSE,stepnumber=1,tabsize=8,texcl=FALSE,xleftmargin=0,xrightmargin=0}
+\newmint{common-lisp}{baselinestretch=auto,firstline=1,firstnumber=1,fontfamily=tt,fontseries=auto,fontsize=auto,fontshape=auto,frame=none,framerule=0.4pt,framesep=\fboxsep,gobble=0,linenos=FALSE,mathescape=FALSE,numberblanklines=TRUE,numbersep=12pt,obeytabs=FALSE,resetmargins=FALSE,rulecolor=black,samepage=FALSE,showspaces=FALSE,showtabs=FALSE,stepnumber=1,tabsize=8,texcl=FALSE,xleftmargin=0,xrightmargin=0}
+\newmint{gnuplot}{baselinestretch=auto,firstline=1,firstnumber=1,fontfamily=tt,fontseries=auto,fontsize=auto,fontshape=auto,frame=none,framerule=0.4pt,framesep=\fboxsep,gobble=0,linenos=FALSE,mathescape=FALSE,numberblanklines=TRUE,numbersep=12pt,obeytabs=FALSE,resetmargins=FALSE,rulecolor=black,samepage=FALSE,showspaces=FALSE,showtabs=FALSE,stepnumber=1,tabsize=8,texcl=FALSE,xleftmargin=0,xrightmargin=0}
+\newmint{haskell}{baselinestretch=auto,firstline=1,firstnumber=1,fontfamily=tt,fontseries=auto,fontsize=auto,fontshape=auto,frame=none,framerule=0.4pt,framesep=\fboxsep,gobble=0,linenos=FALSE,mathescape=FALSE,numberblanklines=TRUE,numbersep=12pt,obeytabs=FALSE,resetmargins=FALSE,rulecolor=black,samepage=FALSE,showspaces=FALSE,showtabs=FALSE,stepnumber=1,tabsize=8,texcl=FALSE,xleftmargin=0,xrightmargin=0}
+\newmint{js}{baselinestretch=auto,firstline=1,firstnumber=1,fontfamily=tt,fontseries=auto,fontsize=auto,fontshape=auto,frame=none,framerule=0.4pt,framesep=\fboxsep,gobble=0,linenos=FALSE,mathescape=FALSE,numberblanklines=TRUE,numbersep=12pt,obeytabs=FALSE,resetmargins=FALSE,rulecolor=black,samepage=FALSE,showspaces=FALSE,showtabs=FALSE,stepnumber=1,tabsize=8,texcl=FALSE,xleftmargin=0,xrightmargin=0}
+\newmint{latex}{baselinestretch=auto,firstline=1,firstnumber=1,fontfamily=tt,fontseries=auto,fontsize=auto,fontshape=auto,frame=none,framerule=0.4pt,framesep=\fboxsep,gobble=0,linenos=FALSE,mathescape=FALSE,numberblanklines=TRUE,numbersep=12pt,obeytabs=FALSE,resetmargins=FALSE,rulecolor=black,samepage=FALSE,showspaces=FALSE,showtabs=FALSE,stepnumber=1,tabsize=8,texcl=FALSE,xleftmargin=0,xrightmargin=0}
+\newmint{text}{baselinestretch=auto,firstline=1,firstnumber=1,fontfamily=tt,fontseries=auto,fontsize=auto,fontshape=auto,frame=none,framerule=0.4pt,framesep=\fboxsep,gobble=0,linenos=FALSE,mathescape=FALSE,numberblanklines=TRUE,numbersep=12pt,obeytabs=FALSE,resetmargins=FALSE,rulecolor=black,samepage=FALSE,showspaces=FALSE,showtabs=FALSE,stepnumber=1,tabsize=8,texcl=FALSE,xleftmargin=0,xrightmargin=0}
+\newmint{cl}{baselinestretch=auto,firstline=1,firstnumber=1,fontfamily=tt,fontseries=auto,fontsize=auto,fontshape=auto,frame=none,framerule=0.4pt,framesep=\fboxsep,gobble=0,linenos=FALSE,mathescape=FALSE,numberblanklines=TRUE,numbersep=12pt,obeytabs=FALSE,resetmargins=FALSE,rulecolor=black,samepage=FALSE,showspaces=FALSE,showtabs=FALSE,stepnumber=1,tabsize=8,texcl=FALSE,xleftmargin=0,xrightmargin=0}
+\newmint{matlab}{baselinestretch=auto,firstline=1,firstnumber=1,fontfamily=tt,fontseries=auto,fontsize=auto,fontshape=auto,frame=none,framerule=0.4pt,framesep=\fboxsep,gobble=0,linenos=FALSE,mathescape=FALSE,numberblanklines=TRUE,numbersep=12pt,obeytabs=FALSE,resetmargins=FALSE,rulecolor=black,samepage=FALSE,showspaces=FALSE,showtabs=FALSE,stepnumber=1,tabsize=8,texcl=FALSE,xleftmargin=0,xrightmargin=0}
+\newmint{text}{baselinestretch=auto,firstline=1,firstnumber=1,fontfamily=tt,fontseries=auto,fontsize=auto,fontshape=auto,frame=none,framerule=0.4pt,framesep=\fboxsep,gobble=0,linenos=FALSE,mathescape=FALSE,numberblanklines=TRUE,numbersep=12pt,obeytabs=FALSE,resetmargins=FALSE,rulecolor=black,samepage=FALSE,showspaces=FALSE,showtabs=FALSE,stepnumber=1,tabsize=8,texcl=FALSE,xleftmargin=0,xrightmargin=0}
+\newmint{ocaml}{baselinestretch=auto,firstline=1,firstnumber=1,fontfamily=tt,fontseries=auto,fontsize=auto,fontshape=auto,frame=none,framerule=0.4pt,framesep=\fboxsep,gobble=0,linenos=FALSE,mathescape=FALSE,numberblanklines=TRUE,numbersep=12pt,obeytabs=FALSE,resetmargins=FALSE,rulecolor=black,samepage=FALSE,showspaces=FALSE,showtabs=FALSE,stepnumber=1,tabsize=8,texcl=FALSE,xleftmargin=0,xrightmargin=0}
+\newmint{octave}{baselinestretch=auto,firstline=1,firstnumber=1,fontfamily=tt,fontseries=auto,fontsize=auto,fontshape=auto,frame=none,framerule=0.4pt,framesep=\fboxsep,gobble=0,linenos=FALSE,mathescape=FALSE,numberblanklines=TRUE,numbersep=12pt,obeytabs=FALSE,resetmargins=FALSE,rulecolor=black,samepage=FALSE,showspaces=FALSE,showtabs=FALSE,stepnumber=1,tabsize=8,texcl=FALSE,xleftmargin=0,xrightmargin=0}
+\newmint{text}{baselinestretch=auto,firstline=1,firstnumber=1,fontfamily=tt,fontseries=auto,fontsize=auto,fontshape=auto,frame=none,framerule=0.4pt,framesep=\fboxsep,gobble=0,linenos=FALSE,mathescape=FALSE,numberblanklines=TRUE,numbersep=12pt,obeytabs=FALSE,resetmargins=FALSE,rulecolor=black,samepage=FALSE,showspaces=FALSE,showtabs=FALSE,stepnumber=1,tabsize=8,texcl=FALSE,xleftmargin=0,xrightmargin=0}
+\newmint{perl}{baselinestretch=auto,firstline=1,firstnumber=1,fontfamily=tt,fontseries=auto,fontsize=auto,fontshape=auto,frame=none,framerule=0.4pt,framesep=\fboxsep,gobble=0,linenos=FALSE,mathescape=FALSE,numberblanklines=TRUE,numbersep=12pt,obeytabs=FALSE,resetmargins=FALSE,rulecolor=black,samepage=FALSE,showspaces=FALSE,showtabs=FALSE,stepnumber=1,tabsize=8,texcl=FALSE,xleftmargin=0,xrightmargin=0}
+\newmint{text}{baselinestretch=auto,firstline=1,firstnumber=1,fontfamily=tt,fontseries=auto,fontsize=auto,fontshape=auto,frame=none,framerule=0.4pt,framesep=\fboxsep,gobble=0,linenos=FALSE,mathescape=FALSE,numberblanklines=TRUE,numbersep=12pt,obeytabs=FALSE,resetmargins=FALSE,rulecolor=black,samepage=FALSE,showspaces=FALSE,showtabs=FALSE,stepnumber=1,tabsize=8,texcl=FALSE,xleftmargin=0,xrightmargin=0}
+\newmint{python}{baselinestretch=auto,firstline=1,firstnumber=1,fontfamily=tt,fontseries=auto,fontsize=auto,fontshape=auto,frame=none,framerule=0.4pt,framesep=\fboxsep,gobble=0,linenos=FALSE,mathescape=FALSE,numberblanklines=TRUE,numbersep=12pt,obeytabs=FALSE,resetmargins=FALSE,rulecolor=black,samepage=FALSE,showspaces=FALSE,showtabs=FALSE,stepnumber=1,tabsize=8,texcl=FALSE,xleftmargin=0,xrightmargin=0}
+\newmint{text}{baselinestretch=auto,firstline=1,firstnumber=1,fontfamily=tt,fontseries=auto,fontsize=auto,fontshape=auto,frame=none,framerule=0.4pt,framesep=\fboxsep,gobble=0,linenos=FALSE,mathescape=FALSE,numberblanklines=TRUE,numbersep=12pt,obeytabs=FALSE,resetmargins=FALSE,rulecolor=black,samepage=FALSE,showspaces=FALSE,showtabs=FALSE,stepnumber=1,tabsize=8,texcl=FALSE,xleftmargin=0,xrightmargin=0}
+\newmint{ruby}{baselinestretch=auto,firstline=1,firstnumber=1,fontfamily=tt,fontseries=auto,fontsize=auto,fontshape=auto,frame=none,framerule=0.4pt,framesep=\fboxsep,gobble=0,linenos=FALSE,mathescape=FALSE,numberblanklines=TRUE,numbersep=12pt,obeytabs=FALSE,resetmargins=FALSE,rulecolor=black,samepage=FALSE,showspaces=FALSE,showtabs=FALSE,stepnumber=1,tabsize=8,texcl=FALSE,xleftmargin=0,xrightmargin=0}
+\newmint{sass}{baselinestretch=auto,firstline=1,firstnumber=1,fontfamily=tt,fontseries=auto,fontsize=auto,fontshape=auto,frame=none,framerule=0.4pt,framesep=\fboxsep,gobble=0,linenos=FALSE,mathescape=FALSE,numberblanklines=TRUE,numbersep=12pt,obeytabs=FALSE,resetmargins=FALSE,rulecolor=black,samepage=FALSE,showspaces=FALSE,showtabs=FALSE,stepnumber=1,tabsize=8,texcl=FALSE,xleftmargin=0,xrightmargin=0}
+\newmint{scheme}{baselinestretch=auto,firstline=1,firstnumber=1,fontfamily=tt,fontseries=auto,fontsize=auto,fontshape=auto,frame=none,framerule=0.4pt,framesep=\fboxsep,gobble=0,linenos=FALSE,mathescape=FALSE,numberblanklines=TRUE,numbersep=12pt,obeytabs=FALSE,resetmargins=FALSE,rulecolor=black,samepage=FALSE,showspaces=FALSE,showtabs=FALSE,stepnumber=1,tabsize=8,texcl=FALSE,xleftmargin=0,xrightmargin=0}
+\newmint{text}{baselinestretch=auto,firstline=1,firstnumber=1,fontfamily=tt,fontseries=auto,fontsize=auto,fontshape=auto,frame=none,framerule=0.4pt,framesep=\fboxsep,gobble=0,linenos=FALSE,mathescape=FALSE,numberblanklines=TRUE,numbersep=12pt,obeytabs=FALSE,resetmargins=FALSE,rulecolor=black,samepage=FALSE,showspaces=FALSE,showtabs=FALSE,stepnumber=1,tabsize=8,texcl=FALSE,xleftmargin=0,xrightmargin=0}
+\newmint{sh}{baselinestretch=auto,firstline=1,firstnumber=1,fontfamily=tt,fontseries=auto,fontsize=auto,fontshape=auto,frame=none,framerule=0.4pt,framesep=\fboxsep,gobble=0,linenos=FALSE,mathescape=FALSE,numberblanklines=TRUE,numbersep=12pt,obeytabs=FALSE,resetmargins=FALSE,rulecolor=black,samepage=FALSE,showspaces=FALSE,showtabs=FALSE,stepnumber=1,tabsize=8,texcl=FALSE,xleftmargin=0,xrightmargin=0}
+\newmint{sql}{baselinestretch=auto,firstline=1,firstnumber=1,fontfamily=tt,fontseries=auto,fontsize=auto,fontshape=auto,frame=none,framerule=0.4pt,framesep=\fboxsep,gobble=0,linenos=FALSE,mathescape=FALSE,numberblanklines=TRUE,numbersep=12pt,obeytabs=FALSE,resetmargins=FALSE,rulecolor=black,samepage=FALSE,showspaces=FALSE,showtabs=FALSE,stepnumber=1,tabsize=8,texcl=FALSE,xleftmargin=0,xrightmargin=0}
+\newmint{sqlite3}{baselinestretch=auto,firstline=1,firstnumber=1,fontfamily=tt,fontseries=auto,fontsize=auto,fontshape=auto,frame=none,framerule=0.4pt,framesep=\fboxsep,gobble=0,linenos=FALSE,mathescape=FALSE,numberblanklines=TRUE,numbersep=12pt,obeytabs=FALSE,resetmargins=FALSE,rulecolor=black,samepage=FALSE,showspaces=FALSE,showtabs=FALSE,stepnumber=1,tabsize=8,texcl=FALSE,xleftmargin=0,xrightmargin=0}
+
+#+end_example
 
 *** GANTT charts
 Eric Fraga wrote a GANTT chart constructor, powered by an [[latex:proglang][Org-mode]]
