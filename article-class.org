@@ -2245,11 +2245,27 @@ Use the [[latex:package][org-special-blocks]] package to wrap a listings environ
 around a source code block to get a floating listing in the LaTeX
 document.
 
+You'll need to load [[latex:package][org-special-blocks]].  This code can go in .emacs.
+
+#+source: special-blocks
+#+begin_src emacs-lisp :exports code
+  (require 'org-special-blocks)
+#+end_src
+
+This might put a box around listings on HTML export.
+
+#+source: html-listings
+#+begin_src org :exports code
+  #+STYLE: <style>.listing {margin: 1em; padding: 1em; border: 1px solid black}
+#+end_src
+
+Then, use a construct like this to wrap the source block in a [[latex:progstruct][\listing]]
+environment.
+
 #+source: float-listing
 #+begin_src org :exports code
-  
   ,#+BEGIN_LISTING
-  , ...
+  , <source block>
   ,#+END_LISTING
 #+end_src
 
@@ -2390,10 +2406,13 @@ This source block is used to put the LaTeX macros into the class file.
 #+end_src
 
 **** Notes                                                         :noexport:
-***** TODO [2/3] Per language configuration in an Org-mode table
+***** DONE [3/3] Per language configuration in an Org-mode table
+      :LOGBOOK:
+      - State "DONE"       from "TODO"       [2010-11-13 Sat 16:28]
+      :END:
       - [X] Write script to output \newminted{} calls
       - [X] Configure path to org-article preamble
-      - [ ] Configure path to .tex file that can be used with \input
+      - [X] Configure path to .tex file that can be used with \input
 ***** TODO [2/3] Define little \newmints using an Org-mode table
       - [X] One for each language
       - [ ] Can be inserted with link syntax
