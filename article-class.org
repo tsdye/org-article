@@ -2253,17 +2253,153 @@ document.
   ,#+END_LISTING
 #+end_src
 
+**** Newmint lookup table
+This table holds default minted values for each of the languages
+supported by Org-mode.  You can change how minted typesets source code
+snippets in any language by modifying the appropriate cell in the table.
+
+#+tblname: newmint-lookup
+| Org          | Minted      | baselinestretch | bgcolor | firstline | firstnumber | fontfamily | fontseries | fontsize | fontshape | formatcom | frame | framerule | framesep | gobble | lastline | linenos | mathescape | numberblanklines | numbersep | obeytabs | resetmargins | rulecolor | samepage | showspaces | showtabs | stepnumber | tabsize | texcl | xleftmargin | xrightmargin |
+| asymptote    | asymptote   | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
+| C            | c           | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
+| clojure      | clojure     | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
+| css          | css         | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
+| ditaa        | text        | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
+| dot          | text        | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
+| emacs-lisp   | common-lisp | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
+| gnuplot      | gnuplot     | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
+| haskell      | haskell     | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
+| js           | js          | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
+| latex        | latex       | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
+| ledger       | text        | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
+| lisp         | cl          | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
+| matlab       | matlab      | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
+| mscgen       | text        | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
+| ocaml        | ocaml       | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
+| octave       | octave      | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
+| oz (contrib) | text        | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
+| perl         | perl        | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
+| plantuml     | text        | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
+| python       | python      | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
+| R            | text        | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
+| ruby         | ruby        | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
+| sass         | sass        | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
+| scheme       | scheme      | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
+| screen       | text        | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
+| sh           | sh          | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
+| sql          | sql         | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
+| sqlite       | sqlite3     | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
+
+**** Newminted lookup table
+This table holds default minted values for each of the languages
+supported by Org-mode.  You can change how minted typesets source code
+blocks in any language by modifying the appropriate cell in the table.
+
+#+tblname: newminted-lookup
+| Org          | Minted      | baselinestretch | bgcolor | firstline | firstnumber | fontfamily | fontseries | fontsize | fontshape | formatcom | frame | framerule | framesep | gobble | lastline | linenos | mathescape | numberblanklines | numbersep | obeytabs | resetmargins | rulecolor | samepage | showspaces | showtabs | stepnumber | tabsize | texcl | xleftmargin | xrightmargin |
+| asymptote    | asymptote   | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
+| C            | c           | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
+| clojure      | clojure     | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
+| css          | css         | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
+| ditaa        | text        | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
+| dot          | text        | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
+| emacs-lisp   | common-lisp | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
+| gnuplot      | gnuplot     | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
+| haskell      | haskell     | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
+| js           | js          | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
+| latex        | latex       | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
+| ledger       | text        | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
+| lisp         | cl          | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
+| matlab       | matlab      | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
+| mscgen       | text        | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
+| ocaml        | ocaml       | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
+| octave       | octave      | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
+| oz (contrib) | text        | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
+| perl         | perl        | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
+| plantuml     | text        | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
+| python       | python      | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
+| R            | text        | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
+| ruby         | ruby        | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
+| sass         | sass        | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
+| scheme       | scheme      | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
+| screen       | text        | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
+| sh           | sh          | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
+| sql          | sql         | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
+| sqlite       | sqlite3     | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
+
+**** Make newminted
+
+This hacky [[latex:proglang][python]] source code block transforms the [[latex:proglang][Org-mode]] table into
+LaTeX macros for the class file.
+
+#+source: make-newminted(x=newminted-lookup)
+#+begin_src python :results output raw
+  res = ''
+  for y in range(1,30):  
+      s = '\\newminted{'
+      s = s + x[y][1] +'}{' + x[0][2] + '=' + x[y][2]
+      for z in range(3,31):
+          if x[y][z] <> 'nil':
+              s = s + ',' + x[0][z] + '=' + str(x[y][z])
+      res = res + s + '}\n\n'
+  print res
+#+end_src
+
+This source block is used to put the LaTeX macros into the class file.
+
+#+source: new-minted-code
+#+begin_src latex :noweb yes
+<<make-newminted(x=newminted-lookup)>>  
+#+end_src
+
+**** Make newmint
+
+This hacky [[latex:proglang][python]] source code block transforms the [[latex:proglang][Org-mode]] table into
+LaTeX macros for the class file.
+
+#+source: make-newmint(x=newmint-lookup)
+#+begin_src python :results output raw
+  res = ''
+  for y in range(1,30):  
+      s = '\\newmint{'
+      s = s + x[y][1] +'}{' + x[0][2] + '=' + x[y][2]
+      for z in range(3,31):
+          if x[y][z] <> 'nil':
+              s = s + ',' + x[0][z] + '=' + str(x[y][z])
+      res = res + s + '}\n\n'
+  print res
+#+end_src
+
+This source block is used to put the LaTeX macros into the class file.
+
+#+source: make-newmint-code
+#+begin_src latex :noweb yes
+  <<make-newmint(x=newmint-lookup)>>
+#+end_src
+
+**** Configuration file
+     :PROPERTIES:
+     :ID:       3C2E108A-B3A9-4537-89B5-17D26117B1DC
+     :END:
+
+#+source: minted-cfg
+#+begin_src latex :tangle minted.cfg :noweb yes
+  <<make-newmint(x=newmint-lookup)>>
+  
+  <<make-newminted(x=newminted-lookup)>>  
+#+end_src
+
 **** Notes                                                         :noexport:
-***** TODO [1/3] Per language configuration in an Org-mode table
+***** TODO [2/3] Per language configuration in an Org-mode table
       - [X] Write script to output \newminted{} calls
-      - [ ] Configure path to org-article preamble
+      - [X] Configure path to org-article preamble
       - [ ] Configure path to .tex file that can be used with \input
-***** TODO [2/4] Define little \newmints using an Org-mode table
+***** TODO [2/3] Define little \newmints using an Org-mode table
       - [X] One for each language
       - [ ] Can be inserted with link syntax
       - [X] First two columns of table have Org-mode language
         name/minted language name
-      - [ ] \newmint[#1]{#2}{#3 ...}
+
 
 ***** Concordance
 | Org          | Minted          |
@@ -2297,113 +2433,6 @@ document.
 | sh           | bash, sh, ksh   |
 | sql          | sql             |
 | sqlite       | sqlite3         |
-
-***** Newmint lookup table
-#+tblname: newmint-lookup
-| Org          | Minted      | baselinestretch | bgcolor | firstline | firstnumber | fontfamily | fontseries | fontsize | fontshape | formatcom | frame | framerule | framesep | gobble | lastline | linenos | mathescape | numberblanklines | numbersep | obeytabs | resetmargins | rulecolor | samepage | showspaces | showtabs | stepnumber | tabsize | texcl | xleftmargin | xrightmargin |
-| asymptote    | asymptote   | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
-| C            | c           | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
-| clojure      | clojure     | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
-| css          | css         | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
-| ditaa        | text        | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
-| dot          | text        | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
-| emacs-lisp   | common-lisp | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
-| gnuplot      | gnuplot     | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
-| haskell      | haskell     | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
-| js           | js          | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
-| latex        | latex       | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
-| ledger       | text        | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
-| lisp         | cl          | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
-| matlab       | matlab      | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
-| mscgen       | text        | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
-| ocaml        | ocaml       | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
-| octave       | octave      | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
-| oz (contrib) | text        | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
-| perl         | perl        | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
-| plantuml     | text        | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
-| python       | python      | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
-| R            | text        | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
-| ruby         | ruby        | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
-| sass         | sass        | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
-| scheme       | scheme      | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
-| screen       | text        | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
-| sh           | sh          | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
-| sql          | sql         | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
-| sqlite       | sqlite3     | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | black     | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE |           0 |            0 |
-
-
-***** Newminted lookup table
-#+tblname: newminted-lookup
-| Org          | Minted      | baselinestretch | bgcolor | firstline | firstnumber | fontfamily | fontseries | fontsize | fontshape | formatcom | frame | framerule | framesep | gobble | lastline | linenos | mathescape | numberblanklines | numbersep | obeytabs | resetmargins | rulecolor | samepage | showspaces | showtabs | stepnumber | tabsize | texcl | xleftmargin | xrightmargin |
-| asymptote    | asymptote   | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
-| C            | c           | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
-| clojure      | clojure     | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
-| css          | css         | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
-| ditaa        | text        | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
-| dot          | text        | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
-| emacs-lisp   | common-lisp | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
-| gnuplot      | gnuplot     | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
-| haskell      | haskell     | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
-| js           | js          | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
-| latex        | latex       | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
-| ledger       | text        | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
-| lisp         | cl          | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
-| matlab       | matlab      | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
-| mscgen       | text        | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
-| ocaml        | ocaml       | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
-| octave       | octave      | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
-| oz (contrib) | text        | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
-| perl         | perl        | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
-| plantuml     | text        | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
-| python       | python      | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
-| R            | text        | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
-| ruby         | ruby        | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
-| sass         | sass        | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
-| scheme       | scheme      | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
-| screen       | text        | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
-| sh           | sh          | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
-| sql          | sql         | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
-| sqlite       | sqlite3     | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | black     | false    | false      | false    |          1 |       8 | false |           0 |            0 |
-
-***** Make newminted
-
-#+source: make-newminted(x=newminted-lookup)
-#+begin_src python :results output raw
-  res = ''
-  for y in range(1,30):  
-      s = '\\newminted{'
-      s = s + x[y][1] +'}{' + x[0][2] + '=' + x[y][2]
-      for z in range(3,31):
-          if x[y][z] <> 'nil':
-              s = s + ',' + x[0][z] + '=' + str(x[y][z])
-      res = res + s + '}\n\n'
-  print res
-#+end_src
-
-
-#+source: new-minted-code
-#+begin_src latex :noweb yes
-<<make-newminted(x=newminted-lookup)>>  
-#+end_src
-
-***** Make newmint
-#+source: make-newmint(x=newmint-lookup)
-#+begin_src python :results output raw
-  res = ''
-  for y in range(1,30):  
-      s = '\\newmint{'
-      s = s + x[y][1] +'}{' + x[0][2] + '=' + x[y][2]
-      for z in range(3,31):
-          if x[y][z] <> 'nil':
-              s = s + ',' + x[0][z] + '=' + str(x[y][z])
-      res = res + s + '}\n\n'
-  print res
-#+end_src
-
-#+source: make-newmint-code
-#+begin_src latex :noweb yes
-  <<make-newmint(x=newmint-lookup)>>
-#+end_src
 
 
 *** GANTT charts
