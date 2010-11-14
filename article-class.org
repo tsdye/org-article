@@ -2256,7 +2256,7 @@ This might put a box around listings on HTML export.
 
 #+source: html-listings
 #+begin_src org :exports code
-  #+STYLE: <style>.listing {margin: 1em; padding: 1em; border: 1px solid black}
+  #+STYLE: <style>.listing {margin: 1em; padding: 1em; border: 1px solid black}</style>
 #+end_src
 
 Then, use a construct like this to wrap the source block in a [[latex:progstruct][\listing]]
