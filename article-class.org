@@ -2035,7 +2035,7 @@ To use minted to typeset source code blocks, add the following option.
 
 Minted defines styles, which are color schemes used in semantic markup
 of code.  Minted styles are accessible with a key=value interface with
-the option [[latex:progstruct][mintedstyle]].  
+the option [[latex:progstruct][mintedstyle]] (fig. \ref{listing:latex}).  
 
 #+source: org-buffer-mintedstyle
 #+begin_src org :exports code
@@ -2061,7 +2061,7 @@ The available options for <style> are:
    - friendly
    - native
 
-
+#+BEGIN_listing
 #+source: pgf-option-mintedstyle
 #+begin_src latex :exports code
   \pgfkeys{ 
@@ -2085,6 +2085,8 @@ The available options for <style> are:
     mintedstyle/native/.code={\AtBeginDocument{\usemintedstyle{native}}}
   } 
 #+end_src
+#+LATEX: \caption{A LaTeX listing.}\label{listing:latex}
+#+END_listing
 
 #+source: option-minted
 #+begin_src latex :exports code
@@ -2106,6 +2108,7 @@ document.
 
 You'll need to load [[latex:package][org-special-blocks]].  This code can go in .emacs.
 
+
 #+source: special-blocks
 #+begin_src emacs-lisp :exports code :results silent
   (require 'org-special-blocks)
@@ -2118,12 +2121,14 @@ This might put a box around listings on HTML export.
 
 
 Then, use a construct like this to wrap the source block in a [[latex:progstruct][listing]]
-environment.
+environment.  Typically, you will want to include a figure caption and
+a label for cross referencing.  This can be done with a [[latex:progstruct][#+LaTeX:]] line.
 
 
- : \#+BEGIN_LISTING
+ : \#+BEGIN_listing
  :  <source block>
- : \#+END_LISTING
+ : #+LATEX: \caption{Source block listing.}\ref{listing:source_block}
+ : \#+END_listing
 
 **** Markup code snippets
 The class creates macros for marking up code snippets, using the
