@@ -120,7 +120,9 @@ sense, the only reason to restrict the number of headings specified in
 [[latex:progstruct][org-export-latex-classes]] would be to constrain the options available
 to the author of the document.  Thus, [[latex:classfile][Org-article]] defines
 headings to the subparagraph level, which is the maximum defined by LaTeX.
+
 #+begin_src emacs-lisp :exports code
+  (require 'org-latex)
   (setq org-export-latex-listings t)
   (add-to-list 'org-export-latex-packages-alist
                '(("AUTO" "inputenc" t)))
@@ -142,6 +144,7 @@ and it includes packages that you don't want always loaded then
 the following setup should work.
 
 #+begin_src emacs-lisp :exports code
+  (require 'org-latex)
   (setq org-export-latex-listings t)
   (add-to-list 'org-export-latex-classes
                '("org-article"
