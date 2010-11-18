@@ -15,7 +15,7 @@
 #+XSLT: 
 #+BABEL: :exports code
 #+LaTeX_CLASS: org-article
-#+LaTeX_CLASS_OPTIONS: [koma,letterpaper,utopia,11pt,minted,mintedstyle=emacs,microtype,paralist,colorlinks=true,urlcolor=blue,secnums,gantt]
+#+LaTeX_CLASS_OPTIONS: [koma,letterpaper,fontset=utopia,11pt,minted,mintedstyle=emacs,microtype,paralist,colorlinks=true,urlcolor=blue,secnum=section,gantt]
 #+LATEX_HEADER: \usepackage[AUTO]{inputenc}
 #+STYLE: <style>.listing {margin: 1em; padding: 1em; border: 1px solid black}</style>
 
@@ -279,7 +279,7 @@ size of the font.
 #+begin_src org :exports code
   ,#+OPTIONS:   H:5 num:t toc:t \n:nil @:t ::t |:t ^:nil -:t f:t *:t <:t
   ,#+LaTeX_CLASS: org-article
-  ,#+LaTeX_CLASS_OPTIONS: [koma,letterpaper,utopia,11pt,listings-es,microtype,paralist,colorlinks=true,urlcolor=blue,secnums]
+  ,#+LaTeX_CLASS_OPTIONS: [koma,letterpaper,utopia,11pt,listings-es,microtype,paralist,colorlinks=true,urlcolor=blue,secnum=section]
 #+end_src
 
 * The class file
@@ -375,17 +375,18 @@ don't have to be declared here.
   <<option-hyperref>>
   
   % Font options
-  <<option-times>>
-  <<option-garamond>>
-  <<option-palatino>>
-  <<option-utopia>>
-  <<option-charter>>
+  <<pgf-option-fontset>>
+  <<pgf-option-times>>
+  <<pgf-option-garamond>>
+  <<pgf-option-palatino>>
+  <<pgf-option-utopia>>
+  <<pgf-option-charter>>
   
   % Base class options
   <<option-koma>>
   <<option-article>>
-  <<option-tocdepth>>
-  <<option-secnum>>
+  <<pgf-option-tocdepth>>
+  <<pgf-option-secnum>>
   
   % Other package options
   <<option-microtype>>
@@ -397,14 +398,14 @@ don't have to be declared here.
   <<pgf-option-mintedstyle>>
   %  <<option-color>>
   <<option-gantt>>
-
+  
   % Base class
   <<pass-to-koma>>
   <<pass-to-article>>  
-
+  
   % Pass options to packages
   <<options-to-hyperref>>
-
+  
   % End of declaration of options part
 #+end_src
 
@@ -471,13 +472,6 @@ package-specific code can be kept together in [[latex-packages][LaTeX packages]]
   <<load-color>>
   <<load-minted>>
   <<load-gantt>>
-   
-  % Font packages 
-  <<load-times>>
-  <<load-garamond>>
-  <<load-palatino>>  
-  <<load-charter>>  
-  <<load-utopia>>  
 
   % Hyperref asks to be loaded last
   <<load-hyperref>>  
@@ -759,20 +753,19 @@ exported as headings, rather than lists) and a command to add some
 vertical space.  Neither of these additions to the =\tableofcontents=
 command is especially desireable.  It is often the case that one wants
 the table of contents depth to differ from the depth to which sections
-are numbered.  In the LaTeX world, the space between the end of one
+are numbered.  Also, in the LaTeX world, the space between the end of one
 element and the start of another is something that is specified within
-a class file, rather than within the document itself.  Formatting with
-the class style exclusively can give the finished document a pleasing
+a class or style file, rather than within the document itself.  Formatting with
+the class or style file exclusively can give the finished document a pleasing
 stylistic uniformity that is difficult to achieve in an ad hoc way.
 Fortunately, the LaTeX exporter is coded in such a way that it is
 possible for the user to alter this behavior relatively easily.
 
-[[latex:classfile][Org-article]] makes it possible to set the depth of headings that
-appear in the table of contents independent of the level to which
-section headings are numbered.  This mechanism will only work if the default behavior of the LaTeX
-exporter is changed.  The following bit of [[latex:proglang][Emacs
-Lisp]] code can be
-placed in =.emacs=:
+[[latex:classfile][Org-article]] makes it possible to set the depth of headings that appear
+in the table of contents independent of the level to which section
+headings are numbered.  This mechanism will only work if the default
+behavior of the LaTeX exporter is changed.  The following bit of [[latex:proglang][Emacs
+Lisp]] code can be placed in =.emacs=:
 
 #+source: format-toc
 #+begin_src emacs-lisp :exports code
@@ -782,24 +775,37 @@ placed in =.emacs=:
               depth)))
   (setq org-export-latex-format-toc-function 'org-export-latex-format-toc-org-article)
 #+end_src
+
 This code uses the depth to which [[latex:proglang][Org-mode]] headlines are exported to
 sections, rather than lists, as the default level to which sections
 are numbered.  This is fine for many applications, but it is possible
 to control this variable separately, as [[section-numbering][shown below]].
 
-Three choices are available in [[latex:classfile][Org-article]]: sections,
-subsections, and subsubsections.  It would be possible to create other
-choices, but it is generally the case that one, two, or three heading
-levels are sufficient for the table of contents.  More levels are
-rarely seen and are perhaps not too desireable.
+The table of contents depth is set with the [[latex:progstruct][tocdepth]] key.  The
+recognized values of =<section>= are =section=, =subsection=,
+=subsubsection=, =paragraph=, and =subparagraph=.  These are the
+standard LaTeX section names available to articles.
 
 #+source: toc-depth-text-block
 #+begin_src org :exports code
-  ,#+LaTeX_CLASS_OPTIONS: [tocdepths,tocdepthss,tocdepthsss]
+  ,#+LaTeX_CLASS_OPTIONS: [tocdepth=<section>]
+#+end_src
+
+#+source: pgf-option-tocdepth
+#+begin_src latex :exports code
+  \pgfkeys{ 
+    /ORGART/.cd, 
+    tocdepth/.is choice,
+    tocdepth/section/.code={\AtBeginDocument{\setcounter{tocdepth}{1}}},
+    tocdepth/subsection/.code={\AtBeginDocument{\setcounter{tocdepth}{2}}},
+    tocdepth/subsubsection/.code={\AtBeginDocument{\setcounter{tocdepth}{3}}},
+    tocdepth/paragraph/.code={\AtBeginDocument{\setcounter{tocdepth}{4}}},
+    tocdepth/subparagraph/.code={\AtBeginDocument{\setcounter{tocdepth}{5}}}
+  } 
 #+end_src
 
 #+source: option-tocdepth
-#+begin_src latex :exports code
+#+begin_src latex :exports none
   \DeclareOption{tocdepths}{\AtBeginDocument{\setcounter{tocdepth}{1}}}
   \DeclareOption{tocdepthss}{\AtBeginDocument{\setcounter{tocdepth}{2}}}
   \DeclareOption{tocdepthsss}{\AtBeginDocument{\setcounter{tocdepth}{3}}}
@@ -809,7 +815,9 @@ rarely seen and are perhaps not too desireable.
 # <<section-numbering>>
 
 It is possible to set the level to which sections will be numbered
-with [[latex:classfile][Org-article]].  
+with [[latex:classfile][Org-article]].  Sections below this level will have unnumbered
+headings.  This requires that the default behavior of the [[latex:proglang][Org-mode]]
+LaTeX exporter be modified, as follows.
 
 #+source: format-toc-for-secnum
 #+begin_src emacs-lisp :exports code
@@ -820,12 +828,28 @@ with [[latex:classfile][Org-article]].
   (setq org-export-latex-format-toc-function 'org-export-latex-format-toc-org-article-sec-num)
 #+end_src
 
-Five choices are available in [[latex:classfile][Org-article]]: sections,
-subsections, subsubsections, paragraphs, and subparagraphs.
+Section numbering is controlled with the =secnum= key.  [[latex:classfile][Org-article]]
+recognizes the following values of =<section>: =none= to inhibit
+section numbering altogether; =section=, =subsection=;
+=subsubsection=; =paragraph=; and =subparagraph=.
 
 #+source: sec-number-text-block
 #+begin_src org :exports code
-  ,#+LaTeX_CLASS_OPTIONS: [secnums,secnumss,secnumsss,secnump,secnumsp]
+  ,#+LaTeX_CLASS_OPTIONS: [secnum=<section>]
+#+end_src
+
+#+source: pgf-option-secnum
+#+begin_src latex :exports code
+  \pgfkeys{ 
+    /ORGART/.cd, 
+    secnum/.is choice,
+    secnum/none/.code={\AtBeginDocument{\setcounter{secnumdepth}{0}}},
+    secnum/section/.code={\AtBeginDocument{\setcounter{secnumdepth}{1}}},
+    secnum/subsection/.code={\AtBeginDocument{\setcounter{secnumdepth}{2}}},
+    secnum/subsubsection/.code={\AtBeginDocument{\setcounter{secnumdepth}{3}}},
+    secnum/paragraph/.code={\AtBeginDocument{\setcounter{secnumdepth}{4}}},
+    secnum/subparagraph/.code={\AtBeginDocument{\setcounter{secnumdepth}{5}}}
+  } 
 #+end_src
 
 #+source: option-secnum
@@ -1410,11 +1434,11 @@ option is provided to not load it.
 #+end_src
 
 Isn't loaded if Times, Charter, Utopia, or Garamond are loaded.  These
-use the[[latex:package][mathdesign]] package, which apparently supersedes [[latex:package][amssymb]].
+use the [[latex:package][mathdesign]] package, which apparently supersedes [[latex:package][amssymb]].
 
 #+source: load-amssymb
 #+begin_src latex :exports code
-  \ifthenelse{\boolean{ORGART@noamssymb}\or\boolean{ORGART@utopia}\or\boolean{ORGART@charter}\or\boolean{ORGART@garamond}\or\boolean{ORGART@times}}
+  \ifthenelse{\boolean{ORGART@noamssymb}\or\equal{fontset}{utopia}\or\equal{fontset}{charter}\or\equal{fontset}{garamond}\or\equal{fontset}{times}}
   {}
   {\RequirePackage{amssymb}}
 #+end_src
@@ -1692,9 +1716,18 @@ Options do not include =debug=.
 LaTeX documents might need three text fonts, one for the serif
 typeface used for text, the sans-serif typeface often used for heads
 and sub-heads, and the monospace typewriter typeface typically used to
-set code examples and the like.  Each of the following options
-specifies all three of the fonts, but takes its name after the serif
-font used to set text.
+set code examples and the like.  [[latex:classfile][Org-article]] offers a =fontset= key
+that can be used to specify sets of all three fonts.  The fonts in
+each set have been chosen to look good with one another.  Each set
+takes its name after the serif font in the set.
+
+#+source: pgf-option-fontset
+#+begin_src latex :exports code
+  \pgfkeys{ 
+    /ORGART/.cd, 
+    fontset/.is choice,
+  } 
+#+end_src
 
 *** Times
 # <<times-font>>
@@ -1709,16 +1742,30 @@ distribution.
 [[http://en.wikipedia.org/wiki/Times_Roman][Times New Roman]] was designed by [[http://en.wikipedia.org/wiki/Stanley_Morison][Stanley Morison]] for /The Times/ of
 London during a redesign of the newspaper prompted, in part, by
 Morison's criticism of its typography in 1929.  [[http://en.wikipedia.org/wiki/Helvetica][Helvetica]] was
-developed in 1957 by [[http://en.wikipedia.org/wiki/Max_Miedinger][Max Miedinger]].  [[http://en.wikipedia.org/wiki/Courier_(typeface)][Courier]] was designed by Howard
-Kettler in 1955 for use in IBM typewriters.
+developed in 1957 by [[http://en.wikipedia.org/wiki/Max_Miedinger][Max Miedinger]].  Helvetica looks better with Times
+if it is set slightly smaller than the serif font.  [[http://en.wikipedia.org/wiki/Courier_(typeface)][Courier]] was
+designed by Howard Kettler in 1955 for use in IBM typewriters.
 
 #+source: org-buffer-times
 #+begin_src org :exports code
-  #+LaTeX_CLASS_OPTIONS: [times]
+  #+LaTeX_CLASS_OPTIONS: [fontset=times]
+#+end_src
+
+#+source: pgf-option-times
+#+begin_src latex :exports code
+  \pgfkeys{
+    /ORGART/.cd,
+    fontset/times/.code={\AtBeginDocument{\ifpdf
+        \RequirePackage[T1]{fontenc}
+        \RequirePackage{mathptmx} 
+        \RequirePackage[scaled=.90]{helvet} 
+        \RequirePackage{courier}
+        \setboolean{ORGART@noamssymb}{true}
+        \fi}}}
 #+end_src
 
 #+source: option-times
-#+begin_src latex :exports code
+#+begin_src latex :exports none
   \newboolean{ORGART@times}
   \DeclareOption{times}{\setboolean{ORGART@times}{true}}
 #+end_src
@@ -1727,7 +1774,7 @@ Helvetica looks better if it is set slightly smaller than the serif
 font.
 
 #+source: load-times
-#+begin_src latex :exports code
+#+begin_src latex :exports none
   \ifthenelse{\boolean{ORGART@times}}
   {%
     \ifpdf
@@ -1744,26 +1791,40 @@ font.
 
 [[http://en.wikipedia.org/wiki/Garamond][Garamond]] refers to a group of old-style serif typefaces and is named
 after the sixteenth-century type designer, Claude Garamond.  It is an
-elegant typeface.  The sans-serif font is [[http://en.wikipedia.org/wiki/Bitstream_Vera][Bera]], an adaptation of a font
+elegant typeface.  Garamond requires a bit more leading than normal.
+The sans-serif font is [[http://en.wikipedia.org/wiki/Bitstream_Vera][Bera]], an adaptation of a font
 originally named Vera.  It was designed by Jim Lyles.  The typewriter
 font is [[http://en.wikipedia.org/wiki/Inconsolata][Inconsolata]], which was created by Raph Levien and is based on Vera.
 
 
 #+source: org-buffer-garamond
 #+begin_src org :exports code
-  #+LaTeX_CLASS_OPTIONS: [garamond]
+  #+LaTeX_CLASS_OPTIONS: [fontset=garamond]
 #+end_src
  
-#+source: option-garamond
+#+source: pgf-option-garamond
 #+begin_src latex :exports code
+  \pgfkeys{
+    /ORGART/.cd,
+    fontset/garamond/.code={\AtBeginDocument{\ifpdf
+        \RequirePackage[T1]{fontenc} 
+        \RequirePackage[urw-garamond]{mathdesign}
+        \RequirePackage[scaled]{berasans} 
+        \RequirePackage{inconsolata} % tt
+        \linespread{1.0609}
+        \setboolean{ORGART@noamssymb}{true}
+        \fi}}}
+#+end_src
+
+#+source: option-garamond
+#+begin_src latex :exports none
   \newboolean{ORGART@garamond}
   \DeclareOption{garamond}{\setboolean{ORGART@garamond}{true}}
 #+end_src
 
-Garamond requires a bit more leading than normal.
 
 #+source: load-garamond
-#+begin_src latex :exports code
+#+begin_src latex :exports none
   \ifthenelse{\boolean{ORGART@garamond}}
   {%
     \ifpdf
@@ -1780,25 +1841,37 @@ Garamond requires a bit more leading than normal.
 # <<palatino-font>>
 
 The beautiful, old-style serif font, [[http://en.wikipedia.org/wiki/Palatino][Palatino]], was designed by [[http://en.wikipedia.org/wiki/Herman_Zapf][Herman
-Zapf]].  It is somewhat heavier and easier to read than [[garamond-font][Garamond]].  It is
-paired here with Helvetica and Courier, as is [[times-font][Times]],
-for which it is an alternative.
+Zapf]].  It is somewhat heavier and easier to read than [[garamond-font][Garamond]].
+Palatino gets a bit more leading than normal.  It is paired here with
+Helvetica and Courier, as is [[times-font][Times]], for which it is an alternative.
 
 #+source: org-buffer-palatino
 #+begin_src org :exports code
-  #+LaTeX_CLASS_OPTIONS: [palatino]
+  #+LaTeX_CLASS_OPTIONS: [fontset=palatino]
+#+end_src
+
+#+source: pgf-option-palatino
+#+begin_src latex :exports code
+  \pgfkeys{
+    /ORGART/.cd,
+    fontset/palatino/.code={\AtBeginDocument{\ifpdf
+        \RequirePackage[T1]{fontenc}
+        \RequirePackage{mathpazo}% 
+        \linespread{1.05}%
+        \RequirePackage[scaled]{helvet}%
+        \RequirePackage{courier} % tt
+        \fi}}}
 #+end_src
 
 #+source: option-palatino
-#+begin_src latex :exports code
+#+begin_src latex :exports none
   \newboolean{ORGART@palatino}
   \DeclareOption{palatino}{\setboolean{ORGART@palatino}{true}}
 #+end_src
 
-Palatino gets a bit more leading than normal.
 
 #+source: load-palatino
-#+begin_src latex :exports code
+#+begin_src latex :exports none
   \ifthenelse{\boolean{ORGART@palatino}}
   {%
     \ifpdf
@@ -1822,17 +1895,30 @@ Note that the utopia font clashes with the [[latex:package][amssymb]] package.
 
 #+source: org-buffer-utopia
 #+begin_src org :exports code
-  #+LaTeX_CLASS_OPTIONS: [utopia]
+  #+LaTeX_CLASS_OPTIONS: [fontset=utopia]
+#+end_src
+
+#+source: pgf-option-utopia
+#+begin_src latex :exports code
+  \pgfkeys{
+    /ORGART/.cd,
+    fontset/utopia/.code={\AtBeginDocument{\ifpdf
+        \RequirePackage[T1]{fontenc} 
+        \RequirePackage[adobe-utopia]{mathdesign}
+        \RequirePackage[scaled]{berasans} 
+        \RequirePackage{inconsolata} % tt
+        \setboolean{ORGART@noamssymb}{true}
+        \fi}}}
 #+end_src
 
 #+source: option-utopia
-#+begin_src latex :exports code
+#+begin_src latex :exports none
   \newboolean{ORGART@utopia}
   \DeclareOption{utopia}{\setboolean{ORGART@utopia}{true}}
 #+end_src
 
 #+source: load-utopia
-#+begin_src latex :exports code
+#+begin_src latex :exports none
   \ifthenelse{\boolean{ORGART@utopia}}
   {%
     \ifpdf
@@ -1849,25 +1935,38 @@ Note that the utopia font clashes with the [[latex:package][amssymb]] package.
 
 [[http://en.wikipedia.org/wiki/Bitstream_Charter][Charter]] was designed to reproduce well on low-resolution 300 dpi
 printers.  It is paired here with Helvetica and Courier, like [[times-font][Times]],
-for which it is an alternative.
+for which it is an alternative.  Helvetica is set a bit smaller to
+better match the Charter font.
 
 These fonts conflict with the [[latex:package][amssymb]] package.
 
 #+source: org-buffer-charter
 #+begin_src org :exports code
-  #+LaTeX_CLASS_OPTIONS: [charter]
+  #+LaTeX_CLASS_OPTIONS: [fontset=charter]
 #+end_src
  
-#+source: option-charter
+#+source: pgf-option-charter
 #+begin_src latex :exports code
+  \pgfkeys{
+    /ORGART/.cd,
+    fontset/charter/.code={\AtBeginDocument{\ifpdf
+     \RequirePackage[T1]{fontenc} 
+     \RequirePackage[bitstream-charter]{mathdesign}
+     \RequirePackage[scaled=.90]{helvet} 
+     \RequirePackage{courier} % tt
+     \setboolean{ORGART@noamssymb}{true}
+     \fi}}}
+#+end_src
+
+#+source: option-charter
+#+begin_src latex :exports none
   \newboolean{ORGART@charter}
   \DeclareOption{charter}{\setboolean{ORGART@charter}{true}}
 #+end_src
 
-Helvetica is set a bit smaller to better match the Charter font.
 
 #+source: load-charter
-#+begin_src latex :exports code
+#+begin_src latex :exports none
   \ifthenelse{\boolean{ORGART@charter}}
   {%
     \ifpdf
@@ -2071,7 +2170,9 @@ You will need to set `org-export-latex-listings' to the special value
   (setq org-export-latex-listings 'minted)
   (setq org-export-latex-minted-lang-environments
         '((python "pythoncode")
-          (emacs-lisp "common-lispcode")))
+          (emacs-lisp "common-lispcode")
+          (org "textcode")
+          (latex "latexcode")))
   (setq org-latex-to-pdf-process
         '("pdflatex --shell-escape -interaction nonstopmode %s"))
 #+end_src
@@ -2253,7 +2354,7 @@ blocks in any language by modifying the appropriate cell in the table.
 | css          | css         | auto            | nil     |         1 |           1 | tt         | auto       | auto          | auto      | nil       | none   | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | \color{black} | false    | false      | false    |          1 |       8 | false | 0pt         | 0pt          |
 | ditaa        | ditaa       | auto            | nil     |         1 |           1 | tt         | auto       | auto          | auto      | nil       | none   | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | \color{black} | false    | false      | false    |          1 |       8 | false | 0pt         | 0pt          |
 | dot          | dotlang     | auto            | nil     |         1 |           1 | tt         | auto       | auto          | auto      | nil       | none   | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | \color{black} | false    | false      | false    |          1 |       8 | false | 0pt         | 0pt          |
-| emacs-lisp   | common-lisp | auto            | nil     |         1 |           1 | tt         | auto       | auto          | auto      | nil       | none   | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | \color{black} | false    | false      | false    |          1 |       8 | false | 0pt         | 0pt          |
+| emacs-lisp   | common-lisp | auto            | nil     |         1 |           1 | tt         | auto       | \footnotesize | auto      | nil       | single | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | \color{black} | false    | false      | false    |          1 |       8 | false | 0pt         | 0pt          |
 | gnuplot      | gnuplot     | auto            | nil     |         1 |           1 | tt         | auto       | auto          | auto      | nil       | none   | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | \color{black} | false    | false      | false    |          1 |       8 | false | 0pt         | 0pt          |
 | haskell      | haskell     | auto            | nil     |         1 |           1 | tt         | auto       | auto          | auto      | nil       | none   | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | \color{black} | false    | false      | false    |          1 |       8 | false | 0pt         | 0pt          |
 | js           | js          | auto            | nil     |         1 |           1 | tt         | auto       | auto          | auto      | nil       | none   | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | \color{black} | false    | false      | false    |          1 |       8 | false | 0pt         | 0pt          |
@@ -2264,7 +2365,7 @@ blocks in any language by modifying the appropriate cell in the table.
 | mscgen       | mscgen      | auto            | nil     |         1 |           1 | tt         | auto       | auto          | auto      | nil       | none   | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | \color{black} | false    | false      | false    |          1 |       8 | false | 0pt         | 0pt          |
 | ocaml        | ocaml       | auto            | nil     |         1 |           1 | tt         | auto       | auto          | auto      | nil       | none   | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | \color{black} | false    | false      | false    |          1 |       8 | false | 0pt         | 0pt          |
 | octave       | octave      | auto            | nil     |         1 |           1 | tt         | auto       | auto          | auto      | nil       | none   | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | \color{black} | false    | false      | false    |          1 |       8 | false | 0pt         | 0pt          |
-| org          | text        | auto            | nil     |         1 |           1 | tt         | auto       | auto          | auto      | nil       | none   | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | \color{black} | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE | 0pt         | 0pt          |
+| org          | text        | auto            | nil     |         1 |           1 | tt         | auto       | \footnotesize | auto      | nil       | single | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | \color{black} | false    | false      | false    |          1 |       8 | false | 0pt         | 0pt          |
 | oz (contrib) | oz          | auto            | nil     |         1 |           1 | tt         | auto       | auto          | auto      | nil       | none   | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | \color{black} | false    | false      | false    |          1 |       8 | false | 0pt         | 0pt          |
 | perl         | perl        | auto            | nil     |         1 |           1 | tt         | auto       | auto          | auto      | nil       | none   | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | \color{black} | false    | false      | false    |          1 |       8 | false | 0pt         | 0pt          |
 | plantuml     | plantuml    | auto            | nil     |         1 |           1 | tt         | auto       | auto          | auto      | nil       | none   | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | \color{black} | false    | false      | false    |          1 |       8 | false | 0pt         | 0pt          |
@@ -2980,7 +3081,7 @@ You can see all the characters with =describe-input-method=.
 
 Will need to let LaTeX know that the input is UTF-8.  It works out of
 the box for HTML.
-** Semantic markup for blocks, Christian Moe
+** TODO Semantic markup for blocks, Christian Moe
 Use org-special-blocks
 
 On Oct 31, 2010, at 9:47 AM, Magnus Nilsson wrote:
@@ -3045,3 +3146,19 @@ It should be possible to change the automatic conversion of Org-mode
 link syntax into HTML links.  The test here could be when the FOLLOW
 function assigned in org-add-link-type is nil.  This is an indication
 that the link is being used in an extended way, and not as a link.
+** TODO Take care of font clashes with amssymb
+** Buffer local variables
+What about making configuration variables buffer-local in the block
+you execute? Once the buffer is killed, you should be back to your
+previous configuration.
+
+For example:
+
+ #+BEGIN_SRC emacs-lisp
+ (make-local-variable 'sentence-end-double-space)
+ (setq sentence-end-double-space t)
+ #+END_SRC
+
+Regards,
+
+-- Nicolas Goaziou
