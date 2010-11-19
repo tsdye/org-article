@@ -1,3 +1,4 @@
+* Header
 #+TITLE:     The Org-article LaTeX class
 #+AUTHOR:    Tom Dye
 #+EMAIL:     tsd at tsdye dot com
@@ -168,7 +169,13 @@ In this case, you will need to specify the [[latex:package][inputenc]] package i
 
 ** Configuration
 Executing the following code block should set up your system to tangle
-the class file and export to LaTeX.
+the class file and export to LaTeX.  Variables have been made
+buffer-local, where possible, so you should find your environment
+relatively intact when you exit the buffer.  Exceptions to this
+general statement include [[special%20blocks][org-special-blocks]], which is loaded to wrap
+code blocks in LaTeX environments, and the two link types defined for
+[[in-line%20markup][in-line markup]] of semantic elements.  These will remain in your setup.
+
 
 #+source: config
 #+begin_src emacs-lisp :noweb yes :exports code :results silent
@@ -523,6 +530,8 @@ It is possible to introduce semantic markup in Org-mode files and
 markup conventions.
 
 ** In-line markup
+# <<in-line markup>>
+
 Arbitrary semantic markup in [[latex:proglang][Org-mode]] files is implemented by
 defining a new link type in =.emacs=.  The following code block
 defines a new link type, [[latex:progstruct][latex]], whose [[latex:progstruct][path]] argument can hold the
@@ -782,6 +791,7 @@ Lisp]] code can be placed in =.emacs=:
 
 #+source: format-toc
 #+begin_src emacs-lisp :exports code
+  (make-local-variable 'org-export-latex-format-toc-function)
   (defun org-export-latex-format-toc-org-article (depth)
     (when depth
       (format "\\setcounter{secnumdepth}{%s}\n\\tableofcontents\n"
@@ -834,6 +844,7 @@ LaTeX exporter be modified, as follows.
 
 #+source: format-toc-for-secnum
 #+begin_src emacs-lisp :exports code
+  (make-local-variable 'org-export-latex-format-toc-function)
   (defun org-export-latex-format-toc-org-article-sec-num (depth)
     (when depth
       (format "%% Org-mode is exporting headings to %s levels.\n\\tableofcontents\n"
@@ -2181,6 +2192,9 @@ You will need to set `org-export-latex-listings' to the special value
 
 #+source: minted-setup
 #+begin_src emacs-lisp :exports code :results silent
+  (make-local-variable 'org-export-latex-listings)
+  (make-local-variable 'org-export-latex-minted-lang-environments)
+  (make-local-variable 'org-latex-to-pdf-process)
   (setq org-export-latex-listings 'minted)
   (setq org-export-latex-minted-lang-environments
         '((python "pythoncode")
@@ -2269,6 +2283,7 @@ The available options for <style> are:
 #+end_src
 
 **** Floating code blocks
+# <<special blocks>>
 Use the [[latex:package][org-special-blocks]] package to wrap a listings environment
 around a source code block to get a floating listing in the LaTeX
 document.
@@ -3071,6 +3086,7 @@ This R script plots the text block information in the table.
    :END:
 #+source: format-toc
 #+begin_src emacs-lisp :exports code
+ (make-local-variable 'org-export-latex-format-toc-function)
   (defun org-export-latex-format-toc-org-article (depth)
     (when depth
       (format "\\setcounter{secnumdepth}{%s}\n\\tableofcontents\n"
