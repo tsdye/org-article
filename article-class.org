@@ -85,7 +85,7 @@ my OS-X system with the [[http://tug.org/mactex/][MacTeX]] distribution:
   sudo mktexlsr
   kpsewhich org-article.cls
 #+end_src
-** Org-mode LaTeX export setup
+** LaTeX export setup
    :PROPERTIES:
    :VISIBILITY: folded
    :END:
@@ -164,6 +164,19 @@ In this case, you will need to specify the [[latex:package][inputenc]] package i
 #+source: specify-inputenc
 #+begin_src org :exports code
   ,#+LATEX_HEADER: \usepackage[AUTO]{inputenc} 
+#+end_src
+
+** Configuration
+Executing the following code block should set up your system to tangle
+the class file and export to LaTeX.
+
+#+source: config
+#+begin_src emacs-lisp :noweb yes :exports code :results silent
+  <<define-latex-link>>
+  <<define-mint-link>>
+  <<format-toc-for-secnum>>
+  <<special-blocks>>
+  <<minted-setup>>
 #+end_src
 
 ** Requirements
@@ -1438,9 +1451,9 @@ use the [[latex:package][mathdesign]] package, which apparently supersedes [[lat
 
 #+source: load-amssymb
 #+begin_src latex :exports code
-  \ifthenelse{\boolean{ORGART@noamssymb}\or\equal{fontset}{utopia}\or\equal{fontset}{charter}\or\equal{fontset}{garamond}\or\equal{fontset}{times}}
+  \ifthenelse{\boolean{ORGART@noamssymb}}
   {}
-  {\RequirePackage{amssymb}}
+  {\AtBeginDocument{\RequirePackage{amssymb}}}
 #+end_src
   
 *** Hyperref
@@ -1465,7 +1478,7 @@ without a value.  Options are passed in the usual way, and
   draft, dvipdfm, dvipdfmx, dvips, dvipsone, dviwindo, encap,
   extension, filebordercolor, filecolor, final, frenchlinks,
   hyperfigures, hyperfootnotes, hyperindex, hypertex, hypertexnames,
-  implicit, latex2html, legalpaper, letterpaper, linkbordercolor,
+  implicit, latex2html, legalpaper, linkbordercolor,
   linkcolor, linktocpage, menubordercolor, menucolor, nativepdf,
   naturalnames, nesting, pageanchor, pagebackref, pdfauthor,
   pdfborder, pdfcenterwindow, pdfcreator, pdfdirection,
@@ -1584,8 +1597,6 @@ Options do not include =debug=.
    \PassOptionsToPackage{latex2html}{hyperref}}
 \DeclareOption{legalpaper}{%
    \PassOptionsToPackage{legalpaper}{hyperref}}
-\DeclareOption{letterpaper}{%
-   \PassOptionsToPackage{letterpaper}{hyperref}}
 \DeclareOption{linkbordercolor}{%
    \PassOptionsToPackage{linkbordercolor}{hyperref}}
 \DeclareOption{linkcolor}{%
@@ -1729,63 +1740,54 @@ takes its name after the serif font in the set.
   } 
 #+end_src
 
-*** Times
-# <<times-font>>
+*** Charter
+# <<charter-font>>
 
-The =times= option uses URW Nimbus Roman, a Times clone, for the serif
-font, URW Nimbus Sans, a Helvetica clone, for the sans-serif font,
-and URW Nimbus Mono, a Courier clone, for the typewriter font.  This
-is a standard set of common typefaces typically used in scientific
-publications.  All of the fonts should be included in a typical LaTeX
-distribution. 
+[[http://en.wikipedia.org/wiki/Bitstream_Charter][Charter]] was designed to reproduce well on low-resolution 300 dpi
+printers.  It is paired here with Helvetica and Courier, like [[times-font][Times]],
+for which it is an alternative.  Helvetica is set a bit smaller to
+better match the Charter font.
 
-[[http://en.wikipedia.org/wiki/Times_Roman][Times New Roman]] was designed by [[http://en.wikipedia.org/wiki/Stanley_Morison][Stanley Morison]] for /The Times/ of
-London during a redesign of the newspaper prompted, in part, by
-Morison's criticism of its typography in 1929.  [[http://en.wikipedia.org/wiki/Helvetica][Helvetica]] was
-developed in 1957 by [[http://en.wikipedia.org/wiki/Max_Miedinger][Max Miedinger]].  Helvetica looks better with Times
-if it is set slightly smaller than the serif font.  [[http://en.wikipedia.org/wiki/Courier_(typeface)][Courier]] was
-designed by Howard Kettler in 1955 for use in IBM typewriters.
+These fonts conflict with the [[latex:package][amssymb]] package.
 
-#+source: org-buffer-times
+#+source: org-buffer-charter
 #+begin_src org :exports code
-  #+LaTeX_CLASS_OPTIONS: [fontset=times]
+  #+LaTeX_CLASS_OPTIONS: [fontset=charter]
 #+end_src
-
-#+source: pgf-option-times
+ 
+#+source: pgf-option-charter
 #+begin_src latex :exports code
   \pgfkeys{
     /ORGART/.cd,
-    fontset/times/.code={\AtBeginDocument{\ifpdf
-        \RequirePackage[T1]{fontenc}
-        \RequirePackage{mathptmx} 
+    fontset/charter/.code={
+      \setboolean{ORGART@noamssymb}{true}
+      \AtBeginDocument{\ifpdf
+        \RequirePackage[T1]{fontenc} 
+        \RequirePackage[bitstream-charter]{mathdesign}
         \RequirePackage[scaled=.90]{helvet} 
-        \RequirePackage{courier}
-        \setboolean{ORGART@noamssymb}{true}
+        \RequirePackage{courier} % tt
         \fi}}}
 #+end_src
 
-#+source: option-times
+#+source: option-charter
 #+begin_src latex :exports none
-  \newboolean{ORGART@times}
-  \DeclareOption{times}{\setboolean{ORGART@times}{true}}
+  \newboolean{ORGART@charter}
+  \DeclareOption{charter}{\setboolean{ORGART@charter}{true}}
 #+end_src
 
-Helvetica looks better if it is set slightly smaller than the serif
-font.
 
-#+source: load-times
+#+source: load-charter
 #+begin_src latex :exports none
-  \ifthenelse{\boolean{ORGART@times}}
+  \ifthenelse{\boolean{ORGART@charter}}
   {%
     \ifpdf
-    \RequirePackage[T1]{fontenc}
-    \RequirePackage{mathptmx} 
-    \RequirePackage[scaled=.90]{helvet} 
-    \RequirePackage{courier}
+     \RequirePackage[T1]{fontenc} 
+     \RequirePackage[bitstream-charter]{mathdesign}
+     \RequirePackage[scaled=.90]{helvet} 
+     \RequirePackage{courier} % tt
     \fi}%
   {}
 #+end_src
-
 *** Garamond
 # <<garamond-font>>
 
@@ -1806,13 +1808,14 @@ font is [[http://en.wikipedia.org/wiki/Inconsolata][Inconsolata]], which was cre
 #+begin_src latex :exports code
   \pgfkeys{
     /ORGART/.cd,
-    fontset/garamond/.code={\AtBeginDocument{\ifpdf
+    fontset/garamond/.code={
+      \setboolean{ORGART@noamssymb}{true}
+      \AtBeginDocument{\ifpdf
         \RequirePackage[T1]{fontenc} 
         \RequirePackage[urw-garamond]{mathdesign}
         \RequirePackage[scaled]{berasans} 
         \RequirePackage{inconsolata} % tt
         \linespread{1.0609}
-        \setboolean{ORGART@noamssymb}{true}
         \fi}}}
 #+end_src
 
@@ -1884,6 +1887,64 @@ Helvetica and Courier, as is [[times-font][Times]], for which it is an alternati
   {}
 #+end_src
 
+*** Times
+# <<times-font>>
+
+The =times= option uses URW Nimbus Roman, a Times clone, for the serif
+font, URW Nimbus Sans, a Helvetica clone, for the sans-serif font,
+and URW Nimbus Mono, a Courier clone, for the typewriter font.  This
+is a standard set of common typefaces typically used in scientific
+publications.  All of the fonts should be included in a typical LaTeX
+distribution. 
+
+[[http://en.wikipedia.org/wiki/Times_Roman][Times New Roman]] was designed by [[http://en.wikipedia.org/wiki/Stanley_Morison][Stanley Morison]] for /The Times/ of
+London during a redesign of the newspaper prompted, in part, by
+Morison's criticism of its typography in 1929.  [[http://en.wikipedia.org/wiki/Helvetica][Helvetica]] was
+developed in 1957 by [[http://en.wikipedia.org/wiki/Max_Miedinger][Max Miedinger]].  Helvetica looks better with Times
+if it is set slightly smaller than the serif font.  [[http://en.wikipedia.org/wiki/Courier_(typeface)][Courier]] was
+designed by Howard Kettler in 1955 for use in IBM typewriters.
+
+#+source: org-buffer-times
+#+begin_src org :exports code
+  #+LaTeX_CLASS_OPTIONS: [fontset=times]
+#+end_src
+
+#+source: pgf-option-times
+#+begin_src latex :exports code
+  \pgfkeys{
+    /ORGART/.cd,
+    fontset/times/.code={
+      \setboolean{ORGART@noamssymb}{true}
+      \AtBeginDocument{\ifpdf
+        \RequirePackage[T1]{fontenc}
+        \RequirePackage{mathptmx} 
+        \RequirePackage[scaled=.90]{helvet} 
+        \RequirePackage{courier}
+        \fi}}}
+#+end_src
+
+#+source: option-times
+#+begin_src latex :exports none
+  \newboolean{ORGART@times}
+  \DeclareOption{times}{\setboolean{ORGART@times}{true}}
+#+end_src
+
+Helvetica looks better if it is set slightly smaller than the serif
+font.
+
+#+source: load-times
+#+begin_src latex :exports none
+  \ifthenelse{\boolean{ORGART@times}}
+  {%
+    \ifpdf
+    \RequirePackage[T1]{fontenc}
+    \RequirePackage{mathptmx} 
+    \RequirePackage[scaled=.90]{helvet} 
+    \RequirePackage{courier}
+    \fi}%
+  {}
+#+end_src
+
 *** Utopia
 # <<utopia-font>>
 
@@ -1902,12 +1963,13 @@ Note that the utopia font clashes with the [[latex:package][amssymb]] package.
 #+begin_src latex :exports code
   \pgfkeys{
     /ORGART/.cd,
-    fontset/utopia/.code={\AtBeginDocument{\ifpdf
+    fontset/utopia/.code={
+      \setboolean{ORGART@noamssymb}{true}
+      \AtEndOfClass{\ifpdf
         \RequirePackage[T1]{fontenc} 
         \RequirePackage[adobe-utopia]{mathdesign}
         \RequirePackage[scaled]{berasans} 
         \RequirePackage{inconsolata} % tt
-        \setboolean{ORGART@noamssymb}{true}
         \fi}}}
 #+end_src
 
@@ -1930,53 +1992,6 @@ Note that the utopia font clashes with the [[latex:package][amssymb]] package.
   {}
 #+end_src
 
-*** Charter
-# <<charter-font>>
-
-[[http://en.wikipedia.org/wiki/Bitstream_Charter][Charter]] was designed to reproduce well on low-resolution 300 dpi
-printers.  It is paired here with Helvetica and Courier, like [[times-font][Times]],
-for which it is an alternative.  Helvetica is set a bit smaller to
-better match the Charter font.
-
-These fonts conflict with the [[latex:package][amssymb]] package.
-
-#+source: org-buffer-charter
-#+begin_src org :exports code
-  #+LaTeX_CLASS_OPTIONS: [fontset=charter]
-#+end_src
- 
-#+source: pgf-option-charter
-#+begin_src latex :exports code
-  \pgfkeys{
-    /ORGART/.cd,
-    fontset/charter/.code={\AtBeginDocument{\ifpdf
-     \RequirePackage[T1]{fontenc} 
-     \RequirePackage[bitstream-charter]{mathdesign}
-     \RequirePackage[scaled=.90]{helvet} 
-     \RequirePackage{courier} % tt
-     \setboolean{ORGART@noamssymb}{true}
-     \fi}}}
-#+end_src
-
-#+source: option-charter
-#+begin_src latex :exports none
-  \newboolean{ORGART@charter}
-  \DeclareOption{charter}{\setboolean{ORGART@charter}{true}}
-#+end_src
-
-
-#+source: load-charter
-#+begin_src latex :exports none
-  \ifthenelse{\boolean{ORGART@charter}}
-  {%
-    \ifpdf
-     \RequirePackage[T1]{fontenc} 
-     \RequirePackage[bitstream-charter]{mathdesign}
-     \RequirePackage[scaled=.90]{helvet} 
-     \RequirePackage{courier} % tt
-    \fi}%
-  {}
-#+end_src
 
 ** Source block markup
 Two options are available for semantic markup and typesetting of
@@ -2166,7 +2181,6 @@ You will need to set `org-export-latex-listings' to the special value
 
 #+source: minted-setup
 #+begin_src emacs-lisp :exports code :results silent
-  (require 'org-special-blocks)
   (setq org-export-latex-listings 'minted)
   (setq org-export-latex-minted-lang-environments
         '((python "pythoncode")
