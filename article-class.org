@@ -24,35 +24,38 @@
   :PROPERTIES:
   :VISIBILITY: children
   :END:
-This [[latex:proglang][Org-mode]] file uses Babel to tangle a [[latex:proglang][LaTeX]] class named [[latex:classfile][Org-article]].
-The class provides all of the LaTeX packages used by the [[latex:proglang][Org-mode]]
-LaTeX exporter.  The class accepts numerous options, which the user
-can set either in =.emacs=, for default use with all org-article
-exports, or within the [[latex:proglang][Org-mode]] file using =#+LaTeX_CLASS_OPTIONS:=.
+This file uses [[latex:proglang][Org-mode's]] Babel facilities to tangle a [[latex:proglang][LaTeX]] class
+named [[latex:classfile][Org-article]].  The class is designed to work with [[latex:proglang][Org-mode]] LaTeX
+export and provides all of the LaTeX packages used by the exporter.
+The class accepts numerous options, which the user can set either in
+=.emacs=, for default use with all org-article exports, or within the
+[[latex:proglang][Org-mode]] file itself using =#+LaTeX_CLASS_OPTIONS:=.
 
 Some of the features include:
-  - Default packages :: Options to keep individual LaTeX packages from
-       loading make it somewhat easier to modify which LaTeX packages
-       are loaded during the processing of LaTeX code exported by
-       [[latex:proglang][Org-mode]].
-  - Fonts :: The package also implements several choices of fonts and
+  - Default [[latex:proglang][Org-mode]] packages :: Options to keep individual LaTeX
+       packages from loading make it somewhat easier to modify which
+       packages are loaded during the processing of LaTeX code
+       exported by [[latex:proglang][Org-mode]]
+  - Fonts :: The package implements several choices of fonts and
              takes steps to ensure that the fonts don't clash with the
              symbol font files that [[latex:proglang][Org-mode]] depends upon to typeset
-             [[latex:progstruct][org-entities]].
-  - Listing themes :: The class provides pre-defined themes for
-                      formatting source code listings, which can be
-                      used as is, or used as a basis for minor modifications.
+             [[latex:progstruct][org-entities]]
+  - Source code :: The class supports both the [[latex:package][listings]] and
+                      the [[latex:package][minted]] packages for semantic markup and
+                      typesetting of source code
   - Compact lists :: A facility to typeset lists with less vertical
-                     space is provided.
-  - Double spacing :: An option is provided to set lines double spaced.
+                     space between entries is provided
+  - Double spacing :: An option is provided to set lines double spaced
   - Table of contents :: The table of contents depth can be set
-       independently of section numbering depth.
+       independently of section numbering depth
   - Section numbering :: Section numbering depth can be specified
-       independently of the table of contents depth.
+       independently of the table of contents depth
   - Key=value options :: [[latex:classfile][Org-article]] implements key=value options
-       using [[latex:package][pgfkeys]] and [[latex:package][pgfopts]].
+       using [[latex:package][pgfkeys]] and [[latex:package][pgfopts]]
+  - Semantic markup :: Facilities are provided for semantic markup in
+       the domain of computer programming
 
-** How to use this Org-mode document
+** How to get this Org-mode document
    :PROPERTIES:
    :VISIBILITY: folded
    :END:
@@ -67,16 +70,22 @@ shell command:
 
 This will create a sub-directory, =org-article=, initialize the git
 repository and download the file =article-class.org= as part of the
-repository.  The [[latex:proglang][Org-mode]] document can be tangled to produce the
+repository.  
+
+** How to make and install the [[latex:classfile][Org-article]] class file
+The [[latex:proglang][Org-mode]] document can be tangled to produce the
 =org-article.cls= file.  This is done by running [[latex:progstruct][org-babel-tangle]] 
 against the file, either by =M-x org-babel-tangle RET= or =C-c C-v
 [C-]t=.
 
 The resulting =org-article.cls= file should then be moved where LaTeX
-can find it.  In LaTeX setups that conform to the [[http://www.tex.ac.uk/tex-archive/tds/tds.html][Tex Directory
-Structure]], this might be path/to/texmf-local/tex/latex/base.  Once
-the file has been placed in an appropriate directory it is often the
-case that the directory database, such as the one maintained by
+can find it.  This can be the directory where the LaTeX file(s) will
+be compiled or another location for use system-wide.  In LaTeX setups
+that conform to the [[http://www.tex.ac.uk/tex-archive/tds/tds.html][Tex Directory Structure]], this system-wide location
+might be [[latex:path][path/to/texmf-local/tex/latex/base]].  
+
+Once the file has been placed in an appropriate directory it is often
+the case that the directory database, such as the one maintained by
 [[http://tug.org/kpathsea/][Kpathsea]], must then be updated. The following shell commands work on
 my OS-X system with the [[http://tug.org/mactex/][MacTeX]] distribution:
 
@@ -86,12 +95,18 @@ my OS-X system with the [[http://tug.org/mactex/][MacTeX]] distribution:
   sudo mktexlsr
   kpsewhich org-article.cls
 #+end_src
+
 ** LaTeX export setup
    :PROPERTIES:
    :VISIBILITY: folded
    :END:
 # <<export-setup>>
-There are two ways to setup [[latex:classfile][Org-article]] and your choice will probably
+
+[[latex:classfile][Org-article]] requires that the [[latex:proglang][Org-mode]] environment be set up before LaTeX
+export.  How the environment is set up will depend on the LaTeX packages you
+typically load, 
+
+There are two ways to set up [[latex:classfile][Org-article]] and your choice will probably
 depend on the value of the variable [[latex:progstruct][org-export-latex-packages-alist]].
 If this variable is nil (or it refers to packages that you always want
 loaded), then the following setup should work for you.  It asks
@@ -104,8 +119,7 @@ exported, which it can't do if it is loaded by [[latex:classfile][Org-article]].
 any packages specified in the [[latex:proglang][Org-mode]] buffer are loaded (the [EXTRA]
 argument).
 
-The [[latex:classfile][Org-article]] setup for the case when
-[[latex:progstruct][org-export-latex-packages-alist]] is [[latex:progstruct][nil]]:
+*** Set up if [[latex:progstruct][org-export-latex-packages-alist]] is [[latex:progstruct][nil]]:
 
 The number of heading levels in the LaTeX output is determined by two
 factors: the number of heading levels (section, subsection, etc.)
@@ -122,9 +136,9 @@ sense, the only reason to restrict the number of headings specified in
 to the author of the document.  Thus, [[latex:classfile][Org-article]] defines
 headings to the subparagraph level, which is the maximum defined by LaTeX.
 
+#+source: packages-alist-not-nil
 #+begin_src emacs-lisp :exports code
   (require 'org-latex)
-  (setq org-export-latex-listings t)
   (add-to-list 'org-export-latex-packages-alist
                '(("AUTO" "inputenc" t)))
   (add-to-list 'org-export-latex-classes
@@ -140,13 +154,15 @@ headings to the subparagraph level, which is the maximum defined by LaTeX.
                ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
 #+end_src
 
+*** Set up if [[latex:progstruct][org-export-latex-packages-alist]] is not [[latex:progstruct][nil]]
+
 If, for some reason, [[latex:progstruct][org-export-latex-packages-alist]] is not [[latex:progstruct][nil]],
 and it includes packages that you don't want always loaded then
 the following setup should work.
 
+#+source: packages-alist-not-nil
 #+begin_src emacs-lisp :exports code
   (require 'org-latex)
-  (setq org-export-latex-listings t)
   (add-to-list 'org-export-latex-classes
                '("org-article"
                  "\\documentclass{org-article}
@@ -160,7 +176,7 @@ the following setup should work.
 #+end_src
 
 In this case, you will need to specify the [[latex:package][inputenc]] package in the
-[[latex:proglang][Org-mode]] file:
+[[latex:proglang][Org-mode]] file, as follows:
 
 #+source: specify-inputenc
 #+begin_src org :exports code
@@ -168,13 +184,13 @@ In this case, you will need to specify the [[latex:package][inputenc]] package i
 #+end_src
 
 ** Configuration
-Executing the following code block should set up your system to tangle
-the class file and export to LaTeX.  Variables have been made
-buffer-local, where possible, so you should find your environment
-relatively intact when you exit the buffer.  Exceptions to this
-general statement include [[special%20blocks][org-special-blocks]], which is loaded to wrap
-code blocks in LaTeX environments, and the two link types defined for
-[[in-line%20markup][in-line markup]] of semantic elements.  These will remain in your setup.
+Executing the following code block should set up your system to export
+to LaTeX.  Variables have been made buffer-local, where possible, so
+you should find your environment relatively intact when you exit the
+buffer.  Exceptions to this general statement include
+[[special%20blocks][org-special-blocks]], which is loaded to wrap code blocks in LaTeX
+environments, and the two link types defined for [[in-line%20markup][in-line markup]] of
+semantic elements.  These will remain in your setup.
 
 
 #+source: config
@@ -186,42 +202,27 @@ code blocks in LaTeX environments, and the two link types defined for
   <<minted-setup>>
 #+end_src
 
-** Requirements
-[[latex:classfile][Org-article]] requires a working LaTeX installation and configuration of
-Org-mode so that it will tangle [[latex:proglang][Python]], LaTeX, and shell source code
-blocks.  Source code blocks in [[latex:proglang][R]] and [[latex:proglang][Octave]] are also present in the
-[[latex:proglang][Org-mode]] file and, depending on what you do, these languages might need
-to be configured in [[latex:proglang][Org-mode]], as well.  The following entry in my
-.emacs has settings that make it possible to tangle the class file:
+This document contains [[latex:proglang][Python]], LaTeX, and [[latex:proglang][shell]] source code
+blocks that can be evaluated.  The variable [[latex:progstruct][org-babel-load-languages]]
+should enable these languages with a setting in .emacs that contains
+the following lines:
 
+#+source: babel-load-languages
 #+begin_src emacs-lisp :tangle yes
   (org-babel-do-load-languages
    'org-babel-load-languages
-   '((R . t)
-     (C . t)
-     (ditaa . t)
-     (dot . t)
-     (emacs-lisp . t)
-     (gnuplot . nil)
-     (haskell . nil)
+   '((emacs-lisp . t)
      (latex . t)
-     (ocaml . nil)
-     (org . t)
-     (perl . t)
-     (python . t)
-     (ruby . t)
-     (screen . nil)
-     (sh . t)
-     (sql . nil)
-     (sqlite . t)))
+     (python . t)))
 #+end_src
 
-[[latex:classfile][Org-article]] also requires a working LaTeX installation.  Most of the
+** Requirements
+[[latex:classfile][Org-article]] requires a working LaTeX installation.  Most of the
 packages that it uses will be included in a modern LaTeX installation,
 with the possible exception of some of the font packages.  Certain
 distributions package these separately; it is up to you to install the
 fonts you choose to use.  If you have problems with fonts, then the
-[[times-font][times]] option might be a good choice, since it relies entirely on very
+[[times-font][times]] option might be a good choice, since it relies on
 widely distributed fonts---Times, Helvetica, and Courier.
 
 When a package is not widely distributed, then shell source code to
@@ -231,7 +232,8 @@ be installed at an appropriate place in the TeX directory structure.
 
 Finally, [[latex:classfile][Org-article]] requires a working [[latex:proglang][Python]] installation for its
 implementation of certain features, in particular future support for the
-[[latex:package][minted]] package.
+[[latex:package][minted]] package, which uses a [[latex:proglang][Python]] library for semantic markup of
+source code in a wide variety of programming languages.
 
 ** Examples
 The functionality of [[latex:classfile][Org-article]] can be demonstrated with the
@@ -3192,3 +3194,4 @@ For example:
 Regards,
 
 -- Nicolas Goaziou
+** TODO Set up listings environment as separate code block
