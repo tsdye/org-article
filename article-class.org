@@ -1,4 +1,4 @@
-* Header
+* Header                                                           :noexport:
 #+TITLE:     The Org-article LaTeX class
 #+AUTHOR:    Tom Dye
 #+EMAIL:     tsd at tsdye dot com
@@ -16,7 +16,7 @@
 #+XSLT: 
 #+BABEL: :exports code
 #+LaTeX_CLASS: org-article
-#+LaTeX_CLASS_OPTIONS: [koma,letterpaper,fontset=utopia,11pt,minted,mintedstyle=emacs,microtype,paralist,colorlinks=true,urlcolor=blue,secnum=section,gantt]
+#+LaTeX_CLASS_OPTIONS: [koma,letterpaper,fontset=utopia,11pt,source=listings,listingstheme=sv,microtype,paralist,colorlinks=true,urlcolor=blue,secnum=section,gantt]
 #+LATEX_HEADER: \usepackage[AUTO]{inputenc}
 #+STYLE: <style>.listing {margin: 1em; padding: 1em; border: 1px solid black}</style>
 
@@ -72,7 +72,7 @@ This will create a sub-directory, =org-article=, initialize the git
 repository and download the file =article-class.org= as part of the
 repository.  
 
-** How to make and install the [[latex:classfile][Org-article]] class file
+** How to make and install the class file
 The [[latex:proglang][Org-mode]] document can be tangled to produce the
 =org-article.cls= file.  This is done by running [[latex:progstruct][org-babel-tangle]] 
 against the file, either by =M-x org-babel-tangle RET= or =C-c C-v
@@ -119,7 +119,7 @@ exported, which it can't do if it is loaded by [[latex:classfile][Org-article]].
 any packages specified in the [[latex:proglang][Org-mode]] buffer are loaded (the [EXTRA]
 argument).
 
-*** Set up if [[latex:progstruct][org-export-latex-packages-alist]] is [[latex:progstruct][nil]]:
+*** Set up if org-export-latex-packages-alist is nil
 
 The number of heading levels in the LaTeX output is determined by two
 factors: the number of heading levels (section, subsection, etc.)
@@ -154,7 +154,7 @@ headings to the subparagraph level, which is the maximum defined by LaTeX.
                ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
 #+end_src
 
-*** Set up if [[latex:progstruct][org-export-latex-packages-alist]] is not [[latex:progstruct][nil]]
+*** Set up if org-export-latex-packages-alist is not nil
 
 If, for some reason, [[latex:progstruct][org-export-latex-packages-alist]] is not [[latex:progstruct][nil]],
 and it includes packages that you don't want always loaded then
@@ -193,13 +193,22 @@ environments, and the two link types defined for [[in-line%20markup][in-line mar
 semantic elements.  These will remain in your setup.
 
 
-#+source: config
+#+source: config-with-minted
 #+begin_src emacs-lisp :noweb yes :exports code :results silent
   <<define-latex-link>>
   <<define-mint-link>>
   <<format-toc-for-secnum>>
   <<special-blocks>>
   <<minted-setup>>
+#+end_src
+
+#+source: config-with-listings
+#+begin_src emacs-lisp :noweb yes :exports code :results silent
+  <<define-latex-link>>
+  <<define-mint-link>>
+  <<format-toc-for-secnum>>
+  <<special-blocks>>
+  <<listings-setup>>
 #+end_src
 
 This document contains [[latex:proglang][Python]], LaTeX, and [[latex:proglang][shell]] source code
@@ -415,8 +424,8 @@ don't have to be declared here.
   <<option-paralist>>
   <<option-setspace>>
   % <<option-topcapt>>
-  <<option-listings>>  
-  <<option-minted>>  
+  <<pgf-option-source>>
+  <<pgf-option-listingstheme>>
   <<pgf-option-mintedstyle>>
   %  <<option-color>>
   <<option-gantt>>
@@ -490,9 +499,7 @@ package-specific code can be kept together in [[latex-packages][LaTeX packages]]
   <<load-microtype>>
   <<load-setspace>>
   % <<load-topcapt>>
-  <<load-listings>>
   <<load-color>>
-  <<load-minted>>
   <<load-gantt>>
 
   % Hyperref asks to be loaded last
@@ -513,11 +520,8 @@ section.
 #+begin_src latex :exports none :noweb yes
   % Class code part
   <<setspace-code>>
-  <<listings-code>>
   <<proglangs-code>>
   <<progstructs-code>>
-  <<new-minted-code>>
-  <<make-newmint-code>>
   % End of class code part  
 #+end_src
 
@@ -535,17 +539,14 @@ markup conventions.
 # <<in-line markup>>
 
 Arbitrary semantic markup in [[latex:proglang][Org-mode]] files is implemented by
-defining a new link type in =.emacs=.  The following code block
+defining new link types wint [[latex:progstruct][org-add-link-type]].  Two new links are
+defined here.  The [[latex-link-type][first code block]]
 defines a new link type, [[latex:progstruct][latex]], whose [[latex:progstruct][path]] argument can hold the
 name of any LaTeX command.  A link such as
 =[latex:proglang][Org-mode]= will export =\proglang{Org-mode}= to the
-LaTeX file.  In this way, it is possible to make the [[latex:proglang][Org-mode]] LaTeX
-exporter conform to the semantic markup defined in arbitrary style
-files.  [[latex:proglang][Org-mode]] will even complete your new link type!
+LaTeX file.
 
-Note that the code below assumes a [[latex:proglang][CSS]] stylsheet that defines classes
-with the same names as the corresponding LaTeX macros.
-
+# <<latex-link-type>>
 #+source: define-latex-link
 #+begin_src emacs-lisp :exports code
   (org-add-link-type
@@ -563,6 +564,7 @@ The [[latex:package][minted]] package defines macros for semantic markup of sour
 snippets.  The snippets are delimited by slashes rather than curly
 braces.
 
+# <<mint-link-type>>
 #+source: define-mint-link
 #+begin_src emacs-lisp :exports code :results silent
   (org-add-link-type
@@ -575,6 +577,13 @@ braces.
        (format "\\%s/%s/" path desc)))))  
 #+end_src
 
+Note that both of the new link definitions assume a [[latex:proglang][CSS]] stylsheet that
+defines classes with the same names as their corresponding LaTeX macros.
+
+Using custom links in this way, it is possible to make the [[latex:proglang][Org-mode]]
+LaTeX exporter honor the semantic markup defined in arbitrary LaTeX
+(and CSS) style files.  With TAB, [[latex:proglang][Org-mode]] will even help complete
+your new link as you type!
 
 *** The path command
 # <<path-command>>
@@ -599,6 +608,11 @@ commands.  [[latex:classfile][Org-article]] currently defines all of these in th
   \let\proglang=\textsf
   \let\package=\textsf
   \let\classfile=\textsf
+#+end_src
+
+#+source: proglangs-use
+#+begin_src org :exports code
+  =[[latex:proglangs][Org-mode]]= will set "Org-mode" in sans serif font.
 #+end_src
 
 *** Programming constructs
@@ -793,7 +807,6 @@ Lisp]] code can be placed in =.emacs=:
 
 #+source: format-toc
 #+begin_src emacs-lisp :exports code
-  (make-local-variable 'org-export-latex-format-toc-function)
   (defun org-export-latex-format-toc-org-article (depth)
     (when depth
       (format "\\setcounter{secnumdepth}{%s}\n\\tableofcontents\n"
@@ -846,7 +859,6 @@ LaTeX exporter be modified, as follows.
 
 #+source: format-toc-for-secnum
 #+begin_src emacs-lisp :exports code
-  (make-local-variable 'org-export-latex-format-toc-function)
   (defun org-export-latex-format-toc-org-article-sec-num (depth)
     (when depth
       (format "%% Org-mode is exporting headings to %s levels.\n\\tableofcontents\n"
@@ -865,7 +877,7 @@ section numbering altogether; =section=, =subsection=;
 #+end_src
 
 #+source: pgf-option-secnum
-#+begin_src latex :exports code
+#+begin_src latex :exports none
   \pgfkeys{ 
     /ORGART/.cd, 
     secnum/.is choice,
@@ -879,7 +891,7 @@ section numbering altogether; =section=, =subsection=;
 #+end_src
 
 #+source: option-secnum
-#+begin_src latex :exports code
+#+begin_src latex :exports none
   \DeclareOption{secnums}{\AtBeginDocument{\setcounter{secnumdepth}{1}}}
   \DeclareOption{secnumss}{\AtBeginDocument{\setcounter{secnumdepth}{2}}}
   \DeclareOption{secnumsss}{\AtBeginDocument{\setcounter{secnumdepth}{3}}}
@@ -907,8 +919,7 @@ The standard LaTeX [[latex:classfile][article]] formats captions to appear below
 captioned item.  However, many document styles require table captions
 above the table.  Users of [[latex:classfile][article]] typically use a package,
 [[http://tug.ctan.org/cgi-bin/ctanPackageInformation.py?id%3Dtopcapt][topcapt]], and place the command [[latex:progstruct][topcaption]] above the
-captioned item.  With the [[latex:proglang][Org-mode]] LaTeX exporter, this requires
-changes to the exported LaTeX code.  The [[http://www.ctan.org/tex-archive/macros/latex/contrib/koma-script/][KOMA-script]] [[latex:classfile][scrartcl]]
+captioned item.  The [[http://www.ctan.org/tex-archive/macros/latex/contrib/koma-script/][KOMA-script]] [[latex:classfile][scrartcl]]
 class provides an option that gets rid of the need for [[latex:package][topcapt]]:
 
 #+source: koma-caption
@@ -1435,7 +1446,7 @@ Mathematical Society's [[http://www.ams.org/publications/authors/tex/amsfonts][s
 required to support [[latex:progstruct][org-entities]].  It is superseded by the
 =mathdesign= package, which is used by various fonts.  If one of these
 is specified, then the [[latex:package][amssymb]] package is not loaded. If the package is
-loaded, the it is loaded without options.
+loaded, then it is loaded without options.
 
 You can probably read the [[latex:package][amssymb]] package documentation by issuing
 the following shell command:
@@ -1446,7 +1457,7 @@ the following shell command:
 #+end_src
 
 This is a standard [[latex:proglang][Org-mode]] package that is loaded by default.  An
-option is provided to not load it.
+option is provided not to load it.
 
 #+source: org-buffer-amssymb
 #+begin_src org :exports code
@@ -1458,9 +1469,6 @@ option is provided to not load it.
   \newboolean{ORGART@noamssymb}
   \DeclareOption{noamssymb}{\setboolean{ORGART@noamssymb}{true}}
 #+end_src
-
-Isn't loaded if Times, Charter, Utopia, or Garamond are loaded.  These
-use the [[latex:package][mathdesign]] package, which apparently supersedes [[latex:package][amssymb]].
 
 #+source: load-amssymb
 #+begin_src latex :exports code
@@ -1537,7 +1545,7 @@ support for the [[path-command][path]] command.
 #+begin_src latex :exports code
   \ifthenelse{\boolean{ORGART@nohyperref}}
   {\RequirePackage{url}}
-  {\RequirePackage{hyperref}}
+  {\AtBeginDocument{\RequirePackage{hyperref}}}
 #+end_src
 
 Options do not include =debug=.
@@ -1759,7 +1767,7 @@ takes its name after the serif font in the set.
 [[http://en.wikipedia.org/wiki/Bitstream_Charter][Charter]] was designed to reproduce well on low-resolution 300 dpi
 printers.  It is paired here with Helvetica and Courier, like [[times-font][Times]],
 for which it is an alternative.  Helvetica is set a bit smaller to
-better match the Charter font.
+match the shape of the Charter font.
 
 These fonts conflict with the [[latex:package][amssymb]] package.
 
@@ -2005,175 +2013,249 @@ Note that the utopia font clashes with the [[latex:package][amssymb]] package.
   {}
 #+end_src
 
-
 ** Source block markup
 Two options are available for semantic markup and typesetting of
 source code blocks.  The [[latex:package][listings]] package is a pure LaTeX solution,
 while the [[latex:package][minted]] package relies on [[latex:proglang][Python]] code and libraries.
 
-*** Listings
-The [[latex:package][listings]] package is a source code printer for LaTeX.  Except for
-the two options =draft= and =final=, which the [[latex:package][listings]] package is
-configured to pick up itself from options passed to [[latex:progstruct][documentclass]],
-the other options were introduced to ease debugging or to trigger
-compatibility with earlier versions of the package.  It seems unwise
-to use this mechanism to set options for the [[latex:package][listings]] package
-because there is no reason to assume that it will be stable.  One
-solution would be to process options for this package using a =key =
-value= interface that sets the values of keys recognized by the
-package's [[latex:progstruct][lstset]] function.  This is relatively difficult to do.  An
-easier approach groups package options into themes, which can be
-selected with simple options, rather than =key = value= pairs.  It is
-the approach adopted here.
+#+source: pgf-option-source
+#+begin_src latex :noweb tangle :exports code
+  \pgfkeys{ 
+    /ORGART/.cd, 
+    source/.is choice,
+  } 
+  <<pgf-option-source-listings>>  
+  <<pgf-option-source-minted>>
+#+end_src
 
-This package is not loaded by default.  Options are provided to load
-it in its default state, set up for black and white reproduction, and
-with two themes for color reproduction.
+*** Listings
+The [[latex:package][listings]] package is a source code printer for LaTeX.  According to
+posts in =comp.text.tex= in mid-2010, the [[latex:package][listings]] package is no
+longer maintained.  
+
+Caveat emptor: the line-breaking mechanism in the listings package
+appears to break when [[latex:progexample][resetmargins = false]].  This means that the
+listing will always be set to =\textwidth=, rather than =\linewidth=.
+Thus, care should be taken to ensure that listings do not occur in
+lists or other indented environments.  Probably the best way to ensure
+that this doesn't happen is to make sure the =H:= option in the export
+header is set to a suitably high level, so source code blocks always
+occur at an [[latex:proglang][Org-mode]] headline level that exports as a heading, rather
+than a list, e.g. if source code appears in a three-asterisk headline
+and no lower, then setting =H: 3= should ensure that listing margins
+are always aligned with text margins.
+
+You can choose to use the listings package by adding the following
+line to the [[latex:proglang][Org-mode]] file:
 
 #+source: org-buffer-listings
 #+begin_src org :exports code
-  #+LaTeX_CLASS_OPTIONS: [listings, listings-bw, listings-color, listings-sv]
+  #+LaTeX_CLASS_OPTIONS: [source=listings]
 #+end_src
- 
-Themes are defined for the listings package.  The
-=listings-color= theme was lifted from a post to the [[latex:proglang][Org-mode]] list by
-Eric Schulte.  The =listings-sv= theme was posted to the list by
-Sebastian Vauban; it has been modified here to work with the [[latex:package][color]]
-package, rather than the [[latex:package][xcolor]] package used by Sebastian, and to
-allow breaking of long lines.
 
-Caveat emptor: the line-breaking mechanism in the listings package appears to
-break when [[latex:progexample][resetmargins = false]].  This means that the listing will
-always be set to =\textwidth=, rather than =\linewidth=.  Thus, care
-should be taken to ensure that listings do not occur in lists.
-Probably the best way to ensure that this doesn't happen is to make
-sure the =H:= option in the export header is set to a suitably high
-level, so source code blocks always occur at an [[latex:proglang][Org-mode]] headline
-level that exports as a heading, rather than a list, e.g. if source
-code appears in a three-asterisk headline and now lower, then setting
-=H: 3= should ensure that listing margins are always aligned with text
-margins. 
+With this setting, default values are used to markup and typeset
+source code blocks.
 
-#+source: option-listings
+#+source: pgf-option-source-listings
+#+begin_src latex :noweb yes :exports code
+  \pgfkeys{ 
+    /ORGART/.cd, 
+    source/listings/.code={
+      \AtEndOfClass{
+        \RequirePackage{listings}}
+      <<listings-code>>
+    }
+  }  
+#+end_src
+
+**** Listings setup
+
+#+source: listings-setup
+#+begin_src emacs-lisp :exports code :results silent
+  (setq org-export-latex-listings t)
+  (setq org-export-latex-minted-lang-environments
+        '((python "pythoncode")
+          (emacs-lisp "common-lispcode")
+          (org "textcode")
+          (latex "latexcode")))
+  (setq org-latex-to-pdf-process
+        '("pdflatex --shell-escape -interaction nonstopmode %s"))
+#+end_src
+
+**** Listings themes
+Themes are defined for the listings package.  Themes treat source
+blocks in all languages identically.  They are provided for
+convenience.
+
+#+source: pgf-option-listingstheme
+#+begin_src latex :noweb yes :exports code
+  \newboolean{ORGART@color}
+  \pgfkeys{ 
+    /ORGART/.cd, 
+    listingstheme/.is choice
+  } 
+  <<pgf-option-listingstheme-bw>>
+  <<pgf-option-listingstheme-color>>
+  <<pgf-option-listingstheme-sv>>
+  <<pgf-option-listingstheme-es>>
+#+end_src
+
+
+The =bw= theme offers footnote size text in a frame, set in black and
+white with shades of gray.
+
+#+source: org-buffer-listings-bw
+#+begin_src org :exports code
+  #+LaTeX_CLASS_OPTIONS: [listingstheme=bw]
+#+end_src
+
+#+source: pgf-option-listingstheme-bw
 #+begin_src latex :exports code
-  \newboolean{listings}
-  \newboolean{color}
-  \DeclareOption{listings}{\setboolean{listings}{true}}
-  \DeclareOption{listings-bw}{%
-    \setboolean{listings}{true}%
-    \AtBeginDocument{%
-      \lstset{
-        basicstyle=\ttfamily\footnotesize,%
-        frame=lines,%
-        breaklines=true,%
-        showstringspaces=false}%
-    }%
-  }
-  \DeclareOption{listings-color}{%
-    \setboolean{listings}{true}%
-    \setboolean{color}{true}%
-    \AtBeginDocument{%
-      \definecolor{keywords}{RGB}{255,0,90}%
-      \definecolor{comments}{RGB}{60,179,113}%
-      \definecolor{back}{RGB}{231,231,231}%
-      \lstset{%
-        keywordstyle=\color{keywords},%
-        commentstyle=\color{comments},%
-        backgroundcolor=\color{back},%
-        basicstyle=\ttfamily\footnotesize,%
-        showstringspaces=false,%
-        frame=lines,%
-        breaklines=true,%
-        resetmargins=true%
-      }%
-    }%
-  }
-  \DeclareOption{listings-sv}{%
-    \setboolean{listings}{true}%
-    \setboolean{color}{true}%
-    \AtBeginDocument{%
-      \definecolor{...@lstbackground}{RGB}{255,255,204} % light yellow
-      \definecolor{...@lstkeyword}{RGB}{0,0,255} % blue
-      \definecolor{...@lstidentifier}{RGB}{0,0,0} % black
-      \definecolor{...@lstcomment}{RGB}{255,0,0} % red
-      \definecolor{...@lststring}{RGB}{0,128,0} % dark green
-      \lstset{%
-        basicstyle=\ttfamily\scriptsize, % the font that is used for the code
-        tabsize=4, % sets default tabsize to 4 spaces
-        numbers=left, % where to put the line numbers
-        numberstyle=\tiny, % line number font size
-        stepnumber=0, % step between two line numbers
-        breaklines=true, %!! do break long lines of code
-        showtabs=false, % show tabs within strings adding particular underscores
-        showspaces=false, % show spaces adding particular underscores
-        showstringspaces=false, % underline spaces within strings
-        keywordstyle=\color{...@lstkeyword},
-        identifierstyle=\color{...@lstidentifier},
-        stringstyle=\color{...@lststring},
-        commentstyle=\color{...@lstcomment},
-        backgroundcolor=\color{...@lstbackground}, % sets the background color
-        resetmargins=true,%
-        captionpos=b, % sets the caption position to `bottom'
-        extendedchars=false %!?? workaround for when the listed file is in UTF-8
-      }%
-    }%
-  }
-  \DeclareOption{listings-es}{%
-    \setboolean{listings}{true}%
-    \setboolean{color}{true}%
-    \AtBeginDocument{%
-      \definecolor{dkgreen}{rgb}{0,0.5,0}%
-      \definecolor{dkred}{rgb}{0.5,0,0}%
-      \definecolor{gray}{rgb}{0.5,0.5,0.5}%
-      \lstset{%
-        basicstyle=\ttfamily\bfseries\scriptsize,
-        keywordstyle=\color{blue},
-        ndkeywordstyle=\color{red},
-        commentstyle=\color{dkred},
-        stringstyle=\color{dkgreen},
-        numbers=left,
-        breaklines=true,
-        numberstyle=\ttfamily\footnotesize\color{gray},
-        stepnumber=1,
-        numbersep=10pt,
-        backgroundcolor=\color{white},
-        tabsize=4,
-        showspaces=false,
-        showstringspaces=false,
-        xleftmargin=.23in
-      }%
-    }%
+  \pgfkeys{
+    /ORGART/.cd,
+    listingstheme/bw/.code={
+      \AtBeginDocument{%
+        \lstset{basicstyle=\ttfamily\footnotesize,
+          frame=lines,
+          breaklines=true,
+          showstringspaces=false}}}
   }
 #+end_src
 
-#+source: load-listings
-#+begin_src latex :exports code
-  \ifthenelse{\boolean{listings}}
-    {\RequirePackage{listings}}
-    {}
+The =listings-color= theme was lifted from a post to the [[latex:proglang][Org-mode]] list
+by Eric Schulte.
+
+#+source: org-buffer-listings-color
+#+begin_src org :exports code
+  #+LaTeX_CLASS_OPTIONS: [listingstheme=color]
 #+end_src
+
+#+source: pgf-option-listingstheme-color
+#+begin_src latex :exports code
+  \pgfkeys{
+    /ORGART/.cd,
+    listingstheme/color/.code={
+      \setboolean{ORGART@color}{true}%
+      \AtBeginDocument{%
+        \definecolor{keywords}{RGB}{255,0,90}%
+        \definecolor{comments}{RGB}{60,179,113}%
+        \definecolor{back}{RGB}{231,231,231}%
+        \lstset{%
+          keywordstyle=\color{keywords},
+          commentstyle=\color{comments},
+          backgroundcolor=\color{back},
+          basicstyle=\ttfamily\footnotesize,
+          showstringspaces=false,
+          frame=lines,
+          breaklines=true,
+          resetmargins=true}}}
+  }
+#+end_src
+
+The =listings-sv= theme was posted to the list by Sebastian Vauban;
+it has been modified here to work with the [[latex:package][color]] package, rather than
+the [[latex:package][xcolor]] package used by Sebastien, and to allow breaking of long
+lines.
+
+#+source: org-buffer-listings-sv
+#+begin_src org :exports code
+  #+LaTeX_CLASS_OPTIONS: [listingstheme=sv]
+#+end_src
+
+#+source: pgf-option-listingstheme-sv
+#+begin_src latex :exports code
+  \pgfkeys{
+    /ORGART/.cd,
+    listingstheme/sv/.code={
+      \setboolean{ORGART@color}{true}%
+      \AtBeginDocument{%
+        \definecolor{...@lstbackground}{RGB}{255,255,204} % light yellow
+        \definecolor{...@lstkeyword}{RGB}{0,0,255} % blue
+        \definecolor{...@lstidentifier}{RGB}{0,0,0} % black
+        \definecolor{...@lstcomment}{RGB}{255,0,0} % red
+        \definecolor{...@lststring}{RGB}{0,128,0} % dark green
+        \lstset{%
+          basicstyle=\ttfamily\scriptsize, % the font that is used for the code
+          tabsize=4, % sets default tabsize to 4 spaces
+          numbers=left, % where to put the line numbers
+          numberstyle=\tiny, % line number font size
+          stepnumber=0, % step between two line numbers
+          breaklines=true, %!! do break long lines of code
+          showtabs=false, % show tabs within strings adding particular underscores
+          showspaces=false, % show spaces adding particular underscores
+          showstringspaces=false, % underline spaces within strings
+          keywordstyle=\color{...@lstkeyword},
+          identifierstyle=\color{...@lstidentifier},
+          stringstyle=\color{...@lststring},
+          commentstyle=\color{...@lstcomment},
+          backgroundcolor=\color{...@lstbackground}, % sets the background color
+          resetmargins=true,%
+          captionpos=b, % sets the caption position to `bottom'
+          extendedchars=false %!?? workaround for when the listed file is in UTF-8
+        }%
+      }%
+    }
+  }
+#+end_src
+
+This theme was designed by Eric Schulte.
+
+#+source: org-buffer-listings-es
+#+begin_src org :exports code
+  #+LaTeX_CLASS_OPTIONS: [listingstheme=es]
+#+end_src
+
+#+source: pgf-option-listingstheme-es
+#+begin_src latex :exports code
+  \pgfkeys{
+    /ORGART/.cd,
+    listingstheme/es/.code={
+      \setboolean{ORGART@color}{true}%
+      \AtBeginDocument{%
+        \definecolor{dkgreen}{rgb}{0,0.5,0}%
+        \definecolor{dkred}{rgb}{0.5,0,0}%
+        \definecolor{gray}{rgb}{0.5,0.5,0.5}%
+        \lstset{%
+          basicstyle=\ttfamily\bfseries\scriptsize,
+          keywordstyle=\color{blue},
+          ndkeywordstyle=\color{red},
+          commentstyle=\color{dkred},
+          stringstyle=\color{dkgreen},
+          numbers=left,
+          breaklines=true,
+          numberstyle=\ttfamily\footnotesize\color{gray},
+          stepnumber=1,
+          numbersep=10pt,
+          backgroundcolor=\color{white},
+          tabsize=4,
+          showspaces=false,
+          showstringspaces=false,
+          xleftmargin=.23in
+        }%
+      }%
+    }
+  }
+#+end_src
+**** Listings code
+
+This code defines three languages for the [[latex:package][listings]] package.  It also
+defines a shell for the listings environment, which is defined and
+used by the [[latex:package][minted]] package.
 
 #+source: listings-code
-#+begin_src latex :exports code
-  \ifthenelse{\boolean{listings}}%
-  {\lstdefinelanguage{org}%
-    {%
-      morekeywords={:results, :session, :var, :noweb, :exports},%
-      sensitive=false,%
-      morestring=[b]",%
-      morecomment=[l]{\#},%
-    }%
-    \lstdefinelanguage{dot}
-    {%
-      morekeywords={graph},
-      sensitive=false,
-    }%
-    \lstdefinelanguage{ditaa}
-    {%
-      breaklines=false
-    }%
-  }%
-  {}%  
+#+begin_src latex :exports none
+    \AtBeginDocument{\lstdefinelanguage{org}%
+        {morekeywords={:results, :session, :var, :noweb, :exports},%
+          sensitive=false,%
+          morestring=[b]",%
+          morecomment=[l]{\#}}%
+        \lstdefinelanguage{dot}
+        {morekeywords={graph},
+          sensitive=false}
+        \lstdefinelanguage{ditaa}{breaklines=false}
+        \newenvironment{listing}{}{}
+        \newcommand\python[1]{#1}
+  }
 #+end_src
 *** Minted
 
@@ -2194,9 +2276,6 @@ You will need to set `org-export-latex-listings' to the special value
 
 #+source: minted-setup
 #+begin_src emacs-lisp :exports code :results silent
-  (make-local-variable 'org-export-latex-listings)
-  (make-local-variable 'org-export-latex-minted-lang-environments)
-  (make-local-variable 'org-latex-to-pdf-process)
   (setq org-export-latex-listings 'minted)
   (setq org-export-latex-minted-lang-environments
         '((python "pythoncode")
@@ -2207,17 +2286,31 @@ You will need to set `org-export-latex-listings' to the special value
         '("pdflatex --shell-escape -interaction nonstopmode %s"))
 #+end_src
 
-
 **** Using minted
 
 To use minted to typeset source code blocks, add the following option.
 #+source: org-buffer-minted
 #+begin_src org :exports code
-  #+LaTeX_CLASS_OPTIONS: [minted] 
+  #+LaTeX_CLASS_OPTIONS: [source=minted] 
 #+end_src
 
+#+source: pgf-option-source-minted
+#+begin_src latex :noweb tangle :exports code
+  \pgfkeys{ 
+    /ORGART/.cd, 
+    source/minted/.code={
+      \newboolean{ORGARTminted}
+      \AtBeginDocument{
+        \RequirePackage{minted}
+        <<make-newminted-code>>
+        <<make-newmint-code>>
+      }}
+  }  
+#+end_src
+
+**** Minted styles
 Minted defines styles, which are color schemes used in semantic markup
-of code.  Minted styles are accessible with a key=value interface with
+of code.  Minted styles are accessible with a =key = value= interface with
 the option [[latex:progstruct][mintedstyle]] (fig. \ref{listing:latex}).  
 
 #+source: org-buffer-mintedstyle
@@ -2227,7 +2320,6 @@ the option [[latex:progstruct][mintedstyle]] (fig. \ref{listing:latex}).
 
 
 The available options for <style> are:
-
    - monokai
    - perldoc
    - borland
@@ -2268,21 +2360,7 @@ The available options for <style> are:
     mintedstyle/native/.code={\AtBeginDocument{\usemintedstyle{native}}}
   } 
 #+end_src
-#+LATEX: \caption{A LaTeX listing.}\label{listing:latex}
 #+END_listing
-
-#+source: option-minted
-#+begin_src latex :exports code
-  \newboolean{minted}
-  \DeclareOption{minted}{\setboolean{minted}{true}}
-#+end_src
-
-#+source: load-minted
-#+begin_src latex :exports code
-  \ifthenelse{\boolean{minted}}
-    {\RequirePackage{minted}}
-    {}
-#+end_src
 
 **** Floating code blocks
 # <<special blocks>>
@@ -2319,7 +2397,7 @@ a label for cross referencing.  This can be done with a [[latex:progstruct][#+La
  : #+LATEX: \caption{Source block listing.}\ref{listing:source_block}
  : \#+END_listing
 
-**** Markup code snippets
+**** Mark up code snippets
 The class creates macros for marking up code snippets, using the
 [[latex:progstruct][newmint]] command of the [[latex:package][minted]] package.  Adding a code snippet is as
 easy as =C-c C-l mint:python x=str(y)=, which yields listing
@@ -2328,9 +2406,7 @@ easy as =C-c C-l mint:python x=str(y)=, which yields listing
 
 #+BEGIN_listing
  [[mint:python][x = str(y)]] 
-#+LaTeX: \caption{A floating listing.}\label{listing:python}
 #+END_listing
-
 
 **** Newmint lookup table                                          :noexport:
 This table holds default minted values for each of the languages
@@ -2340,7 +2416,7 @@ snippets in any language by modifying the appropriate cell in the table.
 #+tblname: newmint-lookup
 | Org          | Minted      | baselinestretch | bgcolor | firstline | firstnumber | fontfamily | fontseries | fontsize      | fontshape | formatcom | frame  | framerule | framesep | gobble | lastline | linenos | mathescape | numberblanklines | numbersep | obeytabs | resetmargins | rulecolor     | samepage | showspaces | showtabs | stepnumber | tabsize | texcl | xleftmargin | xrightmargin |
 | *default*    | *default*   | auto            | nil     |         1 |           1 | tt         | auto       | auto          | auto      | nil       | none   | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | \color{black} | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE | 0pt         | 0pt          |
-| asymptote    | asymptote   | auto            | nil     |         1 |           1 | tt         | auto       | auto          | auto      | nil       | none   | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | \color{black} | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE | 0pt         | 0            |
+| asymptote    | asymptote   | auto            | nil     |         1 |           1 | tt         | auto       | auto          | auto      | nil       | none   | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | \color{black} | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE | 0pt         | 0pt          |
 | C            | cpp         | auto            | nil     |         1 |           1 | tt         | auto       | auto          | auto      | nil       | none   | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | \color{black} | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE | 0pt         | 0pt          |
 | clojure      | clojure     | auto            | nil     |         1 |           1 | tt         | auto       | auto          | auto      | nil       | none   | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | \color{black} | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE | 0pt         | 0pt          |
 | css          | css         | auto            | nil     |         1 |           1 | tt         | auto       | auto          | auto      | nil       | none   | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | \color{black} | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE | 0pt         | 0pt          |
@@ -2378,7 +2454,7 @@ blocks in any language by modifying the appropriate cell in the table.
 
 #+tblname: newminted-lookup
 | Org          | Minted      | baselinestretch | bgcolor | firstline | firstnumber | fontfamily | fontseries | fontsize      | fontshape | formatcom | frame  | framerule | framesep | gobble | lastline | linenos | mathescape | numberblanklines | numbersep | obeytabs | resetmargins | rulecolor     | samepage | showspaces | showtabs | stepnumber | tabsize | texcl | xleftmargin | xrightmargin |
-| *default*    | *default*   | auto            | nil     |         1 |           1 | tt         | auto       | auto          | auto      | nil       | none   | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | \color{black} | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE | 0pt         | 0pt          |
+| *default*    | *default*   | auto            | nil     |         1 |           1 | tt         | auto       | auto          | auto      | nil       | none   | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | \color{black} | false    | false      | false    |          1 |       8 | false | 0pt         | 0pt          |
 | asymptote    | asymptote   | auto            | nil     |         1 |           1 | tt         | auto       | auto          | auto      | nil       | none   | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | \color{black} | false    | false      | false    |          1 |       8 | false | 0pt         | 0pt          |
 | C            | c           | auto            | nil     |         1 |           1 | tt         | auto       | auto          | auto      | nil       | none   | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | \color{black} | false    | false      | false    |          1 |       8 | false | 0pt         | 0pt          |
 | clojure      | clojure     | auto            | nil     |         1 |           1 | tt         | auto       | auto          | auto      | nil       | none   | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | \color{black} | false    | false      | false    |          1 |       8 | false | 0pt         | 0pt          |
@@ -2425,13 +2501,12 @@ LaTeX macros for the class file.
       first = True
       s = '\\newminted{' + x[row][1] +'}{'
       for col in range(2,cols):
-          cell = str(x[row][col])
-          if not (cell == 'nil'):
+          if 'nil' != x[row][col] and x[row][col] != x[1][col]:
               if first:
-                  s = s + x[0][col] + '=' + cell
+                  s = s + x[0][col] + '=' + str(x[row][col])
                   first = False
               else:
-                  s = s + ',' + x[0][col] + '=' + cell
+                  s = s + ',' + x[0][col] + '=' + str(x[row][col])
       res = res + s + '}\n'
   print res
 #+end_src
@@ -2439,13 +2514,9 @@ LaTeX macros for the class file.
 
 This source block is used to put the LaTeX macros into the class file.
 
-#+source: new-minted-code
+#+source: make-newminted-code
 #+begin_src latex :noweb tangle :exports code
-\ifthenelse{\boolean{minted}}
-{%
-<<make-newminted(x=newminted-lookup)>>  
-}
-{}
+<<make-newminted(x=newminted-lookup)>>
 #+end_src
 
 **** Make newmint
@@ -2462,27 +2533,23 @@ LaTeX macros for the class file.
       first = True
       s = '\\newmint{' + x[row][1] +'}{'
       for col in range(2,cols):
-          cell = str(x[row][col])
-          if not (cell == 'nil'):
+          if 'nil' != x[row][col] and x[row][col] != x[1][col]:
               if first:
-                  s = s + x[0][col] + '=' + cell
+                  s = s + x[0][col] + '=' + str(x[row][col])
                   first = False
               else:
-                  s = s + ',' + x[0][col] + '=' + cell
+                  s = s + ',' + x[0][col] + '=' + str(x[row][col])
       res = res + s + '}\n'
   print res
 #+end_src
+
 
 
 This source block is used to put the LaTeX macros into the class file.
 
 #+source: make-newmint-code
 #+begin_src latex :noweb tangle :exports code
-\ifthenelse{\boolean{minted}}
-{%
-  <<make-newmint(x=newmint-lookup)>>
-}
-{}
+<<make-newmint(x=newmint-lookup)>>
 #+end_src
 
 **** Configuration file
@@ -2720,13 +2787,13 @@ options.
 
 #+source: option-color
 #+begin_src latex :exports code
-  \newboolean{color}
-  \DeclareOption{color}{\setboolean{color}{true}}  
+  \newboolean{ORGART@color}
+  \DeclareOption{color}{\setboolean{ORGART@color}{true}}  
 #+end_src
 
 #+source: load-color
 #+begin_src latex :exports code
-  \ifthenelse{\boolean{color}}
+  \ifthenelse{\boolean{ORGART@color}}
     {\RequirePackage{color}}
     {}
 #+end_src
@@ -3088,7 +3155,6 @@ This R script plots the text block information in the table.
    :END:
 #+source: format-toc
 #+begin_src emacs-lisp :exports code
- (make-local-variable 'org-export-latex-format-toc-function)
   (defun org-export-latex-format-toc-org-article (depth)
     (when depth
       (format "\\setcounter{secnumdepth}{%s}\n\\tableofcontents\n"
