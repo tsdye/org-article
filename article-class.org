@@ -184,14 +184,9 @@ In this case, you will need to specify the [[latex:package][inputenc]] package i
 #+end_src
 
 ** Configuration
-Executing the following code block should set up your system to export
-to LaTeX.  Variables have been made buffer-local, where possible, so
-you should find your environment relatively intact when you exit the
-buffer.  Exceptions to this general statement include
-[[special%20blocks][org-special-blocks]], which is loaded to wrap code blocks in LaTeX
-environments, and the two link types defined for [[in-line%20markup][in-line markup]] of
-semantic elements.  These will remain in your setup.
-
+Execute one of the following code blocks to set up your system to export
+to LaTeX.  The first sets up the environment when the [[latex:package][minted]] package
+is used.  The second sets it up for the [[latex:package][listings]] package.
 
 #+source: config-with-minted
 #+begin_src emacs-lisp :noweb yes :exports code :results silent
@@ -761,11 +756,11 @@ and the resulting margins can be altered using the option
 [[latex:progstruct][DIV]] is 9. Smaller text blocks with larger
 margins result when [[latex:progstruct][DIV]] takes a smaller value
 and larger text blocks with smaller margins result when  [[latex:progstruct][DIV]] takes a
-larger value (fig. \ref{fig:div}).
+larger value.
 
-#+CAPTION: Text block sizes on A4 paper with different values of DIV
+#+CAPTION: Text block sizes on A4 paper with different values of DIV.
 #+LABEL: fig:div
-#+ATTR_LaTeX: width=0.5\textwidth
+#+ATTR_LaTeX: width=0.8\textwidth
 #+results:
 [[file:../images/org-article-text-blocks.png]]
 
@@ -777,6 +772,7 @@ by the binding.  This value is passed to the package with the option
 For example, to set the text block large and leave ample space for
 binding with a clip, one might pass the following options to the class
 when using the [[latex:progstruct][koma]] option.
+
 #+source: koma-text-block
 #+begin_src org :exports code
   #+LaTeX_CLASS_OPTIONS: [koma,DIV=15,BCOR=15mm]
@@ -2088,7 +2084,7 @@ blocks in all languages identically.  They are provided for
 convenience.
 
 #+source: pgf-option-listingstheme
-#+begin_src latex :noweb yes :exports code
+#+begin_src latex :noweb tangle :exports code
   \newboolean{ORGART@color}
   \pgfkeys{ 
     /ORGART/.cd, 
@@ -2311,7 +2307,7 @@ To use minted to typeset source code blocks, add the following option.
 **** Minted styles
 Minted defines styles, which are color schemes used in semantic markup
 of code.  Minted styles are accessible with a =key = value= interface with
-the option [[latex:progstruct][mintedstyle]] (fig. \ref{listing:latex}).  
+the option [[latex:progstruct][mintedstyle]].  
 
 #+source: org-buffer-mintedstyle
 #+begin_src org :exports code
@@ -2366,11 +2362,13 @@ The available options for <style> are:
 # <<special blocks>>
 Use the [[latex:package][org-special-blocks]] package to wrap a listings environment
 around a source code block to get a floating listing in the LaTeX
-document.
+document.  LaTeX will keep track of floating listings and will prepare
+a list of listings that can be placed between the table of contents
+and the first section of the article.
 
 You'll need to load [[latex:package][org-special-blocks]].  This code can go in .emacs,or
 you can load it for the session by executing the following source code
-block with =Ctrl-c Ctrl-c=.
+block with =C-c C-c=.
 
 
 #+source: special-blocks
@@ -2400,13 +2398,46 @@ a label for cross referencing.  This can be done with a [[latex:progstruct][#+La
 **** Mark up code snippets
 The class creates macros for marking up code snippets, using the
 [[latex:progstruct][newmint]] command of the [[latex:package][minted]] package.  Adding a code snippet is as
-easy as =C-c C-l mint:python x=str(y)=, which yields listing
-\ref{listing:python}.
+easy as =C-c C-l mint:python x=str(y)=, which yields the following:
 
 
 #+BEGIN_listing
  [[mint:python][x = str(y)]] 
 #+END_listing
+
+**** Newmint and newminted lookup table
+These lookup tables hold configuration information for the the [[latex:package][minted]]
+package.  The configuration information is used by a [[latex:proglang][Python]] script to
+write out =\newmint{}= and =\newminted{}= macros.  These macros expand
+to LaTeX environments that have access to the information needed to
+apply semantic markup to and typeset a particular computer language.
+
+Each row in the table holds information for a language
+supported by [[latex:proglang][Org-mode]].  The first two columns contain the [[latex:proglang][Org-mode]]
+name for the language and the [[latex:package][minted]] name.  The other 29 columns are
+for [[latex:package][minted]] variables.  The table is too large to reproduce on the
+printed page, so a corner of it is presented here.
+
+
+| Org          | Minted      | baselinestretch | bgcolor | firstline |
+| *default*    | *default*   | auto            | nil     |         1 |
+| asymptote    | asymptote   | auto            | nil     |         1 |
+| C            | cpp         | auto            | nil     |         1 |
+| clojure      | clojure     | auto            | nil     |         1 | 
+| css          | css         | auto            | nil     |         1 |
+
+The *default* row holds the [[latex:package][minted]] defaults.  The [[latex:proglang][Python]] scripts that
+use the table to configure [[latex:package][minted]] use this row to determine whether or
+not to write out a =key = value= pair to the [[latex:package][minted]] configuration in
+the [[latex:classfile][Org-article]] class file.  A =nil= value in a cell of the table
+indicates that the variable indicated in the column head is not set in
+the minted configuration for that language.
+
+The printed appearance of source code in any language is controlled by
+changing entries in its row of variables and then tangling a new LaTeX
+class file with =C-c C-v t=.  When the exported LaTeX source code is
+compiled with the new class file, changes in the table will be
+reflected on the pdf output.
 
 **** Newmint lookup table                                          :noexport:
 This table holds default minted values for each of the languages
@@ -2810,7 +2841,7 @@ install it, either in the directory in which the LaTeX file will be
 compiled or at an appropriate place in the TeX directory structure.
 
 The [[latex:progstruct][curl]] command works to grab [[latex:package][gantt.sty]] from Worg.  You can evaluate
-this source code block with =Ctrl-c Ctrl-c=, or cut and paste it into
+this source code block with =C-c C-c=, or cut and paste it into
 a shell and evaluate it there.
 
 #+source: get-gantt.sty
