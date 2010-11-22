@@ -189,7 +189,7 @@ to LaTeX.  The first sets up the environment when the [[latex:package][minted]] 
 is used.  The second sets it up for the [[latex:package][listings]] package.
 
 #+source: config-with-minted
-#+begin_src emacs-lisp :noweb yes :exports code :results silent
+#+begin_src emacs-lisp :noweb tangle :exports code :results silent
   <<define-latex-link>>
   <<define-mint-link>>
   <<format-toc-for-secnum>>
@@ -198,7 +198,7 @@ is used.  The second sets it up for the [[latex:package][listings]] package.
 #+end_src
 
 #+source: config-with-listings
-#+begin_src emacs-lisp :noweb yes :exports code :results silent
+#+begin_src emacs-lisp :noweb tangle :exports code :results silent
   <<define-latex-link>>
   <<define-mint-link>>
   <<format-toc-for-secnum>>
@@ -403,11 +403,14 @@ don't have to be declared here.
   % Font options
   <<pgf-option-fontset>>
   <<pgf-option-bera>>
-  <<pgf-option-times>>
-  <<pgf-option-garamond>>
-  <<pgf-option-palatino>>
-  <<pgf-option-utopia>>
   <<pgf-option-charter>>
+  <<pgf-option-garamond>>
+  <<pgf-option-kp>>
+  <<pgf-option-libertine>>
+  <<pgf-option-nimbus>>
+  <<pgf-option-palatino>>
+  <<pgf-option-times>>
+  <<pgf-option-utopia>>
   
   % Base class options
   <<option-koma>>
@@ -914,10 +917,10 @@ flush left, rather than centered, which is the default
 
 The standard LaTeX [[latex:classfile][article]] formats captions to appear below the
 captioned item.  However, many document styles require table captions
-above the table.  Users of [[latex:classfile][article]] typically use a package,
-[[http://tug.ctan.org/cgi-bin/ctanPackageInformation.py?id%3Dtopcapt][topcapt]], and place the command [[latex:progstruct][topcaption]] above the
-captioned item.  The [[http://www.ctan.org/tex-archive/macros/latex/contrib/koma-script/][KOMA-script]] [[latex:classfile][scrartcl]]
-class provides an option that gets rid of the need for [[latex:package][topcapt]]:
+above the table.  Users of the standard LaTeX [[latex:classfile][article]] class typically
+use a package, [[http://tug.ctan.org/cgi-bin/ctanPackageInformation.py?id%3Dtopcapt][topcapt]], and place the command [[latex:progstruct][topcaption]] above the
+captioned item.  The [[http://www.ctan.org/tex-archive/macros/latex/contrib/koma-script/][KOMA-script]] [[latex:classfile][scrartcl]] class provides an option
+that gets rid of the need for [[latex:package][topcapt]]:
 
 #+source: koma-caption
 #+begin_src org :exports code
@@ -1027,8 +1030,7 @@ option is provided to not load it.
   #+LaTeX_CLASS_OPTIONS: [nofontenc]
 #+end_src
  
-Note that several of the font packages load [[latex:package][fontenc]] themselves.
-These include [[garamond-font][Garamond]], [[palatino-font][Palatino]], [[charter-font][Charter]], and [[utopia-font][Utopia]].
+Note that most of the font sets load [[latex:package][fontenc]] themselves.
 
 #+source: option-fontenc
 #+begin_src latex :exports code
@@ -1745,10 +1747,16 @@ Options do not include =debug=.
 LaTeX documents might need three text fonts, one for the serif
 typeface used for text, the sans-serif typeface often used for heads
 and sub-heads, and the monospace typewriter typeface typically used to
-set code examples and the like.  [[latex:classfile][Org-article]] offers a =fontset= key
-that can be used to specify sets of all three fonts.  The fonts in
-each set have been chosen to look good with one another.  Each set
-takes its name after the serif font in the set.
+set code examples and the like.  
+
+The fonts that come with LaTeX distributions differ in their ability
+to set complex mathematical expressions.  [[latex:classfile][Org-article]] font sets with math support
+include [[garamond-font][Garamond]], [[palatino-font][Palatino]], [[times-font][Times]], and [[utopia-font][Utopia]].
+
+[[latex:classfile][Org-article]] offers a =fontset= key that can be used to specify sets of
+all three fonts.  The fonts in each set have been chosen to look good
+with one another.  Each set takes its name after the serif font in the
+set.
 
 #+source: pgf-option-fontset
 #+begin_src latex :exports code
@@ -1760,6 +1768,8 @@ takes its name after the serif font in the set.
 
 
 *** Bera
+# <<bera-font>>
+
 #+source: org-buffer-bera
 #+begin_src org :exports code
   #+LaTeX_CLASS_OPTIONS: [fontset=bera]
@@ -1808,34 +1818,15 @@ These fonts conflict with the [[latex:package][amssymb]] package.
         \fi}}}
 #+end_src
 
-#+source: option-charter
-#+begin_src latex :exports none
-  \newboolean{ORGART@charter}
-  \DeclareOption{charter}{\setboolean{ORGART@charter}{true}}
-#+end_src
-
-
-#+source: load-charter
-#+begin_src latex :exports none
-  \ifthenelse{\boolean{ORGART@charter}}
-  {%
-    \ifpdf
-     \RequirePackage[T1]{fontenc} 
-     \RequirePackage[bitstream-charter]{mathdesign}
-     \RequirePackage[scaled=.90]{helvet} 
-     \RequirePackage{courier} % tt
-    \fi}%
-  {}
-#+end_src
 *** Garamond
 # <<garamond-font>>
 
 [[http://en.wikipedia.org/wiki/Garamond][Garamond]] refers to a group of old-style serif typefaces and is named
 after the sixteenth-century type designer, Claude Garamond.  It is an
 elegant typeface.  Garamond requires a bit more leading than normal.
-The sans-serif font is [[http://en.wikipedia.org/wiki/Bitstream_Vera][Bera]], an adaptation of a font
-originally named Vera.  It was designed by Jim Lyles.  The typewriter
-font is [[http://en.wikipedia.org/wiki/Inconsolata][Inconsolata]], which was created by Raph Levien and is based on Vera.
+The sans-serif font is Latin Modern and the typewriter font is
+Courier.  Both were chosen to match the shape and stroke weight of
+Garamond.
 
 
 #+source: org-buffer-garamond
@@ -1852,31 +1843,77 @@ font is [[http://en.wikipedia.org/wiki/Inconsolata][Inconsolata]], which was cre
       \AtBeginDocument{\ifpdf
         \RequirePackage[T1]{fontenc} 
         \RequirePackage[urw-garamond]{mathdesign}
-        \RequirePackage[scaled]{berasans} 
-        \RequirePackage{inconsolata} % tt
+        \RequirePackage{lmodern} 
+        \RequirePackage{courier} % tt
         \linespread{1.0609}
         \fi}}}
 #+end_src
 
-#+source: option-garamond
-#+begin_src latex :exports none
-  \newboolean{ORGART@garamond}
-  \DeclareOption{garamond}{\setboolean{ORGART@garamond}{true}}
+*** KP family
+
+The KP font family is produced by Christophe Caignaert for the Johannes Kepler project.  The
+family supports math.
+
+#+source: org-buffer-kp
+#+begin_src org :exports code
+  #+LaTeX_CLASS_OPTIONS: [fontset=kp]
+#+end_src
+ 
+#+source: pgf-option-kp
+#+begin_src latex :exports code
+  \pgfkeys{
+    /ORGART/.cd,
+    fontset/kp/.code={
+      \setboolean{ORGART@noamssymb}{true}
+      \setboolean{ORGART@notextcomp}{true}
+      \AtBeginDocument{\ifpdf
+        \RequirePackage[T1]{fontenc} 
+        \RequirePackage{kpfonts}
+        \fi}}}
 #+end_src
 
+*** Libertine
+# <<libertine-font>>
 
-#+source: load-garamond
-#+begin_src latex :exports none
-  \ifthenelse{\boolean{ORGART@garamond}}
-  {%
-    \ifpdf
-     \RequirePackage[T1]{fontenc} 
-     \RequirePackage[urw-garamond]{mathdesign}
-     \RequirePackage[scaled]{berasans} 
-     \RequirePackage{inconsolata} % tt
-     \linespread{1.0609}
-    \fi}%
-  {}
+#+source: org-buffer-libertine
+#+begin_src org :exports code
+  #+LaTeX_CLASS_OPTIONS: [fontset=libertine]
+#+end_src
+ 
+#+source: pgf-option-libertine
+#+begin_src latex :exports code
+    \pgfkeys{
+      /ORGART/.cd,
+      fontset/libertine/.code={
+  %      \setboolean{ORGART@noamssymb}{true}
+        \AtBeginDocument{\ifpdf
+          \RequirePackage[T1]{fontenc} 
+          \RequirePackage{libertine}
+          \renewcommand*\oldstylenums[1]{{\fontfamily{fxlj}\selectfont #1}}
+          \RequirePackage{lmodern} % tt
+          \fi}}}
+#+end_src
+
+*** Nimbus
+# <<nimbus-font>>
+
+#+source: org-buffer-nimbus
+#+begin_src org :exports code
+  #+LaTeX_CLASS_OPTIONS: [fontset=nimbus]
+#+end_src
+ 
+#+source: pgf-option-nimbus
+#+begin_src latex :exports code
+    \pgfkeys{
+      /ORGART/.cd,
+      fontset/nimbus/.code={
+  %      \setboolean{ORGART@noamssymb}{true}
+        \AtBeginDocument{\ifpdf
+          \RequirePackage[T1]{fontenc}
+          \RequirePackage{tgtermes}
+          \RequirePackage{tgheros}
+          \RequirePackage{tgcursor} % tt
+          \fi}}}
 #+end_src
 
 *** Palatino
@@ -1903,27 +1940,6 @@ Helvetica and Courier, as is [[times-font][Times]], for which it is an alternati
         \RequirePackage[scaled]{helvet}%
         \RequirePackage{courier} % tt
         \fi}}}
-#+end_src
-
-#+source: option-palatino
-#+begin_src latex :exports none
-  \newboolean{ORGART@palatino}
-  \DeclareOption{palatino}{\setboolean{ORGART@palatino}{true}}
-#+end_src
-
-
-#+source: load-palatino
-#+begin_src latex :exports none
-  \ifthenelse{\boolean{ORGART@palatino}}
-  {%
-    \ifpdf
-    \RequirePackage[T1]{fontenc}
-    \RequirePackage{mathpazo}% 
-    \linespread{1.05}%
-    \RequirePackage[scaled]{helvet}%
-    \RequirePackage{courier} % tt
-    \fi}%
-  {}
 #+end_src
 
 *** Times
@@ -1962,34 +1978,12 @@ designed by Howard Kettler in 1955 for use in IBM typewriters.
         \fi}}}
 #+end_src
 
-#+source: option-times
-#+begin_src latex :exports none
-  \newboolean{ORGART@times}
-  \DeclareOption{times}{\setboolean{ORGART@times}{true}}
-#+end_src
-
-Helvetica looks better if it is set slightly smaller than the serif
-font.
-
-#+source: load-times
-#+begin_src latex :exports none
-  \ifthenelse{\boolean{ORGART@times}}
-  {%
-    \ifpdf
-    \RequirePackage[T1]{fontenc}
-    \RequirePackage{mathptmx} 
-    \RequirePackage[scaled=.90]{helvet} 
-    \RequirePackage{courier}
-    \fi}%
-  {}
-#+end_src
-
 *** Utopia
 # <<utopia-font>>
 
 [[http://en.wikipedia.org/wiki/Utopia_(typeface)][Utopia]] is a transitional serif font designed by [[http://en.wikipedia.org/wiki/Robert_Slimbach][Robert Slimbach]] for
 Adobe in 1989.  It became free software in 2006.  It is paired here
-with Bera and Inconsolata, as is [[garamond-font][Garamond]].
+with the Bera sans serif and monospaced fonts.
 
 Note that the utopia font clashes with the [[latex:package][amssymb]] package.
 
@@ -2008,28 +2002,10 @@ Note that the utopia font clashes with the [[latex:package][amssymb]] package.
         \RequirePackage[T1]{fontenc} 
         \RequirePackage[adobe-utopia]{mathdesign}
         \RequirePackage[scaled]{berasans} 
-        \RequirePackage{inconsolata} % tt
+        \RequirePackage[scaled]{beramono} % tt
         \fi}}}
 #+end_src
 
-#+source: option-utopia
-#+begin_src latex :exports none
-  \newboolean{ORGART@utopia}
-  \DeclareOption{utopia}{\setboolean{ORGART@utopia}{true}}
-#+end_src
-
-#+source: load-utopia
-#+begin_src latex :exports none
-  \ifthenelse{\boolean{ORGART@utopia}}
-  {%
-    \ifpdf
-     \RequirePackage[T1]{fontenc} 
-     \RequirePackage[adobe-utopia]{mathdesign}
-     \RequirePackage[scaled]{berasans} 
-     \RequirePackage{inconsolata} % tt
-    \fi}%
-  {}
-#+end_src
 
 ** Source block markup
 Two options are available for syntax highlighting and typesetting of
@@ -2419,7 +2395,7 @@ To use minted to typeset source code blocks, add the following option.
     /ORGART/.cd, 
     source/minted/.code={
       \newboolean{ORGARTminted}
-      \AtBeginDocument{
+      \AtEndOfClass{
         \RequirePackage{minted}
         <<make-newminted-code>>
         <<make-newmint-code>>
@@ -2479,6 +2455,7 @@ The available options for <style> are:
     mintedstyle/native/.code={\AtBeginDocument{\usemintedstyle{native}}}
   } 
 #+end_src
+#+LATEX: \caption{Floated listing.}\label{fig:floated}
 #+END_listing
 
 **** Floating code blocks
@@ -2707,9 +2684,6 @@ This source block is used to put the LaTeX macros into the class file.
 #+end_src
 
 **** Configuration file
-     :PROPERTIES:
-     :ID:       3C2E108A-B3A9-4537-89B5-17D26117B1DC
-     :END:
 
 This source block writes a file, =orgart_minted.cfg=, that can be used to input
 minted shortcuts into an Org-mode file that isn't using [[latex:classfile][Org-article]].
