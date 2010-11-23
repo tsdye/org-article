@@ -16,7 +16,7 @@
 #+XSLT: 
 #+BABEL: :exports code
 #+LaTeX_CLASS: org-article
-#+LaTeX_CLASS_OPTIONS: [koma,letterpaper,fontset=utopia,11pt,source=minted,mintedstyle=emacs,microtype,paralist,colorlinks=true,urlcolor=blue,secnum=section,gantt]
+#+LaTeX_CLASS_OPTIONS: [koma,letterpaper,fontset=bera,11pt,source=minted,mintedstyle=emacs,microtype,paralist,colorlinks=true,urlcolor=blue,secnum=section,gantt]
 #+LATEX_HEADER: \usepackage[AUTO]{inputenc}
 #+STYLE: <style>.listing {margin: 1em; padding: 1em; border: 1px solid black}</style>
 
@@ -24,6 +24,8 @@
   :PROPERTIES:
   :VISIBILITY: children
   :END:
+
+
 This file uses [[latex:proglang][Org-mode's]] Babel facilities to tangle a [[latex:proglang][LaTeX]] class
 named [[latex:classfile][Org-article]].  The class is designed to work with [[latex:proglang][Org-mode]] LaTeX
 export and provides all of the LaTeX packages used by the exporter.
@@ -183,7 +185,7 @@ In this case, you will need to specify the [[latex:package][inputenc]] package i
   ,#+LATEX_HEADER: \usepackage[AUTO]{inputenc} 
 #+end_src
 
-** Configuration
+** Export configuration
 Execute one of the following code blocks to set up your system to export
 to LaTeX.  The first sets up the environment when the [[latex:package][minted]] package
 is used.  The second sets it up for the [[latex:package][listings]] package.
@@ -192,7 +194,7 @@ is used.  The second sets it up for the [[latex:package][listings]] package.
 #+begin_src emacs-lisp :noweb tangle :exports code :results silent
   <<define-latex-link>>
   <<define-mint-link>>
-  <<format-toc-for-secnum>>
+  <<format-toc-for-secnum-with-listings>>
   <<special-blocks>>
   <<minted-setup>>
 #+end_src
@@ -201,7 +203,7 @@ is used.  The second sets it up for the [[latex:package][listings]] package.
 #+begin_src emacs-lisp :noweb tangle :exports code :results silent
   <<define-latex-link>>
   <<define-mint-link>>
-  <<format-toc-for-secnum>>
+  <<format-toc-for-secnum-with-listings>>
   <<special-blocks>>
   <<listings-setup>>
 #+end_src
@@ -814,6 +816,15 @@ Lisp]] code can be placed in =.emacs=:
   (setq org-export-latex-format-toc-function 'org-export-latex-format-toc-org-article)
 #+end_src
 
+#+source: format-toc-with-listings
+#+begin_src emacs-lisp :exports code
+  (defun org-export-latex-format-toc-org-article-with-listings (depth)
+    (when depth
+      (format "\\setcounter{secnumdepth}{%s}\n\\tableofcontents\n\\listoflistings\n"
+              depth)))
+  (setq org-export-latex-format-toc-function 'org-export-latex-format-toc-org-article-with-listings)
+#+end_src
+
 This code uses the depth to which [[latex:proglang][Org-mode]] headlines are exported to
 sections, rather than lists, as the default level to which sections
 are numbered.  This is fine for many applications, but it is possible
@@ -866,6 +877,15 @@ LaTeX exporter be modified, as follows.
   (setq org-export-latex-format-toc-function 'org-export-latex-format-toc-org-article-sec-num)
 #+end_src
 
+#+source: format-toc-for-secnum-with-listings
+#+begin_src emacs-lisp :exports code
+  (defun org-export-latex-format-toc-org-article-sec-num-with-listings (depth)
+    (when depth
+      (format "%% Org-mode is exporting headings to %s levels.\n\\tableofcontents\n\\listoflistings\n"
+              depth)))
+  (setq org-export-latex-format-toc-function 'org-export-latex-format-toc-org-article-sec-num-with-listings)
+#+end_src
+
 Section numbering is controlled with the =secnum= key.  [[latex:classfile][Org-article]]
 recognizes the following values of =<section>: =none= to inhibit
 section numbering altogether; =section=, =subsection=;
@@ -888,15 +908,6 @@ section numbering altogether; =section=, =subsection=;
     secnum/paragraph/.code={\AtBeginDocument{\setcounter{secnumdepth}{4}}},
     secnum/subparagraph/.code={\AtBeginDocument{\setcounter{secnumdepth}{5}}}
   } 
-#+end_src
-
-#+source: option-secnum
-#+begin_src latex :exports none
-  \DeclareOption{secnums}{\AtBeginDocument{\setcounter{secnumdepth}{1}}}
-  \DeclareOption{secnumss}{\AtBeginDocument{\setcounter{secnumdepth}{2}}}
-  \DeclareOption{secnumsss}{\AtBeginDocument{\setcounter{secnumdepth}{3}}}
-  \DeclareOption{secnump}{\AtBeginDocument{\setcounter{secnumdepth}{4}}}
-  \DeclareOption{secnumsp}{\AtBeginDocument{\setcounter{secnumdepth}{5}}}
 #+end_src
 
 *** Equations
@@ -2313,10 +2324,7 @@ languages in the listings-lookup table.
 <<make-lstnewenvironment(x=listings-lookup)>>
 #+end_src
 
-**** Configuration file
-     :PROPERTIES:
-     :ID:       3C2E108A-B3A9-4537-89B5-17D26117B1DC
-     :END:
+**** The listings configuration file
 
 This source block writes a file, =orgart_listings.cfg=, that can be
 used to input minted shortcuts into an Org-mode file that isn't using
@@ -2348,7 +2356,11 @@ used by the [[latex:package][minted]] package.
   {morekeywords={graph},
     sensitive=false}
   \lstdefinelanguage{ditaa}{breaklines=false}
-  \newenvironment{listing}{}{}
+  \newfloat{listing}{h}{lol}
+  \newcommand\listingscaption{Listing}
+  \floatname{listing}{\listingscaption}
+  \newcommand\listoflistingscaption{List of listings}
+  \providecommand\listoflistings{\listof{listing}{\listoflistingscaption}}
   \newcommand\python[1]{#1}
 #+end_src
 
@@ -2455,7 +2467,7 @@ The available options for <style> are:
     mintedstyle/native/.code={\AtBeginDocument{\usemintedstyle{native}}}
   } 
 #+end_src
-#+LATEX: \caption{Floated listing.}\label{fig:floated}
+#+LATEX: \caption{A floating listing.}
 #+END_listing
 
 **** Floating code blocks
@@ -2607,7 +2619,7 @@ blocks in any language by modifying the appropriate cell in the table.
 | oz (contrib) | oz          | auto            | nil     |         1 |           1 | tt         | auto       | auto          | auto      | nil       | none   | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | \color{black} | false    | false      | false    |          1 |       8 | false | 0pt         | 0pt          |
 | perl         | perl        | auto            | nil     |         1 |           1 | tt         | auto       | auto          | auto      | nil       | none   | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | \color{black} | false    | false      | false    |          1 |       8 | false | 0pt         | 0pt          |
 | plantuml     | plantuml    | auto            | nil     |         1 |           1 | tt         | auto       | auto          | auto      | nil       | none   | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | \color{black} | false    | false      | false    |          1 |       8 | false | 0pt         | 0pt          |
-| python       | python      | auto            | nil     |         1 |           1 | tt         | auto       | \small        | auto      | nil       | single | 0.4pt     | \fboxsep |      0 | nil      | true    | false      | TRUE             | 12pt      | false    | false        | \color{blue}  | false    | falsee     | false    |          1 |       8 | false | 0pt         | 0pt          |
+| python       | python      | auto            | nil     |         1 |           1 | tt         | auto       | \small        | auto      | nil       | single | 0.4pt     | \fboxsep |      0 | nil      | true    | false      | TRUE             | 12pt      | false    | false        | \color{blue}  | false    | false      | false    |          1 |       8 | false | 0pt         | 0pt          |
 | R            | rlang       | auto            | nil     |         1 |           1 | tt         | auto       | auto          | auto      | nil       | none   | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | \color{black} | false    | false      | false    |          1 |       8 | false | 0pt         | 0pt          |
 | ruby         | ruby        | auto            | nil     |         1 |           1 | tt         | auto       | auto          | auto      | nil       | none   | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | \color{black} | false    | false      | false    |          1 |       8 | false | 0pt         | 0pt          |
 | sass         | sass        | auto            | nil     |         1 |           1 | tt         | auto       | auto          | auto      | nil       | none   | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | \color{black} | false    | false      | false    |          1 |       8 | false | 0pt         | 0pt          |
@@ -3408,3 +3420,5 @@ Regards,
 | print          | handled by Org-mode :export       |
 | linerange      | individual listings only          |
 |                |                                   |
+
+
