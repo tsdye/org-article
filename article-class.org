@@ -17,18 +17,19 @@
 #+LaTeX_CLASS: org-article
 #+LaTeX_CLASS_OPTIONS: [koma,letterpaper,fontset=bera,11pt,source=listings,microtype,lists=inparai,colorlinks=true,urlcolor=blue,secnum=section,gantt]
 #+LATEX_HEADER: \usepackage[AUTO]{inputenc}
-#+STYLE: <style>.listing {margin: 1em; padding: 1em; border: 1px solid black}</style>
+
 
 #+BEGIN_abstract
 This document contains the code and documentation for the [[latex:classfile][Org-article]]
 LaTeX class.  The [[latex:classfile][Org-article]] class is designed to work with the
-output of the [[latex:proglang][Org-mode]] LaTeX exporter.  It offers several features
+output of the [[latex:proglang][Org-mode]] LaTeX exporter.  It offers some features
 that might make it easy for non-programmers or LaTeX novices to use:
+  4. self-contained configuration;
   1. several choices of fonts;
   2. flexible arrangement of the abstract, table of contents, and
      lists of tables, figures, and source code listings; 
-  3. semantic markup in the domain of computer programming; and
-  4. a common interface for syntax highting and typesetting source
+  3. semantic markup in the domain of computer programming;  and
+  4. a common interface for syntax highlighting and typesetting source
      code blocks.  
 The pdf version of this document is created with the [[latex:classfile][Org-article]] class
      directly from the [[latex:proglang][Org-mode]] source document, without any
@@ -83,8 +84,8 @@ Some features of [[latex:classfile][Org-article]] include:
 
 You might be able to get the [[latex:proglang][Org-mode]] document from GitHub using a
 shell command (Listing \ref{fig:clone}).  If all goes well, this will
-create a sub-directory, =org-article=, initialize the git repository
-there, and download the file =article-class.org= as part of the
+create a sub-directory, [[latex:path][org-article]], initialize the git repository
+there, and download the file [[latex:path][article-class.org]] as part of the
 repository.
 
 #+BEGIN_listing
@@ -413,7 +414,7 @@ The LaTeX class file has six standard parts (Listing \ref{fig:class-structure}):
 ** Identification part
 
 [[latex:classfile][Org-article]] uses a standard identification part (Listing
-\ref{fig:identification-part}.  The [[latex:progstruct][NeedsTeXFormat]] command can take an
+\ref{fig:identification-part}).  The [[latex:progstruct][NeedsTeXFormat]] command can take an
 optional argument with a release date for the oldest version of LaTeX
 that can use the class.  It is relatively easy to update LaTeX
 installations nowadays, so there is less reason to use this optional
@@ -499,7 +500,6 @@ excludes the [[latex:package][inputenc]] package.
   <<option-fixltx2e>>
   <<option-graphicx>>
   <<option-longtable>>
-  <<option-float>>
   <<option-wrapfig>>
   <<option-soul>>
   <<option-textcomp>>
@@ -582,8 +582,6 @@ don't have to be declared here (Listing \ref{fig:pass-options}).
 #+BEGIN_listing
 #+source: pass-options-to-packages
 #+begin_src latex :noweb tangle :exports code
-  <<pass-to-koma>>
-  <<pass-to-article>>  
   <<pass-to-hyperref>>
 #+end_src
 #+LATEX: \caption[Pass options to packages]{Pass options to packages.}\label{fig:pass-options}
@@ -866,9 +864,7 @@ designer [[http://en.wikipedia.org/wiki/Jan_Tschichold][Jan Tschichold]].
 To select the standard LaTeX [[latex:classfile][article]] class, use the class option
 =[article]= (Listing \ref{fig:option-article}).  To select the
 [[http://www.ctan.org/tex-archive/macros/latex/contrib/koma-script/][KOMA-script]] [[latex:classfile][scrartcl]] class, use the class option =[koma]= (Listing
-\ref{fig:option-koma}).  Base class options passed to [[latex:classfile][Org-article]] are
-passed on to the appropriate class (Listings \ref{fig:pass-to-article}
-and \ref{fig:pass-to-koma}).  By default, the LaTeX [[latex:classfile][article]] class is
+\ref{fig:option-koma}).  By default, the LaTeX [[latex:classfile][article]] class is
 loaded (Listing \ref{fig:load-base-class}). For information on
 [[latex:classfile][scrartcl]], you can probably read the documentation on your system with
 the following shell command: [[inline:sh][texdoc koma]].
@@ -877,8 +873,8 @@ the following shell command: [[inline:sh][texdoc koma]].
 #+BEGIN_listing
 #+source: option-article
 #+begin_src latex :exports code
-  \newboolean{article}
-  \DeclareOption{article}{\setboolean{article}{true}}
+  \newboolean{ORGART@article}
+  \DeclareOption{article}{\setboolean{ORGART@article}{true}}
 #+end_src
 #+LATEX: \caption[Set up the article option]{Set up the article option.}\label{fig:option-article}
 #+END_listing
@@ -886,39 +882,18 @@ the following shell command: [[inline:sh][texdoc koma]].
 #+BEGIN_listing
 #+source: option-koma
 #+begin_src latex :exports code
-  \newboolean{koma}
-  \DeclareOption{koma}{\setboolean{koma}{true}}
+  \newboolean{ORGART@koma}
+  \DeclareOption{koma}{\setboolean{ORGART@koma}{true}}
 #+end_src
 #+LATEX: \caption[Set up the koma option]{Set up the koma option.}\label{fig:option-koma}
 #+END_listing
 
 #+BEGIN_listing
-#+source: pass-to-article
-#+begin_src latex :exports code
-  \DeclareOption*{\PassOptionsToClass{\CurrentOption}{article}}
-#+end_src
-#+LATEX: \caption[Pass options to the article class]{Pass options to the article class.}\label{fig:pass-to-article}
-#+END_listing
-
-#+BEGIN_listing
-#+source: pass-to-koma
-#+begin_src latex :exports code
-  \DeclareOption*{\PassOptionsToClass{\CurrentOption}{scrartcl}}
-#+end_src
-#+LATEX: \caption[Pass options to the KOMA scrartcl class]{Pass options to the KOMA scrartcl class.}\label{fig:pass-to-koma}
-#+END_listing
-
-
-#+BEGIN_listing
 #+source: load-base-class
 #+begin_src latex :exports code
-  \ifthenelse{\boolean{koma}}
-  {%
-    \LoadClass{scrartcl}%
-  }%
-  {%
-  \LoadClass{article}%
-  }  
+  \ifthenelse{\boolean{ORGART@koma}}
+  {\LoadClassWithOptions{scrartcl}}
+  {\LoadClassWithOptions{article}}
 #+end_src
 #+LATEX: \caption[Load the base class]{Load the base class.}\label{fig:load-base-class}
 #+END_listing
@@ -1371,40 +1346,31 @@ Tables and figures in LaTeX are treated as floating objects.
 Internally, they are treated as a single (large) glyph, which makes
 them difficult to place on a page of otherwise small glyphs.
 Consequently, they are allowed to "float" until a suitable location is
-found.  The [[latex:package][float]] package provides facilities to define new floating
+found.  
+
+The [[latex:package][float]] package provides facilities to define new floating
 environments, to restyle the existing float environments, and
 additionally defines a placement parameter, [[latex:progstruct][{H}]], that keeps a float
-from floating.  The package is loaded without options.
+from floating.  The package is loaded without options.  Unfortunately,
+the [[latex:package][float]] package isn't fully compatible with the KOMA-script [[latex:classfile][scrartcl]]
+class, which uses a package, [[latex:package][tocbasic]], instead.  [[latex:classfile][Org-article]] can use
+either of these packages, depending upon whether the [[latex:classfile][article]] class or
+the KOMA-script [[latex:classfile][scrartcl]] class is used.
 
-You can probably read about the [[latex:package][float]] package on your system by
-issuing the following shell command:
-
-#+source: read-float
-#+begin_src sh :exports code
-  texdoc float
-#+end_src
-
-
-This is a standard [[latex:proglang][Org-mode]] package that is loaded by default.  An
-option is provided to not load it.
-
-#+source: org-buffer-float
-#+begin_src org :exports code
-  #+LaTeX_CLASS_OPTIONS: [nofloat]
-#+end_src
-
-#+source: option-float
-#+begin_src latex :exports code
-  \newboolean{ORGART@nofloat}
-  \DeclareOption{nofloat}{\setboolean{ORGART@nofloat}{true}}
-#+end_src
-
+#+BEGIN_listing
 #+source: load-float
 #+begin_src latex :exports code
-  \ifthenelse{\boolean{ORGART@nofloat}}
-  {}
+  \ifthenelse{\boolean{ORGART@koma}}
+  {\RequirePackage{tocbasic}}
   {\RequirePackage{float}}
 #+end_src
+#+LATEX: \caption[Loading the float or tocbasic packages]{Loading the float or tocbasic packages.}\label{fig:load-float}
+#+END_listing
+
+You can probably read about the [[latex:package][float]] package on your system by
+issuing the following shell command: [[inline:sh][texdoc float]].  You can learn
+about the [[latex:package][tocbasic]] package by issuing this shell command: [[inline:sh][texdoc koma]].
+
 
 *** Wrapfig
 The [[latex:package][wrapfig]] package defines two new environments to set a narrow
@@ -2692,21 +2658,27 @@ used by the [[latex:package][minted]] package (Listing \ref{fig:listings-code}).
 #+BEGIN_listing
 #+source: listings-code
 #+begin_src latex :exports none
-  \lstdefinelanguage{org}%
-  {morekeywords={:results, :session, :var, :noweb, :exports},%
-    sensitive=false,%
-    morestring=[b]",%
-    morecomment=[l]{\#}}%
-  \lstdefinelanguage{dot}
-  {morekeywords={graph},
-    sensitive=false}
-  \lstdefinelanguage{ditaa}{breaklines=false}
-  \newfloat{listing}{h}{lol}
-  \newcommand\listingscaption{Listing}
-  \floatname{listing}{\listingscaption}
-  \newcommand\listoflistingscaption{List of Listings}
-  \providecommand\listoflistings{\listof{listing}{\listoflistingscaption}}
-  \floatplacement{listing}{htb!}
+    \lstdefinelanguage{org}%
+    {morekeywords={:results, :session, :var, :noweb, :exports},%
+      sensitive=false,%
+      morestring=[b]",%
+      morecomment=[l]{\#}}%
+    \lstdefinelanguage{dot}
+    {morekeywords={graph},
+      sensitive=false}
+    \lstdefinelanguage{ditaa}{breaklines=false}
+    \ifthenelse{\boolean{ORGART@koma}}
+    {\DeclareNewTOC[type=listing,name=Listing,float,floatpos=htb!]{lol}
+      \providecommand\listoflistings{\listoftoc[List of Listings]{lol}}
+      \renewcommand\listoflistings{\listoftoc[List of Listings]{lol}}
+    }
+    {\newfloat{listing}{h}{lol}
+    \newcommand\listingscaption{Listing}
+    \floatname{listing}{\listingscaption}
+    \newcommand\listoflistingscaption{List of Listings}
+    \providecommand\listoflistings{\listof{listing}{\listoflistingscaption}}
+    \floatplacement{listing}{htb!}
+  }
 #+end_src
 #+LATEX: \caption[Code to configure the listings package]{Code to configure the listings package.}\label{fig:listings-code}
 #+END_listing
