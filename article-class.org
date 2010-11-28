@@ -1,4 +1,3 @@
-* Header                                                           :noexport:
 #+TITLE:     The Org-article LaTeX class
 #+AUTHOR:    Tom Dye
 #+EMAIL:     tsd at tsdye dot com
@@ -16,15 +15,35 @@
 #+XSLT: 
 #+BABEL: :exports code
 #+LaTeX_CLASS: org-article
-#+LaTeX_CLASS_OPTIONS: [koma,letterpaper,fontset=kp,11pt,source=listings,microtype,paralist,colorlinks=true,urlcolor=blue,secnum=section,gantt]
+#+LaTeX_CLASS_OPTIONS: [koma,letterpaper,fontset=bera,11pt,source=listings,microtype,lists=inparai,colorlinks=true,urlcolor=blue,secnum=section,gantt]
 #+LATEX_HEADER: \usepackage[AUTO]{inputenc}
 #+STYLE: <style>.listing {margin: 1em; padding: 1em; border: 1px solid black}</style>
+
+#+BEGIN_abstract
+This document contains the code and documentation for the [[latex:classfile][Org-article]]
+LaTeX class.  The [[latex:classfile][Org-article]] class is designed to work with the
+output of the [[latex:proglang][Org-mode]] LaTeX exporter.  It offers several features
+that might make it easy for non-programmers or LaTeX novices to use:
+  1. several choices of fonts;
+  2. flexible arrangement of the abstract, table of contents, and
+     lists of tables, figures, and source code listings; 
+  3. semantic markup in the domain of computer programming; and
+  4. a common interface for syntax highting and typesetting source
+     code blocks.  
+The pdf version of this document is created with the [[latex:classfile][Org-article]] class
+     directly from the [[latex:proglang][Org-mode]] source document, without any
+     subsequent tweaking of the LaTeX export.
+#+END_abstract
+
+#+LATEX: \tableofcontents
+#+LATEX: \listoftables
+#+LATEX: \listoffigures
+#+LATEX: \listoflistings
 
 * Org-article class
   :PROPERTIES:
   :VISIBILITY: children
   :END:
-
 
 This file uses [[latex:proglang][Org-mode's]] Babel facilities to tangle a [[latex:proglang][LaTeX]] class
 named [[latex:classfile][Org-article]].  The class is designed to work with [[latex:proglang][Org-mode]] LaTeX
@@ -54,7 +73,7 @@ Some features of [[latex:classfile][Org-article]] include:
        independently of the table of contents depth
   - Key=value options :: [[latex:classfile][Org-article]] implements key=value options
        using [[latex:package][pgfkeys]] and [[latex:package][pgfopts]]
-  - Semantic markup :: Facilities are provided for semantic markup in
+  - Semantic markup :: Facilities are provided for markup in
        the domain of computer programming
 
 ** How to get this Org-mode document
@@ -62,17 +81,19 @@ Some features of [[latex:classfile][Org-article]] include:
    :VISIBILITY: folded
    :END:
 
-You might be able to get the [[latex:proglang][Org-mode]] document from GitHub using the following
-shell command:
+You might be able to get the [[latex:proglang][Org-mode]] document from GitHub using a
+shell command (Listing \ref{fig:clone}).  If all goes well, this will
+create a sub-directory, =org-article=, initialize the git repository
+there, and download the file =article-class.org= as part of the
+repository.
 
+#+BEGIN_listing
 #+source: get-from-github-alt
 #+begin_src sh :exports code
   git clone git://github.com/tsdye/org-article.git
 #+end_src
-
-This will create a sub-directory, =org-article=, initialize the git
-repository and download the file =article-class.org= as part of the
-repository.  
+#+LATEX: \caption[Shell command to clone the Org-article repository]{Shell command to clone the Org-article repository at GitHub.}\label{fig:clone}
+#+END_listing
 
 ** How to make and install the class file
 The [[latex:proglang][Org-mode]] document can be tangled to produce the
@@ -88,15 +109,20 @@ might be [[latex:path][path/to/texmf-local/tex/latex/base]].
 
 Once the file has been placed in an appropriate directory it is often
 the case that the directory database, such as the one maintained by
-[[http://tug.org/kpathsea/][Kpathsea]], must then be updated. The following shell commands work on
-my OS-X system with the [[http://tug.org/mactex/][MacTeX]] distribution:
+[[http://tug.org/kpathsea/][Kpathsea]], must then be updated. Shell commands that work on
+an OS X system with the [[http://tug.org/mactex/][MacTeX]] distribution are shown in Listing
+\ref{fig:install}.  Something very similar should work on Un*x systems
+using the TeXLive LaTeX distribution.
 
+#+BEGIN_listing
 #+source: install-org-article
 #+begin_src sh :exports code
   sudo cp org-article.cls /usr/local/texlive/texmf-local/tex/latex/base/
   sudo mktexlsr
   kpsewhich org-article.cls
 #+end_src
+#+LATEX: \caption[Installing Org-article on an OS X system]{Installing Org-article on an OS X system.}\label{fig:install}
+#+END_listing
 
 ** LaTeX export setup
    :PROPERTIES:
@@ -138,6 +164,12 @@ sense, the only reason to restrict the number of headings specified in
 to the author of the document.  Thus, [[latex:classfile][Org-article]] defines
 headings to the subparagraph level, which is the maximum defined by LaTeX.
 
+The configuration to use if [[latex:proglang][Org-mode]] doesn't load LaTeX packages is
+shown in Listing \ref{fig:setup-one}.  If [[latex:proglang][Org-mode]] does load LaTeX
+packages, then the configuration in Listing \ref{fig:setup-two} can be
+used.
+
+#+BEGIN_listing
 #+source: packages-alist-not-nil
 #+begin_src emacs-lisp :exports code
   (require 'org-latex)
@@ -155,6 +187,8 @@ headings to the subparagraph level, which is the maximum defined by LaTeX.
                ("\\paragraph{%s}" . "\\paragraph*{%s}")
                ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
 #+end_src
+#+LATEX: \caption[Configuration when Org-mode doesn't load LaTeX packages]{Configuration when Org-mode doesn't load LaTeX packages.}\label{fig:setup-one}
+#+END_listing
 
 *** Set up if org-export-latex-packages-alist is not nil
 
@@ -162,6 +196,7 @@ If, for some reason, [[latex:progstruct][org-export-latex-packages-alist]] is no
 and it includes packages that you don't want always loaded then
 the following setup should work.
 
+#+BEGIN_listing
 #+source: packages-alist-not-nil
 #+begin_src emacs-lisp :exports code
   (require 'org-latex)
@@ -176,43 +211,76 @@ the following setup should work.
                  ("\\paragraph{%s}" . "\\paragraph*{%s}")
                  ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
 #+end_src
+#+LATEX: \caption[Configuration when Org-mode also loads LaTeX packages]{Configuration when Org-mode also loads LaTeX packages.}\label{fig:setup-two}
+#+END_listing
 
 In this case, you will need to specify the [[latex:package][inputenc]] package in the
-[[latex:proglang][Org-mode]] file, as follows:
-
-#+source: specify-inputenc
-#+begin_src org :exports code
-  ,#+LATEX_HEADER: \usepackage[AUTO]{inputenc} 
-#+end_src
+[[latex:proglang][Org-mode]] file, as follows:  =#+LATEX_HEADER: \usepackage{AUTO}{inputenc}=
 
 ** Export configuration
-Execute one of the following code blocks to set up your system to export
-to LaTeX.  The first sets up the environment when the [[latex:package][minted]] package
-is used.  The second sets it up for the [[latex:package][listings]] package.
+The following code blocks set up your system to export
+to LaTeX.  They are provided here for convenience only and you might
+want to configure your system in some other way.
 
+The first code block sets up the environment when the [[latex:package][minted]] package
+is used (Listing \ref{fig:minted-config}).  The second sets it up for
+the [[latex:package][listings]] package (Listing \ref{fig:listings-config}).
+
+Both of the code blocks rely on [[latex:progstruct][noweb]] expansion.  
+
+  - define-latex-link :: Defines the [[latex:progstruct][latex]] link type for semantic
+       markup of text
+  - define-inline-link :: Defines the [[latex:progstruct][inline]] link type for syntax
+       highlighting and typesetting of inline code snippets
+  - format-toc-for-secnum-with-listings :: Lets [[latex:classfile][Org-article]] configure
+       the table of contents depth and section numbering depth, and
+       also inserts a list of source code listings after the table of contents
+
+  - babel-load-languages :: Configures Org-mode to evaluate code
+       blocks in [[latex:proglang][Emacs Lisp]], [[latex:proglang][Python]], and LaTeX
+
+  - special-blocks :: Loads [[latex:package][org-special-blocks]] for semantic markup of
+                      text blocks
+  - minted-setup :: Loads the [[latex:package][minted]] package, specifies the source
+                    code languages that it will deal with, and
+                    configures the call to [[latex:proglang][pdflatex]] so it will
+                    communicate with the external processes launched
+                    by [[latex:package][minted]]
+  - listings-setup :: Loads the [[latex:package][listings]] package, and specifies the source
+                      code languages it will deal with
+
+#+BEGIN_listing
 #+source: config-with-minted
 #+begin_src emacs-lisp :noweb tangle :exports code :results silent
   <<define-latex-link>>
   <<define-inline-link>>
-  <<format-toc-for-secnum-with-listings>>
+  <<format-no-toc>>
+  <<babel-load-languages>>
   <<special-blocks>>
   <<minted-setup>>
 #+end_src
+#+LATEX: \caption[Minted configuration]{Minted configuration.}\label{fig:minted-config}
+#+END_listing
 
+#+BEGIN_listing
 #+source: config-with-listings
 #+begin_src emacs-lisp :noweb tangle :exports code :results silent
   <<define-latex-link>>
   <<define-inline-link>>
-  <<format-toc-for-secnum-with-listings>>
+  <<format-no-toc>>
+  <<babel-load-languages>>
   <<special-blocks>>
   <<listings-setup>>
 #+end_src
+#+LATEX: \caption[Listings configuration]{Listings configuration.}\label{fig:listings-config}
+#+END_listing
 
-This document contains [[latex:proglang][Python]], LaTeX, and [[latex:proglang][shell]] source code
-blocks that can be evaluated.  The variable [[latex:progstruct][org-babel-load-languages]]
-should enable these languages with a setting in .emacs that contains
-the following lines:
+This document contains [[latex:proglang][Python]], LaTeX, and
+[[latex:proglang][shell]] source code blocks that can be evaluated.
+The variable [[latex:progstruct][org-babel-load-languages]] should
+enable these languages as shown in Listing \ref{fig:babel-config}.
 
+#+BEGIN_listing
 #+source: babel-load-languages
 #+begin_src emacs-lisp :tangle yes
   (org-babel-do-load-languages
@@ -221,7 +289,8 @@ the following lines:
      (latex . t)
      (python . t)))
 #+end_src
-
+#+LATEX: \caption[Babel configuration]{Babel configuration.}\label{fig:babel-config}
+#+END_listing
 ** Requirements
 [[latex:classfile][Org-article]] requires a working LaTeX installation.  Most of the
 packages that it uses will be included in a modern LaTeX installation,
@@ -241,7 +310,7 @@ implementation of certain features, in particular future support for the
 [[latex:package][minted]] package, which uses a [[latex:proglang][Python]] library for syntax highlighting of
 source code in a wide variety of programming languages.
 
-** Examples
+** Examples                                                        :noexport:
 The functionality of [[latex:classfile][Org-article]] can be demonstrated with the
 following two examples of pdf output generated by [[latex:proglang][Org-mode]] LaTeX
 export of this [[latex:proglang][Org-mode]] file.  In the first, these three lines appear
@@ -315,19 +384,21 @@ size of the font.
    :VISIBILITY: folded
    :ID:       CF77554B-3CC5-4A09-B15B-98C13A93AB41
    :END:
-The LaTeX class file has six standard parts:
+The LaTeX class file has six standard parts (Listing \ref{fig:class-structure}):
 
    - Identification part :: Defines the nature of the file and
-        specifies the TeX format that it requires.
-   - Initial code part :: Loads packages used internally by the class file.
+        specifies the TeX format that it requires (Listing \ref{fig:identification-part})
+   - Initial code part :: Loads packages used internally by the class
+        file (Listing \ref{fig:initial-code})
    - Declaration of options part :: All options known to the class are
-        declared here.  It is forbidden to load packages in this part.
+        declared here (Listing \ref{fig:declaration-options})
    - Execution of options part :: Set default values and execute the
         code for the options that have been declared.
    - Package loading part :: Load packages with the options specified
         in the declaration of options part using [[latex:progstruct][PassOptionsToPackage]].
    - Main code part :: Usually used to define new commands and structures.
 
+#+BEGIN_listing
 #+source: org-article
 #+begin_src latex :tangle org-article.cls :noweb yes :exports none
   <<identification-part>>
@@ -337,57 +408,96 @@ The LaTeX class file has six standard parts:
   <<package-loading-part>>
   <<class-code-part>>
 #+end_src
-
+#+LATEX: \caption[Structure of the LaTeX class file]{Structure of the LaTeX class file.}\label{fig:class-structure}
+#+END_listing
 ** Identification part
 
-This is a standard identification part.  The [[latex:progstruct][NeedsTeXFormat]] command
-can take an optional argument with a release date for the oldest
-version of LaTeX that can use the class.  Since it is relatively easy
-to update LaTeX installations nowadays there is less reason to use
-this optional argument than there was in the past.  It is omitted here.
+[[latex:classfile][Org-article]] uses a standard identification part (Listing
+\ref{fig:identification-part}.  The [[latex:progstruct][NeedsTeXFormat]] command can take an
+optional argument with a release date for the oldest version of LaTeX
+that can use the class.  It is relatively easy to update LaTeX
+installations nowadays, so there is less reason to use this optional
+argument than there was in the past.  The optional argument is omitted
+here.
 
+#+BEGIN_listing
 #+source: identification-part
 #+begin_src latex :exports code
   % Identification part
   \NeedsTeXFormat{LaTeX2e}
-  \ProvidesClass{org-article}[2010/09/21 0.2 (TSD)]
+  \ProvidesClass{org-article}[2010/11/25 0.3 (TSD)]
   % End of the identification part
   %
 #+end_src
+#+LATEX: \caption[The identification part of the class file]{The identification part of the class file.}\label{fig:identification-part}
+#+END_listing
 
 ** Initial code part
-The initial code part loads packages needed to process the class file.  
+The initial code part loads packages needed to process the class file
+(Listing \ref{fig:initial-code}).  
 
-
+  - ifthen :: Implements an [[latex:progstruct][ifthenelse]] flow control
+  - ifpdf :: Tests whether output is pdf or not (this is a holdover
+             from the days when I was making the transition from dvi
+             to pdf output, not sure it's needed anymore)
+  - pdfopts :: Loads the classfile interface to Till Tantau's [[latex:package][pgfkeys]]
+               package for implementing =key = value= options
+ 
+#+BEGIN_listing
 #+source: initial-code-part
 #+begin_src latex :noweb yes :exports code
-  % Initial code part
-
   \RequirePackage{ifthen}
-  \RequirePackage{calc}
   \RequirePackage{ifpdf}
-  \RequirePackage{remreset}
   \RequirePackage{pgfopts}
-  % End of initial code part
 #+end_src
+#+LATEX: \caption[The initial code part of the class file]{The initial code part of the class file.}\label{fig:initial-code}
+#+END_listing
   
 ** Declaration of options part
 # <<declaration>>
+
 The package options are declared here in a code block made up entirely
-of noweb references.  Typically, a package referred to here will also
-appear in the [[package-loading-part][package loading part]].  The [[package-loading-part][package loading part]] also
-consists of noweb references, an arrangement that makes it possible to
-keep all the code specific to a particular package together in the
-[[latex-packages][LaTeX packages]] section.
+of noweb references (Listing \ref{fig:declaration-options}).  It is
+forbidden to load packages in this part, so a package referred to here
+will also appear in the [[package-loading-part][package loading part]] or it will be sent to
+=AtEndOfCodeBlock= or =AtBeginDocument= for loading there.  The
+[[package-loading-part][package loading part]] also consists of noweb references, an arrangement
+that makes it possible to keep all the code specific to a particular
+package together in the [[latex-packages][LaTeX packages]] section.
 
-Options defined by the base class, either the standard [[latex:classfile][article]] or the
-Koma class [[latex:classfile][scrartcl]], are passed on to those classes by default and
-don't have to be declared here.
+This is a long part and it is broken up here mostly for convenience in
+typesetting a printed page.
 
+  - org-mode-default-options :: Process options not to load the LaTeX
+       packages typically loaded by default with the [[latex:proglang][Org-mode]] LaTeX
+       exporter (Listing \ref{fig:org-mode-default-options})
+  - fontset-options :: Options to load font sets where the serif,
+       sans-serif, and monospace fonts are chosen to look good with
+       one another (Listing \ref{fig:fontset-options})
+  - base-class-options :: Options to configure the base class (Listing \ref{fig:base-class-options})
+  - other-package-options :: Options to load other packages that might
+       be useful (Listing \ref{fig:other-package-options})
+  - pass-options-to-packages :: Route options to the appropriate class
+       or package (Listing \ref{fig:pass-options})
+#+BEGIN_listing
 #+source: declaration-of-options-part
 #+begin_src latex :noweb tangle :exports code
-  % Declaration of options part
-  % Org-mode default packages
+  <<org-mode-default-options>>
+  <<fontset-options>>  
+  <<base-class-options>>
+  <<other-package-options>>
+  <<pass-options-to-packages>>
+#+end_src
+#+LATEX: \caption[Declaration of options part]{Declaration of options part.}\label{fig:declaration-options}
+#+END_listing
+
+The LaTeX packages that Org-mode loads by default are listed here
+(Listing \ref{fig:org-mode-default-options}).  Note that the list
+excludes the [[latex:package][inputenc]] package.
+
+#+BEGIN_listing
+#+source: org-mode-default-options
+#+begin_src latex :noweb tangle :exports code
   <<option-fontenc>>
   <<option-fixltx2e>>
   <<option-graphicx>>
@@ -401,8 +511,16 @@ don't have to be declared here.
   <<option-latexsym>>
   <<option-amssymb>>
   <<option-hyperref>>
-  
-  % Font options
+#+end_src
+#+LATEX: \caption[Options for the Org-mode default LaTeX packages]{Options for the Org-mode default LaTeX packages.}\label{fig:org-mode-default-options}
+#+END_listing
+
+The font sets defined by [[latex:classfile][Org-article]] are listed here (Listing
+\ref{fig:fontset-options}).
+
+#+BEGIN_listing
+#+source: fontset-options
+#+begin_src latex :noweb tangle :exports code
   <<pgf-option-fontset>>
   <<pgf-option-bera>>
   <<pgf-option-charter>>
@@ -413,49 +531,82 @@ don't have to be declared here.
   <<pgf-option-palatino>>
   <<pgf-option-times>>
   <<pgf-option-utopia>>
-  
-  % Base class options
+#+end_src
+#+LATEX: \caption[Options for font sets]{Options for font sets.}\label{fig:fontset-options}
+#+END_listing
+
+The base class options include the choice of which class to load and
+setting the depth of the table of contents and section numbering
+(Listing \ref{fig:base-class-options}).
+
+#+BEGIN_listing
+#+source: base-class-options
+#+begin_src latex :noweb tangle :exports code
   <<option-koma>>
   <<option-article>>
   <<pgf-option-tocdepth>>
   <<pgf-option-secnum>>
-  
-  % Other package options
+#+end_src
+#+LATEX: \caption[Base class options]{Base class options.}\label{fig:base-class-options}
+#+END_listing
+
+Options are provided to load several other packages that might be
+useful.
+  - option-microtype :: Sophisticated typesetting made possible when
+       using [[latex:package][pdflatex]] (Listing \ref{fig:microtype-option})
+  - option-paralist :: Set lists compactly (Listing \ref{fig:paralist-option})
+  - option-setspace :: Double-space output (Listing \ref{fig:setspace-options})
+  - pgf-option-source :: Options for syntax highlighting and
+       typesetting source code blocks (Listing \ref{fig:option-source})
+  - pgf-option-listingstheme :: Themes designed for the [[latex:package][listings]]
+       package (Listing \ref{fig:option-listingstheme})
+  - pgf-option-mintedstyle :: Styles for the [[latex:package][minted]] package are color
+       themes used in syntax highlighting (Listing \ref{fig:option-mintedstyle})
+  - option-gantt :: Create GANTT charts from Org-mode tables (Listing \ref{fig:option-gantt})
+
+#+BEGIN_listing
+#+source: other-package-options
+#+begin_src latex :noweb tangle :exports code
   <<option-microtype>>
-  <<option-paralist>>
+  <<pgf-option-paralist>>
   <<option-setspace>>
-  % <<option-topcapt>>
   <<pgf-option-source>>
   <<pgf-option-listingstheme>>
   <<pgf-option-mintedstyle>>
-  %  <<option-color>>
   <<option-gantt>>
-  
-  % Base class
+#+end_src
+#+LATEX: \caption[Other package options]{Other package options.}\label{fig:other-package-options}
+#+END_listing
+
+Options defined by the base class, either the standard [[latex:classfile][article]] or the
+Koma class [[latex:classfile][scrartcl]], are passed on to those classes by default and
+don't have to be declared here (Listing \ref{fig:pass-options}).
+
+#+BEGIN_listing
+#+source: pass-options-to-packages
+#+begin_src latex :noweb tangle :exports code
   <<pass-to-koma>>
   <<pass-to-article>>  
-  
-  % Pass options to packages
-  <<options-to-hyperref>>
-  
-  % End of declaration of options part
+  <<pass-to-hyperref>>
 #+end_src
+#+LATEX: \caption[Pass options to packages]{Pass options to packages.}\label{fig:pass-options}
+#+END_listing
 
 ** Execution of options part
 
-The [[latex:progstruct][ProcessOptions]] command reclaims the memory used to store user
-options, so those values are now gone unless something was done with
-them in the [[declaration][declaration of options]] part.
+This part reflects the on-going transition to using the [[latex:package][pgfkeys]]
+package (Listing \ref{fig:execution-of-options}).  The [[latex:package][pgfkeys]] options
+are processed first because the [[latex:progstruct][ProcessOptions]] command reclaims the
+memory used to store user options.
 
+#+BEGIN_listing
 #+source: execution-of-options-part
 #+begin_src latex :exports code
-  % Execution of options part
-
   \ProcessPgfOptions{/ORGART}
   \ProcessOptions\relax
-  
-  % End of execution of options part
 #+end_src
+#+LATEX: \caption[Execution of options]{Execution of options.}\label{fig:execution-of-options}
+#+END_listing
 
 ** Package loading part
 # <<package-loading-part>>
@@ -472,59 +623,57 @@ functionality is required in the case where two or more fonts with
 different encodings are used.
 
 This code block is implemented as noweb references so that
-package-specific code can be kept together in [[latex-packages][LaTeX packages]].
+package-specific code can be kept together in [[latex-packages][LaTeX packages]] (Listing
+\ref{fig:package-loading}).
 
+
+#+BEGIN_listing
 #+source: package-loading-part
-#+begin_src latex :noweb yes :exports none
-  % Package loading part
-  
-  % Base class
+#+begin_src latex :noweb tangle :exports code
   <<load-base-class>>
-  
-  % Org-mode default
   <<load-fixltx2e>>    
   <<load-graphicx>>   
   <<load-longtable>>    
   <<load-float>>  
   <<load-wrapfig>>  
   <<load-soul>>  
-  <<load-fontenc>>    % with T1 option for symbol packages
+  <<load-fontenc>>
   <<load-textcomp>>  
   <<load-marvosym>>  
   <<load-wasysym>>  
   <<load-latexsym>>  
   <<load-amssymb>>  
-  
-  % Other packages
-  <<load-paralist>>  
   <<load-microtype>>
   <<load-setspace>>
-  % <<load-topcapt>>
   <<load-color>>
   <<load-gantt>>
-
-  % Hyperref asks to be loaded last
   <<load-hyperref>>  
-  
-  % End of package loading part
-  %
 #+end_src
+#+LATEX: \caption[The package loading part]{The package loading part.}\label{fig:package-loading}
+#+END_listing
 
 ** Class code part
 # <<class-code-part>>
 
-This part is also implemented with noweb references.  It calls
-package-specific setup routines that are defined in the [[latex-packages][LaTeX packages]]
-section.
+The class code part is also implemented with noweb references (Listing
+\ref{fig:class-code}).  It calls package-specific setup routines that
+are defined in the [[latex-packages][LaTeX packages]] section.
 
+  - setspace-code :: The code that sets doublespacing (Listing \ref{fig:setspace})
+  - proglangs-code :: Markup of terms having to do with
+                      programming languages (Listing \ref{fig:proglangs})
+  - progstructs-code :: Markup of terms having to do with
+       programming structures (Listing \ref{fig:progstructs})
+
+#+BEGIN_listing
 #+source: class-code-part
-#+begin_src latex :exports none :noweb yes
-  % Class code part
+#+begin_src latex :exports code :noweb tangle
   <<setspace-code>>
   <<proglangs-code>>
   <<progstructs-code>>
-  % End of class code part  
 #+end_src
+#+LATEX: \caption[The class code part]{The class code part.}\label{fig:class-code}
+#+END_listing
 
 * Semantic markup
 
@@ -540,13 +689,14 @@ markup conventions.
 # <<in-line markup>>
 
 Arbitrary semantic markup in [[latex:proglang][Org-mode]] files is implemented by
-defining new link types wint [[latex:progstruct][org-add-link-type]].  Two new links are
+defining new link types with [[latex:progstruct][org-add-link-type]].  Two new links are
 defined here.  The [[latex-link-type][first code block]]
 defines a new link type, [[latex:progstruct][latex]], whose [[latex:progstruct][path]] argument can hold the
-name of any LaTeX command.  A link such as
+name of any LaTeX command (Listing \ref{fig:latex-link}).  A link such as
 =[latex:proglang][Org-mode]= will export =\proglang{Org-mode}= to the
-LaTeX file.
+LaTeX file (Listing).
 
+#+BEGIN_listing
 # <<latex-link-type>>
 #+source: define-latex-link
 #+begin_src emacs-lisp :exports code
@@ -560,16 +710,20 @@ LaTeX file.
        (format "\\%s{%s}" path desc)))))
   
 #+end_src
+#+LATEX: \caption[Define a new link type, latex, for in-line markup]{Define a new link type, latex, for in-line markup.}\label{fig:latex-link}
+#+END_listing
 
 [[latex:classfile][Org-article]] defines [[markup-code-snippets][several macros]] for marking up code
 snippets.  A separate link type is needed because the markup is
 delimited by slashes rather than the curly braces typical of LaTeX.
+This is handled by the "inline" link (Listing \ref{fig:inline-link}).
 
+#+BEGIN_listing
 # <<inline-link-type>>
 #+source: define-inline-link
 #+begin_src emacs-lisp :exports code :results silent
   (org-add-link-type
-   "mint" nil
+   "inline" nil
    (lambda (path desc format)
      (cond
       ((eq format 'html)
@@ -577,7 +731,8 @@ delimited by slashes rather than the curly braces typical of LaTeX.
       ((eq format 'latex)
        (format "\\%s/%s/" path desc)))))  
 #+end_src
-
+#+LATEX: \caption[Define a new link type, inline, for in-line source snippets]{Define a new link type, inline, for in-line source snippets.}\label{fig:inline-link}
+#+END_listing
 Note that both of the new link definitions assume a [[latex:proglang][CSS]] stylsheet that
 defines classes with the same names as their corresponding LaTeX macros.
 
@@ -600,32 +755,38 @@ end of the line,
 *** Programming languages
 # <<proglangs>>
 
-Semantic markup for programming language names, package names, and
+Markup for programming language names, package names, and
 class file names is provided with the [[latex:progstruct][proglang]], [[latex:progstruct][package]], and [[latex:progstruct][classfile]]
-commands.  [[latex:classfile][Org-article]] currently defines all of these in the same way.
+commands (Listing \ref{fig:proglangs}).  [[latex:classfile][Org-article]] currently defines
+all of these in the same way.
 
+#+BEGIN_listing
 #+source: proglangs-code
 #+begin_src latex :exports code
   \let\proglang=\textsf
   \let\package=\textsf
   \let\classfile=\textsf
 #+end_src
+#+LATEX: \caption[Markup of programming language, class, and package names]{Markup of programming language, class, and package names.}\label{fig:proglangs}
+#+END_listing
 
-#+source: proglangs-use
-#+begin_src org :exports code
-  =[[latex:proglangs][Org-mode]]= will set "Org-mode" in sans serif font.
-#+end_src
+For example,  =[[latex:proglangs][Org-mode]]= will set [[latex:proglang][Org-mode]] in sans serif font, as you
+see it here.
+
 
 *** Programming constructs
 Markup for programming constructs is provided with the [[latex:progstruct][progstruct]]
 and [[latex:progstruct][progexample]] commands.  Both are set in monospaced type; the
 examples are set at a slightly smaller size.
 
+#+BEGIN_listing
 #+source: progstructs-code
 #+begin_src latex :exports code
   \let\progstruct=\texttt
   \newcommand{\progexample}[1]{{\ttfamily\small #1}}
 #+end_src
+#+LATEX: \caption[Semantic markup of programming structures]{Semantic markup of programming structures.}\label{fig:progstructs}
+#+END_listing
 
 ** Block-level markup
 # <<special blocks>>
@@ -643,36 +804,47 @@ syntax and typeset source code listings.
 
 Use a construct like this to wrap the source block in a [[latex:progstruct][listing]]
 environment.  Typically, you will want to include a figure caption and
-a label for cross referencing.  This can be done with a [[latex:progstruct][#+LaTeX:]] line.
+a label for cross referencing.  This can be done with a =#+LATEX:= line.
 
- : \#+BEGIN_listing
+ : #+BEGIN_listing
  :  <source block>
- : #+LATEX: \caption{Source block listing.}\ref{listing:source_block}
- : \#+END_listing
+ : #+LATEX: \caption{The caption.}\ref{fig:src_blk}
+ : #+END_listing
 
-To use this facility, you'll need to load [[latex:package][org-special-blocks]].  This
-code can go in =.emacs=, or you can load it for the session by
-executing the following source code block with =C-c C-c=.
+To use this facility, you'll need to load [[latex:package][org-special-blocks]] (Listing
+\ref{fig:org-special-blocks}).  This code can go in =.emacs=, or you
+can load it for the session by executing the following source code
+block with =C-c C-c=.
 
+# <<special blocks>>
+
+#+BEGIN_listing
 #+source: special-blocks
 #+begin_src emacs-lisp :exports code :results silent
   (require 'org-special-blocks)
 #+end_src
+#+LATEX: \caption[Require org-special-blocks]{Require org-special-blocks.}\label{fig:org-special-blocks}
+#+END_listing
 
 The [[latex:package][org-special-blocks]] package leaves it up to the user to see that
-the HTML output is styled correctly.  The following line, or something
-similar, when added to the [[latex:proglang][Org-mode]] buffer, styles listings by putting
-a black box around them.
+the HTML output is styled correctly.  A line of code like Listing
+\ref{fig:css}, or something similar, when added to the [[latex:proglang][Org-mode]]
+buffer, styles listings by putting a black box around them.
 
- :  \#+STYLE: <style>.listing {margin: 1em; padding: 1em; border: 1px solid black}</style>
-
-
-
+#+BEGIN_listing
+#+source: css
+#+begin_src org :exports code
+ #+STYLE: <style>.listing {margin: 1em; padding: 1em; border: 1px solid black}</style>
+#+end_src
+#+LATEX: \caption[A simple CSS style for listings]{A simple CSS style for listings.}\label{fig:css}
+#+END_listing
 
 Note that the [[latex:progstruct][listing]] environment is implemented in [[latex:classfile][Org-article]] using
 the [[latex:package][float]] package to ensure compatability with the environment defined
-in the [[latex:package][minted]] package.  The [[latex:classfile][KOMA script scrartcl]] class complains about
-this and advises that its own package, [[latex:package][tocbasic]], be used instead.
+in the [[latex:package][minted]] package and to take advantage of the [[latex:package][float]] package being
+one of the default packages loaded by [[latex:proglang][Org-mode]].  The [[latex:classfile][KOMA script
+scrartcl]] class complains about this and advises that its own package,
+[[latex:package][tocbasic]], be used instead.
 
 * LaTeX packages
    :PROPERTIES:
@@ -682,65 +854,62 @@ this and advises that its own package, [[latex:package][tocbasic]], be used inst
 
 ** Article base class options
 
-[[latex:classfile][Org-article]] offers a choice of two base classes.  The first is the
-standard LaTeX [[latex:classfile][article]] class.  Also available is the [[http://www.ctan.org/tex-archive/macros/latex/contrib/koma-script/][KOMA-script]]
-[[latex:classfile][scrartcl]] class.  The KOMA-script [[latex:classfile][scrartcl]] is compatible with the
+[[latex:classfile][Org-article]] offers a choice of two base classes:  the
+standard LaTeX [[latex:classfile][article]] class, and the [[http://www.ctan.org/tex-archive/macros/latex/contrib/koma-script/][KOMA-script]]
+[[latex:classfile][scrartcl]] class.  The KOMA-script [[latex:classfile][scrartcl]] class is compatible with the
 standard LaTeX article class; input that compiles with [[latex:classfile][article]] should
 also compile with [[latex:classfile][scrartcl]].  It differs in the layout of the page and
 the styling of page elements, producing a somewhat more "modern"
 design based on principles set out by the typographer and book
 designer [[http://en.wikipedia.org/wiki/Jan_Tschichold][Jan Tschichold]].
 
-To select the standard LaTeX [[latex:classfile][article]] class, put this line in your [[latex:proglang][Org-mode]]
-document:
-
-#+source: org-buffer-article
-#+begin_src org :exports code
-  #+LaTeX_CLASS_OPTIONS: [article]
-#+end_src
-
-To select the [[http://www.ctan.org/tex-archive/macros/latex/contrib/koma-script/][KOMA-script]] [[latex:classfile][scrartcl]] class, put this line in your
-[[latex:proglang][Org-mode]] document:
-
-#+source: org-buffer-koma
-#+begin_src org :exports code
-  #+LaTeX_CLASS_OPTIONS: [koma]
-#+end_src
- 
-
-For information on [[latex:classfile][scrartcl]], you can probably read the documentation
-on your system with the following shell command:
-
-#+source: read-koma
-#+begin_src sh :exports code
-  texdoc koma
-#+end_src
+To select the standard LaTeX [[latex:classfile][article]] class, use the class option
+=[article]= (Listing \ref{fig:option-article}).  To select the
+[[http://www.ctan.org/tex-archive/macros/latex/contrib/koma-script/][KOMA-script]] [[latex:classfile][scrartcl]] class, use the class option =[koma]= (Listing
+\ref{fig:option-koma}).  Base class options passed to [[latex:classfile][Org-article]] are
+passed on to the appropriate class (Listings \ref{fig:pass-to-article}
+and \ref{fig:pass-to-koma}).  By default, the LaTeX [[latex:classfile][article]] class is
+loaded (Listing \ref{fig:load-base-class}). For information on
+[[latex:classfile][scrartcl]], you can probably read the documentation on your system with
+the following shell command: [[inline:sh][texdoc koma]].
 
 
-#+source: option-koma
-#+begin_src latex :exports code
-  \newboolean{koma}
-  \DeclareOption{koma}{\setboolean{koma}{true}}
-#+end_src
-
+#+BEGIN_listing
 #+source: option-article
 #+begin_src latex :exports code
   \newboolean{article}
   \DeclareOption{article}{\setboolean{article}{true}}
 #+end_src
+#+LATEX: \caption[Set up the article option]{Set up the article option.}\label{fig:option-article}
+#+END_listing
 
-#+source: pass-to-koma
+#+BEGIN_listing
+#+source: option-koma
 #+begin_src latex :exports code
-  \DeclareOption*{\PassOptionsToClass{\CurrentOption}{scrartcl}}
+  \newboolean{koma}
+  \DeclareOption{koma}{\setboolean{koma}{true}}
 #+end_src
+#+LATEX: \caption[Set up the koma option]{Set up the koma option.}\label{fig:option-koma}
+#+END_listing
 
+#+BEGIN_listing
 #+source: pass-to-article
 #+begin_src latex :exports code
   \DeclareOption*{\PassOptionsToClass{\CurrentOption}{article}}
 #+end_src
+#+LATEX: \caption[Pass options to the article class]{Pass options to the article class.}\label{fig:pass-to-article}
+#+END_listing
 
-The article class is loaded by default.
+#+BEGIN_listing
+#+source: pass-to-koma
+#+begin_src latex :exports code
+  \DeclareOption*{\PassOptionsToClass{\CurrentOption}{scrartcl}}
+#+end_src
+#+LATEX: \caption[Pass options to the KOMA scrartcl class]{Pass options to the KOMA scrartcl class.}\label{fig:pass-to-koma}
+#+END_listing
 
+
+#+BEGIN_listing
 #+source: load-base-class
 #+begin_src latex :exports code
   \ifthenelse{\boolean{koma}}
@@ -751,15 +920,20 @@ The article class is loaded by default.
   \LoadClass{article}%
   }  
 #+end_src
+#+LATEX: \caption[Load the base class]{Load the base class.}\label{fig:load-base-class}
+#+END_listing
 
 *** Paper size
 
-The following paper size options are available for the standard LaTeX
-[[latex:classfile][article]] class and the [[http://www.ctan.org/tex-archive/macros/latex/contrib/koma-script/][KOMA-script]] [[latex:classfile][scrartcl]] class.  The first three
-options are [[http://en.wikipedia.org/wiki/Paper_size#North_American_paper_sizes][North American paper sizes]].  The [[latex:progstruct][a4paper]], [[latex:progstruct][a5paper]], [[latex:progstruct][b4paper]],
-and [[latex:progstruct][b5paper]] options are [[http://en.wikipedia.org/wiki/Paper_size#The_international_standard:_ISO_216][international standard ISO 216]].  The
-[[latex:progstruct][landscape]] option orients the paper with the long axis horizontal. 
+There are several paper size options are available for both the
+standard LaTeX [[latex:classfile][article]] class and the [[http://www.ctan.org/tex-archive/macros/latex/contrib/koma-script/][KOMA-script]] [[latex:classfile][scrartcl]] class
+(Listing \ref{fig:paper-sizes}).  The
+first three options are [[http://en.wikipedia.org/wiki/Paper_size#North_American_paper_sizes][North American paper sizes]].  The [[latex:progstruct][a4paper]],
+[[latex:progstruct][a5paper]], [[latex:progstruct][b4paper]], and [[latex:progstruct][b5paper]] options are [[http://en.wikipedia.org/wiki/Paper_size#The_international_standard:_ISO_216][international standard ISO
+216]].  The [[latex:progstruct][landscape]] option orients the paper with the long axis
+horizontal.
 
+#+BEGIN_listing
 #+source: paper-sizes
 #+begin_src org :exports code
   #+LaTeX_CLASS_OPTIONS: [letterpaper]
@@ -771,12 +945,16 @@ and [[latex:progstruct][b5paper]] options are [[http://en.wikipedia.org/wiki/Pap
   #+LaTeX_CLASS_OPTIONS: [b5paper]
   #+LaTeX_CLASS_OPTIONS: [landscape]
 #+end_src
+#+LATEX: \caption[Base class paper size options]{Base class paper size options.}\label{fig:paper-sizes}
+#+END_listing
 
 The [[http://www.ctan.org/tex-archive/macros/latex/contrib/koma-script/][KOMA-script]] [[latex:classfile][scrartcl]] class has options for a fuller range of the
 [[http://en.wikipedia.org/wiki/Paper_size#The_international_standard:_ISO_216][international standard ISO 216]] paper sizes, in addition to the sizes
-offered by the standard LaTeX [[latex:classfile][article]] class.  In the example below, X
-is replaced by an integer [0, 1, ... 10].
+offered by the standard LaTeX [[latex:classfile][article]] class.  In the examples in
+Listing \ref{fig:koma-paper-sizes}, X is replaced by an integer [0, 1,
+... 10].
  
+#+BEGIN_listing
 #+source: koma-paper-sizes
 #+begin_src org :exports code
   #+LaTeX_CLASS_OPTIONS: [aXpaper]
@@ -784,30 +962,35 @@ is replaced by an integer [0, 1, ... 10].
   #+LaTeX_CLASS_OPTIONS: [cXpaper]
   #+LaTeX_CLASS_OPTIONS: [dXpaper]  
 #+end_src
+#+LATEX: \caption[Paper sizes available only with the KOMA scrartcl class]{Paper sizes available only with the KOMA scrartcl class.}\label{fig:koma-paper-sizes}
+#+END_listing
 
 *** Font size
 
 There are three base font size options available for the standard
-LaTeX [[latex:classfile][article]] and the [[http://www.ctan.org/tex-archive/macros/latex/contrib/koma-script/][KOMA-script]] [[latex:classfile][scrartcl]] classes.  This option
-sets the size of the main text in the body of the document.  Other
-fonts used in the document design, such as headers, footers, heads,
-sub-heads, etc., will be scaled accordingly.
+LaTeX [[latex:classfile][article]] and the [[http://www.ctan.org/tex-archive/macros/latex/contrib/koma-script/][KOMA-script]] [[latex:classfile][scrartcl]] classes (Listing
+\ref{fig:font-sizes}).  This option sets the size of the main text in
+the body of the document.  Other fonts used in the document design,
+such as headers, footers, heads, sub-heads, etc., will be scaled
+according to the document design of the base class.
 
+#+BEGIN_listing
 #+source: font-sizes
 #+begin_src org :exports code
   ,#+LaTeX_CLASS_OPTIONS: [10pt]
   ,#+LaTeX_CLASS_OPTIONS: [11pt]
   ,#+LaTeX_CLASS_OPTIONS: [12pt]
 #+end_src
+#+LATEX: \caption[Standard font sizes]{Standard font sizes.}\label{fig:font-sizes}
+#+END_listing
 
 *** Text block and margins
-With the [[latex:progstruct][koma]] option, the size of the text block
-and the resulting margins can be altered using the option
-[[latex:progstruct][DIV]].  A typical value of
-[[latex:progstruct][DIV]] is 9. Smaller text blocks with larger
-margins result when [[latex:progstruct][DIV]] takes a smaller value
-and larger text blocks with smaller margins result when  [[latex:progstruct][DIV]] takes a
-larger value.
+
+With the [[latex:progstruct][koma]] option, the size of the text block and the resulting
+margins can be altered using the option [[latex:progstruct][DIV]].  A typical value of [[latex:progstruct][DIV]]
+is 9. Smaller text blocks with larger margins result when [[latex:progstruct][DIV]] takes a
+smaller value and larger text blocks with smaller margins result when
+[[latex:progstruct][DIV]] takes a larger value (Fig. \ref{fig:div}).
 
 #+CAPTION: Text block sizes on A4 paper with different values of DIV.
 #+LABEL: fig:div
@@ -816,16 +999,16 @@ larger value.
 [[file:../images/org-article-text-blocks.png]]
 
 
-The [[latex:progstruct][koma]] class can also take into account the part of the page used
+The [[latex:classfile][KOMA]] class can also take into account the part of the page used
 by the binding.  This value is passed to the package with the option
 [[latex:progstruct][BCOR]], which takes any LaTeX length as its argument.
 
 For example, to set the text block large and leave ample space for
 binding with a clip, one might pass the following options to the class
-when using the [[latex:progstruct][koma]] option.
+=[koma,DIV=15,BCOR=15mm]=.
 
 #+source: koma-text-block
-#+begin_src org :exports code
+#+begin_src org :exports none
   #+LaTeX_CLASS_OPTIONS: [koma,DIV=15,BCOR=15mm]
 #+end_src
 
@@ -843,48 +1026,36 @@ element and the start of another is something that is specified within
 a class or style file, rather than within the document itself.  Formatting with
 the class or style file exclusively can give the finished document a pleasing
 stylistic uniformity that is difficult to achieve in an ad hoc way.
+Also, hardwiring the table of contents in this way always puts it
+directly following the output of the LaTeX [[latex:progstruct][maketitle]] command.  In
+practice, however, it is often useful to print an abstract or
+executive summary between the title and the table of contents.
 Fortunately, the LaTeX exporter is coded in such a way that it is
 possible for the user to alter this behavior relatively easily.
 
-[[latex:classfile][Org-article]] makes it possible to set the depth of headings that appear
-in the table of contents independent of the level to which section
-headings are numbered.  This mechanism will only work if the default
-behavior of the LaTeX exporter is changed.  The following bit of [[latex:proglang][Emacs
-Lisp]] code can be placed in =.emacs=:
+[[latex:classfile][Org-article]] makes these behaviors possible by changing the default
+behavior of the LaTeX exporter so that nothing is inserted after the
+LaTeX [[latex:progstruct][maketitle]] command (Listing \ref{fig:format-no-toc}).
 
-#+source: format-toc
+#+BEGIN_listing
+#+source: format-no-toc
 #+begin_src emacs-lisp :exports code
-  (defun org-export-latex-format-toc-org-article (depth)
+(defun org-export-latex-no-toc (depth)  
     (when depth
-      (format "\\setcounter{secnumdepth}{%s}\n\\tableofcontents\n"
+      (format "%% Org-mode is exporting headings to %s levels.\n"
               depth)))
-  (setq org-export-latex-format-toc-function 'org-export-latex-format-toc-org-article)
+  (setq org-export-latex-format-toc-function 'org-export-latex-no-toc)
 #+end_src
+#+LATEX: \caption[Configure org-export-latex-format-toc-function]{Configure org-export-latex-format-toc-function.}\label{fig:format-no-toc}
+#+END_listing
 
-#+source: format-toc-with-listings
-#+begin_src emacs-lisp :exports code
-  (defun org-export-latex-format-toc-org-article-with-listings (depth)
-    (when depth
-      (format "\\setcounter{secnumdepth}{%s}\n\\tableofcontents\n\\listoflistings\n"
-              depth)))
-  (setq org-export-latex-format-toc-function 'org-export-latex-format-toc-org-article-with-listings)
-#+end_src
+The table of contents depth is set with the [[latex:progstruct][tocdepth]] key:
+=[tocdepth=<section>]=.  The recognized values of =<section>= are
+=section=, =subsection=, =subsubsection=, =paragraph=, and
+=subparagraph= (Listing \ref{fig:tocdepth}).  These are the standard LaTeX section names available
+to articles.
 
-This code uses the depth to which [[latex:proglang][Org-mode]] headlines are exported to
-sections, rather than lists, as the default level to which sections
-are numbered.  This is fine for many applications, but it is possible
-to control this variable separately, as [[section-numbering][shown below]].
-
-The table of contents depth is set with the [[latex:progstruct][tocdepth]] key.  The
-recognized values of =<section>= are =section=, =subsection=,
-=subsubsection=, =paragraph=, and =subparagraph=.  These are the
-standard LaTeX section names available to articles.
-
-#+source: toc-depth-text-block
-#+begin_src org :exports code
-  ,#+LaTeX_CLASS_OPTIONS: [tocdepth=<section>]
-#+end_src
-
+#+BEGIN_listing
 #+source: pgf-option-tocdepth
 #+begin_src latex :exports code
   \pgfkeys{ 
@@ -897,50 +1068,22 @@ standard LaTeX section names available to articles.
     tocdepth/subparagraph/.code={\AtBeginDocument{\setcounter{tocdepth}{5}}}
   } 
 #+end_src
-
-#+source: option-tocdepth
-#+begin_src latex :exports none
-  \DeclareOption{tocdepths}{\AtBeginDocument{\setcounter{tocdepth}{1}}}
-  \DeclareOption{tocdepthss}{\AtBeginDocument{\setcounter{tocdepth}{2}}}
-  \DeclareOption{tocdepthsss}{\AtBeginDocument{\setcounter{tocdepth}{3}}}
-#+end_src
-
+#+LATEX: \caption[The tocdepth key]{The tocdepth key.}\label{fig:tocdepth}
+#+END_listing
 *** Section numbering
 # <<section-numbering>>
 
 It is possible to set the level to which sections will be numbered
 with [[latex:classfile][Org-article]].  Sections below this level will have unnumbered
 headings.  This requires that the default behavior of the [[latex:proglang][Org-mode]]
-LaTeX exporter be modified, as follows.
+LaTeX exporter be modified, as in Listing \ref{fig:format-no-toc}.
 
-#+source: format-toc-for-secnum
-#+begin_src emacs-lisp :exports code
-  (defun org-export-latex-format-toc-org-article-sec-num (depth)
-    (when depth
-      (format "%% Org-mode is exporting headings to %s levels.\n\\tableofcontents\n"
-              depth)))
-  (setq org-export-latex-format-toc-function 'org-export-latex-format-toc-org-article-sec-num)
-#+end_src
-
-#+source: format-toc-for-secnum-with-listings
-#+begin_src emacs-lisp :exports code
-  (defun org-export-latex-format-toc-org-article-sec-num-with-listings (depth)
-    (when depth
-      (format "%% Org-mode is exporting headings to %s levels.\n\\tableofcontents\n\\listoflistings\n"
-              depth)))
-  (setq org-export-latex-format-toc-function 'org-export-latex-format-toc-org-article-sec-num-with-listings)
-#+end_src
-
-Section numbering is controlled with the =secnum= key.  [[latex:classfile][Org-article]]
+Section numbering is controlled with the =secnum= key: =[secnum=<section>]=.  [[latex:classfile][Org-article]]
 recognizes the following values of =<section>: =none= to inhibit
 section numbering altogether; =section=, =subsection=;
-=subsubsection=; =paragraph=; and =subparagraph=.
+=subsubsection=; =paragraph=; and =subparagraph= (Listing \ref{fig:secnum}).
 
-#+source: sec-number-text-block
-#+begin_src org :exports code
-  ,#+LaTeX_CLASS_OPTIONS: [secnum=<section>]
-#+end_src
-
+#+BEGIN_listing
 #+source: pgf-option-secnum
 #+begin_src latex :exports none
   \pgfkeys{ 
@@ -954,6 +1097,8 @@ section numbering altogether; =section=, =subsection=;
     secnum/subparagraph/.code={\AtBeginDocument{\setcounter{secnumdepth}{5}}}
   } 
 #+end_src
+#+LATEX: \caption[The secnum key]{The secnum key.}\label{fig:secnum}
+#+END_listing
 
 *** Equations
 
@@ -976,12 +1121,11 @@ captioned item.  However, many document styles require table captions
 above the table.  Users of the standard LaTeX [[latex:classfile][article]] class typically
 use a package, [[http://tug.ctan.org/cgi-bin/ctanPackageInformation.py?id%3Dtopcapt][topcapt]], and place the command [[latex:progstruct][topcaption]] above the
 captioned item.  The [[http://www.ctan.org/tex-archive/macros/latex/contrib/koma-script/][KOMA-script]] [[latex:classfile][scrartcl]] class provides an option
-that gets rid of the need for [[latex:package][topcapt]]:
+that gets rid of the need for [[latex:package][topcapt]]: =[captions=tableheading]=.
+This is left as an option so that default handling of table captions
+is the same, regardless of which base class is chosen and even though
+the default yields less than satisfactory results.  
 
-#+source: koma-caption
-#+begin_src org :exports code
-  ,#+LaTeX_CLASS_OPTIONS: [captions=tableheading]
-#+end_src
 
 ** Org-mode default packages
 
@@ -1098,7 +1242,7 @@ Note that most of the font sets load [[latex:package][fontenc]] themselves.
 #+begin_src latex :exports code
   \ifthenelse{\boolean{ORGART@nofontenc}}
   {}
-  {\RequirePackage[T1]{fontenc}}
+  {\AtEndOfClass{\RequirePackage[T1]{fontenc}}}
 #+end_src
 
 #+source: options-to-fontenc
@@ -1140,7 +1284,7 @@ option is provided to not load it.
 #+begin_src latex :exports code
   \ifthenelse{\boolean{ORGART@nofixltx2e}}
   {}
-  {\RequirePackage{fixltx2e}}
+  {\AtEndOfClass{\RequirePackage{fixltx2e}}}
 #+end_src
 
 *** Graphicx
@@ -1177,7 +1321,7 @@ option is provided to not load it.
 #+begin_src latex :exports code
   \ifthenelse{\boolean{ORGART@nographicx}}
   {}
-  {\RequirePackage{graphicx}}
+  {\AtEndOfClass{\RequirePackage{graphicx}}}
 #+end_src
 
 *** Longtable
@@ -1214,7 +1358,7 @@ option is provided to not load it.
 #+begin_src latex :exports code
   \ifthenelse{\boolean{ORGART@nolongtable}}
   {}
-  {\RequirePackage{longtable}}
+  {\AtEndOfClass{\RequirePackage{longtable}}}
 #+end_src
 
 *** Float
@@ -1293,7 +1437,7 @@ option is provided to not load it.
 #+begin_src latex :exports code
   \ifthenelse{\boolean{ORGART@nowrapfig}}
   {}
-  {\RequirePackage{wrapfig}}
+  {\AtEndOfClass{\RequirePackage{wrapfig}}}
 #+end_src
 
 *** Soul
@@ -1326,7 +1470,7 @@ option is provided to not load it.
 #+begin_src latex :exports code
   \ifthenelse{\boolean{ORGART@nosoul}}
   {}
-  {\RequirePackage{soul}}
+  {\AtEndOfClass{\RequirePackage{soul}}}
 #+end_src
 
 *** T1enc                                                          :noexport:
@@ -1375,7 +1519,7 @@ option is provided to not load it.
 #+begin_src latex :exports code
   \ifthenelse{\boolean{ORGART@notextcomp}}
   {}
-  {\RequirePackage{textcomp}}
+  {\AtEndOfClass{\RequirePackage{textcomp}}}
 #+end_src
 
 *** MarVoSym
@@ -1409,7 +1553,7 @@ option is provided to not load it.
 #+begin_src latex :exports code
   \ifthenelse{\boolean{ORGART@nomarvosym}}
   {}
-  {\RequirePackage{marvosym}}
+  {\AtEndOfClass{\RequirePackage{marvosym}}}
 #+end_src
 
 *** Wasysym
@@ -1456,8 +1600,8 @@ option is provided to not load it.
   {}
   {%
     \ifthenelse{\boolean{ORGART@integrals}}%
-    {\RequirePackage[integrals]{wasysym}}%
-    {\RequirePackage[nointegrals]{wasysym}}%
+    {\AtEndOfClass{\RequirePackage[integrals]{wasysym}}}%
+    {\AtEndOfClass{\RequirePackage[nointegrals]{wasysym}}}%
   }
 #+end_src
 
@@ -1492,7 +1636,7 @@ option is provided to not load it.
 #+begin_src latex :exports code
   \ifthenelse{\boolean{ORGART@nolatexsym}}
   {}
-  {\RequirePackage{latexsym}}
+  {\AtEndOfClass{\RequirePackage{latexsym}}}
 #+end_src
 
 *** Amssymb
@@ -1529,7 +1673,7 @@ option is provided not to load it.
 #+begin_src latex :exports code
   \ifthenelse{\boolean{ORGART@noamssymb}}
   {}
-  {\AtBeginDocument{\RequirePackage{amssymb}}}
+  {\AtEndOfClass{\RequirePackage{amssymb}}}
 #+end_src
   
 *** Hyperref
@@ -1581,9 +1725,7 @@ following shell command:
 
 
 This is a standard [[latex:proglang][Org-mode]] package that is loaded by default.  An
-option is provided to not load it.  If the user chooses not to load
-[[latex:package][hyperref]], then the [[latex:package][url]] package is loaded instead to provide
-support for the [[path-command][path]] command.
+option is provided not to load it.
 
 #+source: org-buffer-hyperref
 #+begin_src org :exports code
@@ -1596,6 +1738,11 @@ support for the [[path-command][path]] command.
   \DeclareOption{nohyperref}{\setboolean{ORGART@nohyperref}{true}}
 #+end_src
 
+If [[latex:package][hyperref]] is not loaded, then the [[latex:package][url]] package is loaded for the [[path-command][path]]
+command.  The [[latex:package][hyperref]] package asks to be loaded last; it is loaded
+here =AtBeginDocument=, which follows on the other packages loaded
+=AtEndOfClass=.
+
 #+source: load-hyperref
 #+begin_src latex :exports code
   \ifthenelse{\boolean{ORGART@nohyperref}}
@@ -1605,7 +1752,7 @@ support for the [[path-command][path]] command.
 
 Options do not include =debug=.
 
-#+source: options-to-hyperref
+#+source: pass-to-hyperref
 #+begin_src latex :exports code
 \DeclareOption{anchorcolor}{%
    \PassOptionsToPackage{anchorcolor}{hyperref}}
@@ -1826,6 +1973,9 @@ set.
 *** Bera
 # <<bera-font>>
 
+Bera is the LaTeX version of the Bitstream's Vera family of fonts.  It
+includes serif, sans-serif, and monospace fonts.
+
 #+source: org-buffer-bera
 #+begin_src org :exports code
   #+LaTeX_CLASS_OPTIONS: [fontset=bera]
@@ -1931,6 +2081,10 @@ family supports math.
 *** Libertine
 # <<libertine-font>>
 
+The [[http://www.linuxlibertine.org/][Linux Libertine Project]] produces OpenSource fonts.  Libertine is a
+replacement for Times New Roman.  It was used to typeset the Wikipedia
+logo.  The monospace typewriter font is Latin Modern.
+
 #+source: org-buffer-libertine
 #+begin_src org :exports code
   #+LaTeX_CLASS_OPTIONS: [fontset=libertine]
@@ -1950,15 +2104,17 @@ family supports math.
           \fi}}}
 #+end_src
 
-*** Nimbus                                                         :noexport:
+*** Nimbus                                                     
 # <<nimbus-font>>
 
-The nimbus font set uses fonts from the Tex-Gyre distribution, which
+The Nimbus font set uses fonts from the [[http://www.gust.org.pl/projects/e-foundry/tex-gyre/][Tex-Gyre]] distribution, which
 provides a rich collection of diacritical characters in the attempt to
-cover as many Latin-based scripts as possible.
+cover as many Latin-based scripts as possible.  The serif font is
+Termes, which is a replacement for Times Roman.  The sans-serif font
+is Heros, which is a replacement for Helvetica.  The monospace font is
+Cursor, which is a Courier replacement.
 
-The sans-serif font needs to be scaled down somehow.  I haven't
-figured out how to do this.
+Choose the Nimbus font set with the [[latex:progstruct][nimbus]] option.
 
 #+source: org-buffer-nimbus
 #+begin_src org :exports code
@@ -1974,7 +2130,7 @@ figured out how to do this.
         \AtBeginDocument{\ifpdf
           \RequirePackage[T1]{fontenc}
           \RequirePackage{tgtermes}
-          \RequirePackage{tgheros}
+          \RequirePackage[scale=.85]{tgheros}
           \RequirePackage{tgcursor} % tt
           \fi}}}
 #+end_src
@@ -2048,7 +2204,7 @@ designed by Howard Kettler in 1955 for use in IBM typewriters.
 Adobe in 1989.  It became free software in 2006.  It is paired here
 with the Bera sans serif and monospaced fonts.
 
-Note that the utopia font clashes with the [[latex:package][amssymb]] package.
+Note that the Utopia font clashes with the [[latex:package][amssymb]] package.
 
 #+source: org-buffer-utopia
 #+begin_src org :exports code
@@ -2069,12 +2225,16 @@ Note that the utopia font clashes with the [[latex:package][amssymb]] package.
         \fi}}}
 #+end_src
 
-
 ** Source block markup
 Two options are available for syntax highlighting and typesetting of
 source code blocks.  The [[latex:package][listings]] package is a pure LaTeX solution,
 while the [[latex:package][minted]] package relies on [[latex:proglang][Python]] code and libraries.
+[[latex:classfile][Org-article]] is designed so changing from one package to the other does
+not involve changes to the input file; a single LaTeX export of an
+[[latex:proglang][Org-mode]] file can be processed with either the [[latex:package][minted]] or [[latex:package][listings]]
+package using [[latex:classfile][Org-article]]. 
 
+#+BEGIN_listing
 #+source: pgf-option-source
 #+begin_src latex :noweb tangle :exports code
   \pgfkeys{ 
@@ -2084,6 +2244,8 @@ while the [[latex:package][minted]] package relies on [[latex:proglang][Python]]
   <<pgf-option-source-listings>>  
   <<pgf-option-source-minted>>
 #+end_src
+#+LATEX: \caption[Set up option for source code highlighting and typesetting]{Set up option for source code highlighting and typesetting.}\label{fig:option-source}
+#+END_listing
 
 *** Listings
 The [[latex:package][listings]] package is a source code printer for LaTeX.  According to
@@ -2103,16 +2265,27 @@ and no lower, then setting =H: 3= should ensure that listing margins
 are always aligned with text margins.
 
 You can choose to use the listings package by adding the following
-line to the [[latex:proglang][Org-mode]] file:
-
-#+source: org-buffer-listings
-#+begin_src org :exports code
-  #+LaTeX_CLASS_OPTIONS: [source=listings]
-#+end_src
-
+line to the [[latex:proglang][Org-mode]] file: =#+LaTeX_CLASS_OPTIONS: [source=listings]=.
 With this setting, default values are used to markup and typeset
 source code blocks.
 
+The [[latex:progstruct][listings]] option requires quite a bit of configuration to ensure
+compatibility with the [[latex:package][minted]] package (Listing
+\ref{fig:listings-option}).
+  - make-lstinline-macro :: Defines a macro to create
+       language-specific shortcuts for highlighting and typesetting
+       inline source code snippets (Listing \ref{fig:lstinline-macro})
+  - listings-code :: Defines basic markup for a few languages, and an
+                     environment for floating listings based on code
+                     in the [[latex:package][minted]] package (Listing \ref{fig:listings-code})
+  - make-lstnewenvironment-code :: A [[latex:proglang][Python]] script configures
+       block-level environments for the languages recognized by [[latex:proglang][Org-mode]]
+  - make-lstinline-code :: A [[latex:proglang][Python]] script configures inline source
+       code markup with macros for each of the languages recognized by
+       [[latex:proglang][Org-mode]]
+
+
+#+BEGIN_listing
 #+source: pgf-option-source-listings
 #+begin_src latex :noweb tangle :exports code
   <<make-lstinline-macro>>
@@ -2128,19 +2301,28 @@ source code blocks.
     }
   }  
 #+end_src
+#+LATEX: \caption[The listings option]{The listings option.}\label{fig:listings-option}
+#+END_listing
 
 **** Listings setup
+# <<listings setup>>
+
+These settings configure Org-mode to export source blocks that
+[[latex:classfile][Org-article]] will recognize and handle.  Setting
+[[latex:progstruct][org-export-latex-listings]] to =listings= ensures that source code
+blocks in langauges that aren't listed in
+[[latex:progstruct][org-export-latex-custom-lang-environments]] are also typeset by the
+[[latex:progstruct][listings]] package.  
 
 #+source: listings-setup
 #+begin_src emacs-lisp :exports code :results silent
-  (setq org-export-latex-listings 'listings)
-  (setq org-export-latex-custom-lang-environments
-        '((python "pythoncode")
-          (emacs-lisp "common-lispcode")
-          (org "textcode")
-          (latex "latexcode")))
-  (setq org-latex-to-pdf-process
-        '("pdflatex --shell-escape -interaction nonstopmode %s"))
+    (setq org-export-latex-listings 'listings)
+    (setq org-export-latex-custom-lang-environments
+          '((python "pythoncode")
+            (emacs-lisp "common-lispcode")
+            (org "textcode")
+            (latex "latexcode")
+            (sh "shcode")))
 #+end_src
 
 **** Listings themes
@@ -2148,6 +2330,7 @@ Themes are defined for the listings package.  Themes treat source
 blocks in all languages identically.  They are provided for
 convenience.
 
+#+BEGIN_listing
 #+source: pgf-option-listingstheme
 #+begin_src latex :noweb tangle :exports code
   \newboolean{ORGART@color}
@@ -2160,7 +2343,8 @@ convenience.
   <<pgf-option-listingstheme-sv>>
   <<pgf-option-listingstheme-es>>
 #+end_src
-
+#+LATEX: \caption[Set up options for listings package themes]{Set up options for listings package themes.}\label{fig:option-listingstheme}
+#+END_listing
 
 The =bw= theme offers footnote size text in a frame, set in black and
 white with shades of gray.
@@ -2298,14 +2482,16 @@ This theme was designed by Eric Schulte.
   }
 #+end_src
 
-**** Listings lookup table
-This table has a column for each of the [[latex:package][listings]] variables likely relevant for
-[[latex:proglang][Org-mode]] users.  The first two columns list the [[latex:proglang][Org-mode]] name for the
-language and the name that the [[latex:package][listings]] package environment will have
-for that language.  Note that these names should appear on the list
-held by [[latex:progstruct][org-export-latex-custom-lang-environments]].  Note, too, that
-the names all end in "code"; this is the default used by the [[latex:package][minted]]
-package and it is used here to promote interoperability.
+**** Listings lookup tables
+These tables have a column for each of the [[latex:package][listings]] variables likely
+relevant for [[latex:proglang][Org-mode]] users.  The first two columns in each table list
+the [[latex:proglang][Org-mode]] name for the language and the name that the [[latex:package][listings]]
+package environment will have for that language.  Note that these
+names should appear on the list held by
+[[latex:progstruct][org-export-latex-custom-lang-environments]].  Note, too, that the names
+in the Lstlisting lookup table all end in "code"; this is the default
+used by the [[latex:package][minted]] package and it is used here to promote
+interoperability.
 
 Default values are in the second row of the table.  These are used by
 the [[latex:proglang][Python]] script to determine whether or not the variable should be
@@ -2320,7 +2506,7 @@ language in the environment definition.
 | asymptote  | asymptotecode   | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {}                | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false        | false      | false             | {}       | {}        | 20pt        | true            | none   | ffff       | 3pt      | 2pt     | 0.4pt     | 0pt              | 0pt               | 0pt             | 0pt                | nil             | nil            | nil       | nil          | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
 | C          | ccode           | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | [ANSI]{C}         | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false        | false      | false             | {}       | {}        | 20pt        | true            | none   | ffff       | 3pt      | 2pt     | 0.4pt     | 0pt              | 0pt               | 0pt             | 0pt                | nil             | nil            | nil       | nil          | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
 | clojure    | clojurecode     | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {}                | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false        | false      | false             | {}       | {}        | 20pt        | true            | none   | ffff       | 3pt      | 2pt     | 0.4pt     | 0pt              | 0pt               | 0pt             | 0pt                | nil             | nil            | nil       | nil          | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
-| css        | csscode         | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {}                | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false        | false      | false             | {}       | {}        | 20pt        | true            | none   | ffff       | 3pt      | 2pt     | 0.4pt     | 0pt              | 0pt               | 0pt             | 0pt                | nil             | nil            | nil       | nil          | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
+| css        | csscode         | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {}                | {}           | {}             | {\ttfamily\footnotesize} | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false        | false      | false             | {}       | {}        | 20pt        | true            | none   | ffff       | 3pt      | 2pt     | 0.4pt     | 0pt              | 0pt               | 0pt             | 0pt                | nil             | \color{orange} | nil       | nil          | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
 | ditaa      | ditaacode       | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {ditaa}           | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false        | false      | false             | {}       | {}        | 20pt        | true            | none   | ffff       | 3pt      | 2pt     | 0.4pt     | 0pt              | 0pt               | 0pt             | 0pt                | nil             | nil            | nil       | nil          | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
 | dot        | dotlangcode     | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {dot}             | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false        | false      | false             | {}       | {}        | 20pt        | true            | none   | ffff       | 3pt      | 2pt     | 0.4pt     | 0pt              | 0pt               | 0pt             | 0pt                | nil             | nil            | nil       | nil          | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
 | emacs-lisp | common-lispcode | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {Lisp}            | {}           | {}             | {\ttfamily\footnotesize} | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false        | true       | false             | {}       | {}        | 20pt        | true            | single | ffff       | 3pt      | 2pt     | 0.4pt     | 0pt              | 0pt               | 0pt             | 0pt                | nil             | \color{gray}   | nil       | nil          | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
@@ -2350,38 +2536,38 @@ language in the environment definition.
 
 ***** Lstinline lookup table                                       :noexport:
 #+tblname: lstinline-lookup
-| Org        | Listings    | aboveskip      | belowskip      | firstline | lastline | showlines | emptylines | gobble | style | language          | alsolanguage | defaultdialect | basicstyle               | identifierstyle | commentstyle | stringstyle | keywordstyle | classoffset | extendedchars | inputencoding | upquote | tabsize | showtabs | showspaces | showstringspaces | formfeed  | numbers | stepnumber | numberfirstline | numberstyle | numbersep | numberblanklines | firstnumber | thelstnumber       | linewidth  | xleftmargin | xrightmargin | breaklines | resetmargins | breakatwhitespace | prebreak | postbreak | breakindent | breakautoindent | index | indexstyle     | columns  | flexiblecolumns | basewidth      | fontadjust | texcl | mathescape | escapechar | escapeinside | escapebegin | escapeend |
-| *default*  | *default*   | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | nil               | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
-| asymptote  | asymptote   | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {}                | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
-| C          | cpp         | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | [ANSI]{C}         | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
-| clojure    | clojure     | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {}                | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
-| css        | css         | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {}                | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
-| ditaa      | ditaa       | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {}                | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
-| dot        | dotlang     | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {}                | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
-| emacs-lisp | commonlisp  | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {Lisp}            | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
-| gnuplot    | gnuplot     | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {Gnuplot}         | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
-| haskell    | haskell     | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {Haskell}         | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
-| js         | js          | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {Java}            | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
-| latex      | latex       | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | [LaTeX]{TeX}      | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
-| ledger     | ledger      | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {}                | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
-| lisp       | cl          | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {Lisp}            | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
-| matlab     | matlab      | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {Matlab}          | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
-| mscgen     | mscgen      | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {}                | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
-| ocaml      | ocaml       | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | [Objective]{Caml} | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
-| octave     | octave      | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {Octave}          | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
-| org        | org         | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {}                | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
-| oz         | oz          | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {Oz}              | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
-| perl       | perl        | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {Perl}            | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
-| plantuml   | plantuml    | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {}                | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
-| python     | python      | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {Python}          | {}           | {}             | {\ttfamily\footnotesize} | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
-| R          | rlang       | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {R}               | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
-| ruby       | ruby        | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {Ruby}            | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
-| sass       | sass        | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {}                | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
-| scheme     | scheme      | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {}                | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
-| screen     | screen      | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {}                | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
-| sh         | sh          | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {sh}              | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
-| sql        | sql         | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {SQL}             | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
-| sqlite     | sqlite3     | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {SQL}             | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
+| Org        | Listings   | aboveskip      | belowskip      | firstline | lastline | showlines | emptylines | gobble | style | language          | alsolanguage | defaultdialect | basicstyle               | identifierstyle | commentstyle | stringstyle | keywordstyle | classoffset | extendedchars | inputencoding | upquote | tabsize | showtabs | showspaces | showstringspaces | formfeed  | numbers | stepnumber | numberfirstline | numberstyle | numbersep | numberblanklines | firstnumber | thelstnumber       | linewidth  | xleftmargin | xrightmargin | breaklines | resetmargins | breakatwhitespace | prebreak | postbreak | breakindent | breakautoindent | index | indexstyle     | columns  | flexiblecolumns | basewidth      | fontadjust | texcl | mathescape | escapechar | escapeinside | escapebegin | escapeend |
+| *default*  | *default*  | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | nil               | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
+| asymptote  | asymptote  | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {}                | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
+| C          | cpp        | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | [ANSI]{C}         | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
+| clojure    | clojure    | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {}                | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
+| css        | css        | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {}                | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
+| ditaa      | ditaa      | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {}                | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
+| dot        | dotlang    | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {}                | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
+| emacs-lisp | commonlisp | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {Lisp}            | {}           | {}             | {\ttfamily\footnotesize} | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
+| gnuplot    | gnuplot    | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {Gnuplot}         | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
+| haskell    | haskell    | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {Haskell}         | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
+| js         | js         | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {Java}            | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
+| latex      | latex      | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | [LaTeX]{TeX}      | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
+| ledger     | ledger     | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {}                | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
+| lisp       | cl         | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {Lisp}            | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
+| matlab     | matlab     | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {Matlab}          | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
+| mscgen     | mscgen     | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {}                | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
+| ocaml      | ocaml      | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | [Objective]{Caml} | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
+| octave     | octave     | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {Octave}          | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
+| org        | org        | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {org}             | {}           | {}             | {\ttfamily\footnotesize} | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
+| oz         | oz         | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {Oz}              | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
+| perl       | perl       | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {Perl}            | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
+| plantuml   | plantuml   | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {}                | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
+| python     | python     | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {Python}          | {}           | {}             | {\ttfamily\footnotesize} | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
+| R          | rlang      | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {R}               | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
+| ruby       | ruby       | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {Ruby}            | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
+| sass       | sass       | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {}                | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
+| scheme     | scheme     | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {}                | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
+| screen     | screen     | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {}                | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
+| sh         | sh         | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {sh}              | {}           | {}             | {\ttfamily\footnotesize} | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
+| sql        | sql        | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {SQL}             | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
+| sqlite     | sqlite3    | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {SQL}             | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
 
 
 **** Make listings environments
@@ -2417,11 +2603,13 @@ languages in the listings-lookup table.
 **** Make inline list commands                                   
 
 A LaTeX macro is used to define language-specific shortcuts for inline
-listings with the [[latex:package][listings]] package.  It defines a newcommand
-[[latex:progstruct][makelstinline]] that takes two arguments: the name of the new shortcut
-command and the =key = value= options needed to configure the syntax
-highlighting and typesetting.
+listings with the [[latex:package][listings]] package (Listing
+\ref{fig:lstinline-macro}).  It defines a newcommand [[latex:progstruct][makelstinline]]
+that takes two arguments: the name of the new shortcut command and the
+=key = value= options needed to configure the syntax highlighting and
+typesetting.
 
+#+BEGIN_listing
 #+source: make-lstinline-macro
 #+begin_src latex :exports code
   \newcommand\makelstinline[2]{
@@ -2429,6 +2617,8 @@ highlighting and typesetting.
     \expandafter\newcommand\csname\makelstinline@shortname\endcsname[1][]{ 
       \lstinline[#2]##1}}
 #+end_src
+#+LATEX: \caption[A macro to make language-specific shortcuts for Org-mode languages]{A macro to make language-specific shortcuts for Org-mode languages.}\label{fig:lstinline-macro}
+#+END_listing
 
 This [[latex:proglang][Python]] code block uses the lookup table to create a call to
 [[latex:progstruct][makelstinline]] for each of the languages in the table.
@@ -2479,8 +2669,9 @@ Typically, the configuration file would be input in the LaTeX header:
 
 This code defines three languages for the [[latex:package][listings]] package.  It also
 defines a shell for the listings environment, which is defined and
-used by the [[latex:package][minted]] package.
+used by the [[latex:package][minted]] package (Listing \ref{fig:listings-code}).
 
+#+BEGIN_listing
 #+source: listings-code
 #+begin_src latex :exports none
   \lstdefinelanguage{org}%
@@ -2495,10 +2686,12 @@ used by the [[latex:package][minted]] package.
   \newfloat{listing}{h}{lol}
   \newcommand\listingscaption{Listing}
   \floatname{listing}{\listingscaption}
-  \newcommand\listoflistingscaption{List of listings}
+  \newcommand\listoflistingscaption{List of Listings}
   \providecommand\listoflistings{\listof{listing}{\listoflistingscaption}}
+  \floatplacement{listing}{htb!}
 #+end_src
-
+#+LATEX: \caption[Code to configure the listings package]{Code to configure the listings package.}\label{fig:listings-code}
+#+END_listing
 *** Minted
 
 Minted is a LaTeX package for formatting source code.  It is an
@@ -2513,8 +2706,12 @@ sudo aptitude install python-pygments
 #+end_src
 
 **** Org-mode setup
-You will need to set `org-export-latex-listings' to the special value
-'minted.
+# <<minted setup>>
+
+This code block sets `org-export-latex-listings' so that [[latex:package][minted]] is
+used to syntax highlight and typeset source code, defines the
+languages that [[latex:package][minted]] will work on, and configures the call to
+[[latex:proglang][pdflatex]] so it can interface with the external calls made by [[latex:package][minted]].
 
 #+source: minted-setup
 #+begin_src emacs-lisp :exports code :results silent
@@ -2546,7 +2743,9 @@ To use minted to typeset source code blocks, add the following option.
         \RequirePackage{minted}
         <<make-newminted-code>>
         <<make-newmint-code>>
-      }}
+        \floatplacement{listing}{htb!}
+        \listoflistingscaption{List of Listings}
+        }}
   }  
 #+end_src
 
@@ -2579,7 +2778,7 @@ The available options for <style> are:
    - native
 
 #+BEGIN_listing
-#+source: pgf-option-mintedstyle
+#+source:pgf-option-mintedstyle
 #+begin_src latex :exports code
   \pgfkeys{ 
     /ORGART/.cd, 
@@ -2602,7 +2801,7 @@ The available options for <style> are:
     mintedstyle/native/.code={\AtBeginDocument{\usemintedstyle{native}}}
   } 
 #+end_src
-#+LATEX: \caption{A floating listing.}
+#+LATEX: \caption[Set up options for minted package styles]{Set up options for minted package styles.}\label{fig:option-mintedstyle}
 #+END_listing
 
 
@@ -2611,16 +2810,15 @@ The available options for <style> are:
 
 The class creates macros for marking up code snippets, using the
 [[latex:progstruct][newmint]] command of the [[latex:package][minted]] package.  Adding a code snippet is as
-easy as =C-c C-l mint:python x=str(y)=, which yields the following:
+easy as =C-c C-l inline:python x=str(y)=, which yields the following:
 
-#+BEGIN_listing
- [[mint:python][x = str(y)]] 
-#+END_listing
+This is some [[latex:proglang][Python]] code inline:  [[inline:python][x = str(y)]].
 
-**** Newmint and newminted lookup table
+
+**** Newmint and newminted lookup tables
 These lookup tables hold configuration information for the the [[latex:package][minted]]
 package.  The configuration information is used by a [[latex:proglang][Python]] script to
-write out =\newmint{}= and =\newminted{}= macros.  These macros expand
+write out =newmint= and =newminted= macros.  These macros expand
 to LaTeX environments that have access to the information needed to
 highlight syntax and typeset a particular computer language.
 
@@ -2630,6 +2828,8 @@ name for the language and the [[latex:package][minted]] name.  The other 29 colu
 for [[latex:package][minted]] variables.  The table is too large to reproduce on the
 printed page, so a corner of it is presented here.
 
+#+CAPTION: A corner of the newminted lookup table
+#+LABEL: {tab:newminted}
 
 | Org          | Minted      | baselinestretch | bgcolor | firstline |
 | *default*    | *default*   | auto            | nil     |         1 |
@@ -2888,18 +3088,21 @@ it.
   #+LaTeX_CLASS_OPTIONS: [microtype]
 #+end_src
 
+#+BEGIN_listing
 #+source: option-microtype
 #+begin_src latex :exports code
   \newboolean{ORGART@microtype}
   \DeclareOption{microtype}{\setboolean{ORGART@microtype}{true}}
 #+end_src
+#+LATEX: \caption[Setting the microtype option]{Setting the microtype option.}\label{fig:microtype-option}
+#+END_listing
 
 #+source: load-microtype
 #+begin_src latex :exports code
     \ifthenelse{\boolean{ORGART@microtype}}
   {%
     \ifpdf
-     \RequirePackage{microtype}
+     \AtEndOfClass{\RequirePackage{microtype}}
     \fi}%
   {}
 #+end_src
@@ -2919,6 +3122,7 @@ it, and to set linespacing to doublespace.
   #+LaTeX_CLASS_OPTIONS: [setspace,doublespace]
 #+end_src
  
+#+BEGIN_listing
 #+source: option-setspace
 #+begin_src latex :exports code
   \newboolean{ORGART@setspace}
@@ -2926,6 +3130,8 @@ it, and to set linespacing to doublespace.
   \DeclareOption{setspace}{\setboolean{ORGART@setspace}{true}}
   \DeclareOption{doublespace}{\setboolean{ORGART@doublespace}{true}}
 #+end_src
+#+LATEX: \caption[Set up options for the setspace package]{Set up options for the setspace package.}\label{fig:setspace-options}
+#+END_listing
 
 #+source: load-setspace
 #+begin_src latex :exports code
@@ -2934,6 +3140,7 @@ it, and to set linespacing to doublespace.
   {}
 #+end_src
 
+#+BEGIN_listing
 #+source: setspace-code
 #+begin_src latex :exports code
   \ifthenelse{\boolean{ORGART@setspace}}%
@@ -2942,6 +3149,8 @@ it, and to set linespacing to doublespace.
   {\singlespacing}}%
   {}%
 #+end_src
+#+LATEX: \caption[Setting the document line spacing]{Setting the document line spacing.}\label{fig:setspace}
+#+END_listing
 
 *** Paralist
 
@@ -2951,40 +3160,62 @@ loaded, then the LaTeX environments =itemize=, =enumerate=, and
 =description= are over-ridden by their paralist counterparts.
 
 You can probably read the [[latex:package][paralist]] documentation on your system by
-issuing the shell command:
+issuing the shell command:  [[inline:sh][texdoc paralist]].
 
-#+source: read-paralist
-#+begin_src sh :exports code
-  texdoc paralist
-#+end_src
+List typesetting is configured with the [[latex:progstruct][lists]] key which recognizes the
+following values: [[latex:progstruct][latex]], [[latex:progstruct][compact]], and several varieties of the value
+[[latex:progstruct][inpara]], each of which begin with [[latex:progstruct][inpara]] and are followed by the format
+of the list enumeration inside the paragraph:
 
-
-This package is not loaded by default.  An option is provided to load
-it.
+  - latex :: Use standard LaTeX lists, which are set with generous
+             space between items
+  - compact :: Use compact lists, with little space between items
+  - inpara :: Use compact lists for itemize and description
+              environments, but set enumerated lists inside paragraphs
+  - inparacustom :: Like [[latex:progstruct][inpara]], but the label used for enumeration
+                    can be customized with the [[latex:progstruct][customlabel]] key
+  - customlabel :: a formatting string for the label, e.g., i), (i),
+                   a), A), I), 1), {example} a.
 
 #+source: org-buffer-paralist
 #+begin_src org :exports code
-  #+LaTeX_CLASS_OPTIONS: [paralist]
-#+end_src
- 
-#+source: option-paralist
-#+begin_src latex :exports code
-  \newboolean{ORGART@paralist}
-  \DeclareOption{paralist}{\setboolean{ORGART@paralist}{true}}
+  #+LaTeX_CLASS_OPTIONS: [lists=<value>]
 #+end_src
 
-#+source: load-paralist
+#+BEGIN_listing
+#+source: pgf-option-paralist
 #+begin_src latex :exports code
-  % Set the standard LaTeX list environments to their compact counterparts  
-  \ifthenelse{\boolean{ORGART@paralist}}
-    {%
-      \RequirePackage{paralist}
-      \let\itemize\compactitem%
-      \let\description\compactdesc%
-      \let\enumerate\compactenum%
-    }
-    {}
+    \pgfkeys{ 
+      /ORGART/.cd, 
+      customlabel/.store in=\ORGART@customlabel,
+      lists/.is choice,
+      lists/latex/.code={},
+      lists/compact/.code={\AtEndOfClass{%
+        \RequirePackage{paralist}
+        \let\itemize\compactitem
+        \let\description\compactdesc
+        \let\enumerate\compactenum}},
+     lists/inpara/.code={\AtEndOfClass{%
+        \RequirePackage{paralist}
+        \let\itemize\compactitem
+        \let\description\compactdesc
+        \let\enumerate\inparaenum}},
+     lists/inparai/.code={\AtEndOfClass{%
+        \RequirePackage{paralist}
+        \let\itemize\compactitem
+        \let\description\compactdesc
+        \renewenvironment{enumerate}{\begin{inparaenum}[(i)]}{\end{inparaenum}}}},
+     lists/inparacustom/.code={\AtEndOfClass{%
+        \RequirePackage{paralist}}
+        \AtBeginDocument{
+        \let\itemize\compactitem
+        \let\description\compactdesc
+        \renewenvironment{enumerate}{\begin{inparaenum}[\ORGART@customlabel]}{\end{inparaenum}}}}
+  }  
 #+end_src
+#+LATEX: \caption[Set up option for lists]{Set up options for lists.}\label{fig:paralist-option}
+#+END_listing
+
 
 *** Topcapt                                                        :noexport:
 The [[latex:packgae][topcapt]] package is needed when it is desired to set the caption
@@ -3070,16 +3301,19 @@ The [[latex:package][gantt.sty]] package can be loaded by adding the following l
 The following two bits of code implement the [[latex:progstruct][gantt]] option in
 [[latex:classfile][Org-article]].
 
+#+BEGIN_listing
 #+source: option-gantt
 #+begin_src latex :exports code
   \newboolean{ORGART@gantt}
   \DeclareOption{gantt}{\setboolean{ORGART@gantt}{true}}
 #+end_src
+#+LATEX: \caption[Set up option for table-driven GANTT charts]{Set up option for table-driven GANTT charts.}\label{fig:option-gantt}
+#+END_listing
 
 #+source: load-gantt
 #+begin_src latex :exports code
   \ifthenelse{\boolean{ORGART@gantt}}
-  {\RequirePackage{gantt}}
+  {\AtEndOfClass{\RequirePackage{gantt}}}
   {}
 #+end_src
 
@@ -3102,6 +3336,8 @@ The following two bits of code implement the [[latex:progstruct][gantt]] option 
   tasks, whether to the left or right of the bar or, if nothing is
   specified, centred within the bar itself.
 
+#+CAPTION: The GANTT chart input table
+#+LABEL: tab:gantt
 #+tblname: gantttesttable
     |    | type      | label | activity      | depends | start | duration | end | align |
     |----+-----------+-------+---------------+---------+-------+----------+-----+-------|
@@ -3165,10 +3401,12 @@ The results are wrapped in =#+BEGIN_LaTeX= ... =#+END_LaTeX=.
 
 
 The resulting GANTT chart is processed by LaTeX and appears in the PDF
-output without reference to an external file.  Note that the chart
-does not appear in the HTML export.  The chart looks great, Eric!
+output without reference to an external file (Fig. \ref{fig:gantt}).
+Note that the chart does not appear in the HTML export.  The chart
+looks great, Eric!
 
-
+#+BEGIN_figure
+#+LATEX: \centering
 #+BEGIN_LaTeX
 \pgfdeclarelayer{background}
 \pgfdeclarelayer{foreground}
@@ -3198,7 +3436,8 @@ does not appear in the HTML export.  The chart looks great, Eric!
 
 \end{tikzpicture}
 #+END_LaTeX
-
+#+LATEX: \caption[Eric Fraga's GANTT chart example]{Eric Fraga's GANTT chart example.}\label{fig:gantt}
+#+END_figure
 
 **** GANTT Emacs lisp source code block                            :noexport:
 
