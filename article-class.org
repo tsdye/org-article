@@ -135,12 +135,12 @@ export.  How the environment is set up will depend on the LaTeX packages you
 typically load, 
 
 There are two ways to set up [[latex:classfile][Org-article]] and your choice will probably
-depend on the value of the variable [[latex:progstruct][org-export-latex-packages-alist]].
+depend on the value of the variable [[latex:lispvar][org-export-latex-packages-alist]].
 If this variable is nil (or it refers to packages that you always want
 loaded), then the following setup should work for you.  It asks
 [[latex:proglang][Org-mode]] *not* to load the default packages, because these are loaded
 by [[latex:classfile][Org-article]].  Then, it loads the packages in
-[[latex:progstruct][org-export-latex-packages-alist]], which should consist of a single
+[[latex:lispvar][org-export-latex-packages-alist]], which should consist of a single
 entry for the [[latex:package][inputenc]] package.  [[latex:proglang][Org-mode]] automatically sets the
 input encoding based on the status of the [[latex:proglang][Org-mode]] buffer being
 exported, which it can't do if it is loaded by [[latex:classfile][Org-article]].  Finally,
@@ -151,16 +151,16 @@ argument).
 
 The number of heading levels in the LaTeX output is determined by two
 factors: the number of heading levels (section, subsection, etc.)
-defined in [[latex:progstruct][org-export-latex-classes]] and the setting of the [[latex:progstruct][H:]]
+defined in [[latex:lispvar][org-export-latex-classes]] and the setting of the [[latex:progstruct][H:]]
 option in the export header.  The number of heading levels will be the
 smaller of the two values, e.g., if [[latex:progexample][H: 5]] calls for five heading
-levels, but only sections are defined in [[latex:progstruct][org-export-latex-classes]]
+levels, but only sections are defined in [[latex:lispvar][org-export-latex-classes]]
 then the exported LaTeX file will only contain sections and will lack
 subsections, subsubsections, etc.  Similarly, if headings down to
-subparagraph are defined in [[latex:progstruct][org-export-latex-classes]] and  [[latex:progexample][H: 1]],
+subparagraph are defined in [[latex:lispvar][org-export-latex-classes]] and  [[latex:progexample][H: 1]],
 then only sections will appear in the LaTeX export.  In a practical
 sense, the only reason to restrict the number of headings specified in
-[[latex:progstruct][org-export-latex-classes]] would be to constrain the options available
+[[latex:lispvar][org-export-latex-classes]] would be to constrain the options available
 to the author of the document.  Thus, [[latex:classfile][Org-article]] defines
 headings to the subparagraph level, which is the maximum defined by LaTeX.
 
@@ -192,7 +192,7 @@ used.
 
 *** Set up if org-export-latex-packages-alist is not nil
 
-If, for some reason, [[latex:progstruct][org-export-latex-packages-alist]] is not [[latex:progstruct][nil]],
+If, for some reason, [[latex:lispvar][org-export-latex-packages-alist]] is not [[latex:progstruct][nil]],
 and it includes packages that you don't want always loaded then
 the following setup should work.
 
@@ -277,7 +277,7 @@ Both of the code blocks rely on [[latex:progstruct][noweb]] expansion.
 
 This document contains [[latex:proglang][Python]], LaTeX, and
 [[latex:proglang][shell]] source code blocks that can be evaluated.
-The variable [[latex:progstruct][org-babel-load-languages]] should
+The variable [[latex:lispvar][org-babel-load-languages]] should
 enable these languages as shown in Listing \ref{fig:babel-config}.
 
 #+BEGIN_listing
@@ -423,11 +423,8 @@ here.
 #+BEGIN_listing
 #+source: identification-part
 #+begin_src latex :exports code
-  % Identification part
   \NeedsTeXFormat{LaTeX2e}
   \ProvidesClass{org-article}[2010/11/25 0.3 (TSD)]
-  % End of the identification part
-  %
 #+end_src
 #+LATEX: \caption[The identification part of the class file]{The identification part of the class file.}\label{fig:identification-part}
 #+END_listing
@@ -612,7 +609,7 @@ memory used to store user options.
 # <<package-loading-part>>
 
 By default, [[latex:classfile][Org-article]] loads all but one of the packages in
-[[latex:progstruct][org-export-latex-default-packages-alist]].  It does not load [[latex:package][inputenc]]
+[[latex:lispvar][org-export-latex-default-packages-alist]].  It does not load [[latex:package][inputenc]]
 directly, but instead relies on the [[latex:proglang][Org-mode]] LaTeX exporter to load
 this package, which passes as an option the encoding scheme of the
 exported buffer.  The [[latex:package][fontenc]] package is loaded with the [[latex:progstruct][T1]] option
@@ -689,7 +686,7 @@ markup conventions.
 # <<in-line markup>>
 
 Arbitrary semantic markup in [[latex:proglang][Org-mode]] files is implemented by
-defining new link types with [[latex:progstruct][org-add-link-type]].  Two new links are
+defining new link types with [[latex:lispvar][org-add-link-type]].  Two new links are
 defined here.  The [[latex-link-type][first code block]]
 defines a new link type, [[latex:progstruct][latex]], whose [[latex:progstruct][path]] argument can hold the
 name of any LaTeX command (Listing \ref{fig:latex-link}).  A link such as
@@ -788,6 +785,9 @@ examples are set at a slightly smaller size.
 #+LATEX: \caption[Semantic markup of programming structures]{Semantic markup of programming structures.}\label{fig:progstructs}
 #+END_listing
 
+In addition, a =lispvar= command that will break long [[latex:proglang][Emacs Lisp]]
+variable names at hyphens is also provided (see Listing
+\ref{fig:load-hyperref}).  It is typically invoked as follows: \\  =[[latex:lispvar][a-long-and-descriptive-emacs-lisp-var]]=
 ** Block-level markup
 # <<special blocks>>
 
@@ -1103,17 +1103,20 @@ section numbering altogether; =section=, =subsection=;
 *** Equations
 
 The standard LaTeX [[latex:classfile][article]] class and the [[http://www.ctan.org/tex-archive/macros/latex/contrib/koma-script/][KOMA-script]] [[latex:classfile][scrartcl]] class
-both recognize two options that control formatting of equations.  The
-option [[latex:progstruct][leqno]] will number equations on the left, rather than the
-right, which is the default.  The option [[latex:progstruct][fleqn]] displays equations
-flush left, rather than centered, which is the default
+both recognize two options that control formatting of equations
+(Listing \ref{fig:equations}).  The option [[latex:progstruct][leqno]] will number equations
+on the left, rather than the right, which is the default.  The option
+[[latex:progstruct][fleqn]] displays equations flush left, rather than centered, which is
+the default
 
+#+BEGIN_listing
 #+source: equations
 #+begin_src org :exports code
   ,#+LaTeX_CLASS_OPTIONS: [leqno]
   ,#+LaTeX_CLASS_OPTIONS: [fleqn]
 #+end_src
-
+#+LATEX: \caption[Options for equation numbering]{Options for equation numbering.}\label{fig:equations}
+#+END_listing
 *** Table captions
 
 The standard LaTeX [[latex:classfile][article]] formats captions to appear below the
@@ -1215,43 +1218,45 @@ it can be called several times with different options to load fonts
 that have various encodings.
 
 You can probably read the documentation for [[latex:package][fontenc]] on your system
-with the following shell command:
+with the following shell command:  [[inline:sh][texdoc fontenc]].
 
-#+source: read-fontenc
-#+begin_src sh :exports code
-  texdoc fontenc
-#+end_src
+This is a standard [[latex:proglang][Org-mode]] package that is loaded by default (Listing
+\ref{fig:nofontenc}).  An option, =[nofontenc]=, is provided not to
+load it (Listing \ref{fig:nofontenc}).  Note that most of the font
+sets load [[latex:package][fontenc]] themselves, so the =[nofontenc]= option can't ensure
+that the package won't be loaded.
 
-This is a standard [[latex:proglang][Org-mode]] package that is loaded by default.  An
-option is provided to not load it.
-
-#+source: org-buffer-fontenc
-#+begin_src org :exports code
-  #+LaTeX_CLASS_OPTIONS: [nofontenc]
-#+end_src
- 
-Note that most of the font sets load [[latex:package][fontenc]] themselves.
-
-#+source: option-fontenc
-#+begin_src latex :exports code
-  \newboolean{ORGART@nofontenc}  
-  \DeclareOption{nofontenc}{\setboolean{ORGART@nofontenc}{true}}
-#+end_src
-
+#+BEGIN_listing
 #+source: load-fontenc
 #+begin_src latex :exports code
   \ifthenelse{\boolean{ORGART@nofontenc}}
   {}
   {\AtEndOfClass{\RequirePackage[T1]{fontenc}}}
 #+end_src
+#+LATEX: \caption[Loading the fontenc package]{Loading the fontenc package.}\label{fig:load-fontenc}
+#+END_listing
 
+#+BEGIN_listing
+#+source: option-fontenc
+#+begin_src latex :exports code
+  \newboolean{ORGART@nofontenc}  
+  \DeclareOption{nofontenc}{\setboolean{ORGART@nofontenc}{true}}
+#+end_src
+#+LATEX: \caption[The nofontenc option]{The nofontenc option.}\label{fig:nofontenc}
+#+END_listing
+
+Options passed to [[latex:classfile][Org-article]] are passed on to the [[latex:package][fontenc]] package
+(Listing \ref{fig:options-to-fontenc}).
+
+#+BEGIN_listing
 #+source: options-to-fontenc
 #+begin_src latex :exports code
   \DeclareOption*{%
     \PassOptionsToPackage{\CurrentOption}{fontenc}
   }
 #+end_src
-
+#+LATEX: \caption[Passing options to the fontenc package]{Passing options to the fontenc package.}\label{fig:options-to-fontenc}
+#+END_listing
 *** Fixltx2e
 The [[latex:package][fixltx2e]] package applies fixes to LaTeX2e that would break older
 documents, so have not been applied to the LaTeX2e kernel.  The
@@ -1739,16 +1744,29 @@ option is provided not to load it.
 #+end_src
 
 If [[latex:package][hyperref]] is not loaded, then the [[latex:package][url]] package is loaded for the [[path-command][path]]
-command.  The [[latex:package][hyperref]] package asks to be loaded last; it is loaded
-here =AtBeginDocument=, which follows on the other packages loaded
-=AtEndOfClass=.
+command (Listing \ref{fig:load-hyperref}).  The [[latex:package][hyperref]] package asks
+to be loaded last; it is loaded here =AtBeginDocument=, which follows
+on the other packages loaded =AtEndOfClass=.  The [[latex:package][url]] package is
+loaded with options to let it accept spaces in its argument, break its
+argument at those spaces, and also to break it at hyphens.  This
+latter option is potentially ambiguous, but seems to be the only
+option when typesetting those long [[latex:proglang][Emacs Lisp]] variable names used in
+[[latex:proglang][Org-mode]].
 
+#+BEGIN_listing
 #+source: load-hyperref
 #+begin_src latex :exports code
-  \ifthenelse{\boolean{ORGART@nohyperref}}
-  {\RequirePackage{url}}
-  {\AtBeginDocument{\RequirePackage{hyperref}}}
+    \ifthenelse{\boolean{ORGART@nohyperref}}
+    {\AtEndOfClass{\RequirePackage[spaces,obeyspaces,hyphens]{url}
+        \DeclareUrlCommand\lispvar{\urlstyle{tt}}}}
+    {\AtBeginDocument{%
+        \RequirePackage[spaces,obeyspaces,hyphens]{url}
+        \RequirePackage{hyperref}
+        \DeclareUrlCommand\lispvar{\urlstyle{tt}}
+      }}
 #+end_src
+#+LATEX: \caption[Load the hyperref and url packages]{Load the hyperref and url packages.}\label{fig:load-hyperref}
+#+END_listing
 
 Options do not include =debug=.
 
@@ -2309,9 +2327,9 @@ compatibility with the [[latex:package][minted]] package (Listing
 
 These settings configure Org-mode to export source blocks that
 [[latex:classfile][Org-article]] will recognize and handle.  Setting
-[[latex:progstruct][org-export-latex-listings]] to =listings= ensures that source code
+[[latex:lispvar][org-export-latex-listings]] to =listings= ensures that source code
 blocks in langauges that aren't listed in
-[[latex:progstruct][org-export-latex-custom-lang-environments]] are also typeset by the
+[[latex:lispvar][org-export-latex-custom-lang-environments]] are also typeset by the
 [[latex:progstruct][listings]] package.  
 
 #+source: listings-setup
@@ -2488,7 +2506,7 @@ relevant for [[latex:proglang][Org-mode]] users.  The first two columns in each 
 the [[latex:proglang][Org-mode]] name for the language and the name that the [[latex:package][listings]]
 package environment will have for that language.  Note that these
 names should appear on the list held by
-[[latex:progstruct][org-export-latex-custom-lang-environments]].  Note, too, that the names
+[[latex:lispvar][org-export-latex-custom-lang-environments]].  Note, too, that the names
 in the Lstlisting lookup table all end in "code"; this is the default
 used by the [[latex:package][minted]] package and it is used here to promote
 interoperability.
