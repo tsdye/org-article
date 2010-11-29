@@ -504,7 +504,7 @@ excludes the [[latex:package][inputenc]] package.
   <<option-soul>>
   <<option-textcomp>>
   <<option-marvosym>>
-  <<option-wasysym>>
+  <<pgf-option-wasysym>>
   <<option-latexsym>>
   <<option-amssymb>>
   <<option-hyperref>>
@@ -555,8 +555,6 @@ useful.
   - option-setspace :: Double-space output (Listing \ref{fig:setspace-options})
   - pgf-option-source :: Options for syntax highlighting and
        typesetting source code blocks (Listing \ref{fig:option-source})
-  - pgf-option-listingstheme :: Themes designed for the [[latex:package][listings]]
-       package (Listing \ref{fig:option-listingstheme})
   - pgf-option-mintedstyle :: Styles for the [[latex:package][minted]] package are color
        themes used in syntax highlighting (Listing \ref{fig:option-mintedstyle})
   - option-gantt :: Create GANTT charts from Org-mode tables (Listing \ref{fig:option-gantt})
@@ -568,7 +566,6 @@ useful.
   <<pgf-option-paralist>>
   <<option-setspace>>
   <<pgf-option-source>>
-  <<pgf-option-listingstheme>>
   <<pgf-option-mintedstyle>>
   <<option-gantt>>
 #+end_src
@@ -654,7 +651,7 @@ The class code part is also implemented with noweb references (Listing
 \ref{fig:class-code}).  It calls package-specific setup routines that
 are defined in the [[latex-packages][LaTeX packages]] section.
 
-  - setspace-code :: The code that sets doublespacing (Listing \ref{fig:setspace})
+  - setspace-code :: The code that sets [[setspace][doublespacing]]
   - proglangs-code :: Markup of terms having to do with
                       programming languages (Listing \ref{fig:proglangs})
   - progstructs-code :: Markup of terms having to do with
@@ -813,8 +810,6 @@ To use this facility, you'll need to load [[latex:package][org-special-blocks]] 
 \ref{fig:org-special-blocks}).  This code can go in =.emacs=, or you
 can load it for the session by executing the following source code
 block with =C-c C-c=.
-
-# <<special blocks>>
 
 #+BEGIN_listing
 #+source: special-blocks
@@ -1234,38 +1229,31 @@ Options passed to [[latex:classfile][Org-article]] are passed on to the [[latex:
 #+END_listing
 *** Fixltx2e
 The [[latex:package][fixltx2e]] package applies fixes to LaTeX2e that would break older
-documents, so have not been applied to the LaTeX2e kernel.  The
-package doesn't take any options.
+documents, so have not been applied to the LaTeX2e kernel.  You can
+probably read about [[latex:package][fixltx2e]] on your system by issuing the following
+shell command: [[inline:sh][texdoc fixltx2e]].  An option, =[nofixltx2e]= is provided
+not to load it (Listing \ref{fig:nofixltx2e}).  This is a standard
+[[latex:proglang][Org-mode]] package that is loaded by default (Listing
+\ref{fig:load-fixltx2e}).  The package doesn't take any options.
 
-You can probably read about [[latex:package][fixltx2e]] on your system by issuing the
-following shell command:
-
-#+source: read-fixltx2e
-#+begin_src sh :exports code
-  texdoc fixltx2e
-#+end_src
- 
-
-This is a standard [[latex:proglang][Org-mode]] package that is loaded by default.  An
-option is provided to not load it.
-
-#+source: org-buffer-fixltx2e
-#+begin_src org :exports code
-  #+LaTeX_CLASS_OPTIONS: [nofixltx2e]
-#+end_src
- 
+#+BEGIN_listing
 #+source: option-fixltx2e
 #+begin_src latex :exports code
   \newboolean{ORGART@nofixltx2e}
   \DeclareOption{nofixltx2e}{\setboolean{ORGART@nofixltx2e}{true}}
 #+end_src
+#+LATEX: \caption[The nofixltx2e option]{The nofixltx2e option.}\label{fig:nofixltx2e}
+#+END_listing
 
+#+BEGIN_listing
 #+source: load-fixltx2e
 #+begin_src latex :exports code
   \ifthenelse{\boolean{ORGART@nofixltx2e}}
   {}
   {\AtEndOfClass{\RequirePackage{fixltx2e}}}
 #+end_src
+#+LATEX: \caption[Load the fixltx2e package]{Load the fixltx2e package.}\label{fig:load-fixltx2e}
+#+END_listing
 
 *** Graphicx
 The [[latex:package][graphicx]] package is typically configured with *.def files
@@ -1275,34 +1263,29 @@ options.
 
 You should be able to read about [[latex:package][graphicx]], along with its companion
 packages [[latex:package][color]] and [[latex:package][graphics]] by issuing the following shell
-command:
+command: [[inline:sh][texdoc graphicx]].  An
+option, [[latex:progstruct][nographicx]], is provided not to load it (Listing
+\ref{fig:nographicx}), otherwise this is a standard [[latex:proglang][Org-mode]] package
+that is loaded by default (Listing \ref{fig:load-graphicx}).
 
-#+source: read-graphicx
-#+begin_src sh :exports code
-  texdoc graphicx
-#+end_src
-
-
-This is a standard [[latex:proglang][Org-mode]] package that is loaded by default.  An
-option is provided to not load it.
-
-#+source: org-buffer-graphicx
-#+begin_src org :exports code
-  #+LaTeX_CLASS_OPTIONS: [nographicx]
-#+end_src
- 
+#+BEGIN_listing
 #+source: option-graphicx
 #+begin_src latex :exports code
   \newboolean{ORGART@nographicx}
   \DeclareOption{nographicx}{\setboolean{ORGART@nographicx}{true}}
 #+end_src
+#+LATEX: \caption[The nographicx option]{The nographicx option.}\label{fig:nographicx}
+#+END_listing
 
+#+BEGIN_listing
 #+source: load-graphicx
 #+begin_src latex :exports code
   \ifthenelse{\boolean{ORGART@nographicx}}
   {}
   {\AtEndOfClass{\RequirePackage{graphicx}}}
 #+end_src
+#+LATEX: \caption[Load the graphicx package]{Load the graphicx package.}\label{fig:load-graphicx}
+#+END_listing
 
 *** Longtable
 The [[latex:package][longtable]] package defines a new LaTeX environment that can be
@@ -1312,35 +1295,29 @@ tables that typically won't fit onto a single page.  The package is
 loaded without option.
 
 You should be able to read the [[latex:package][longtable]] documentation on your
-system by issuing the following shell command:
+system by issuing the following shell command: [[inline:sh][texdoc longtable]].  An
+option, [[latex:progstruct][nolongtable]], is provided not to load it (Listing \ref{fig:nolongtable}).
+This is a standard [[latex:proglang][Org-mode]] package that is loaded by default (Listing
+\ref{fig:load-longtable}).
 
-#+source: read-longtable
-#+begin_src sh :exports code
-  texdoc longtable
-#+end_src
-
-
-This is a standard [[latex:proglang][Org-mode]] package that is loaded by default.  An
-option is provided to not load it.
-
-#+source: org-buffer-longtable
-#+begin_src org :exports code
-  #+LaTeX_CLASS_OPTIONS: [nolongtable]
-#+end_src
-
+#+BEGIN_listing
 #+source: option-longtable
 #+begin_src latex :exports code
   \newboolean{ORGART@nolongtable}
   \DeclareOption{nolongtable}{\setboolean{ORGART@nolongtable}{true}}
 #+end_src
+#+LATEX: \caption[The nolongtable option]{The nolongtable option.}\label{fig:nolongtable}
+#+END_listing
 
+#+BEGIN_listing
 #+source: load-longtable
 #+begin_src latex :exports code
   \ifthenelse{\boolean{ORGART@nolongtable}}
   {}
   {\AtEndOfClass{\RequirePackage{longtable}}}
 #+end_src
-
+#+LATEX: \caption[Load the longtable package]{Load the longtable package.}\label{fig:load-longtable}
+#+END_listing
 *** Float
 Tables and figures in LaTeX are treated as floating objects.
 Internally, they are treated as a single (large) glyph, which makes
@@ -1371,78 +1348,65 @@ You can probably read about the [[latex:package][float]] package on your system 
 issuing the following shell command: [[inline:sh][texdoc float]].  You can learn
 about the [[latex:package][tocbasic]] package by issuing this shell command: [[inline:sh][texdoc koma]].
 
-
 *** Wrapfig
 The [[latex:package][wrapfig]] package defines two new environments to set a narrow
 float at the edge of the text and wrap the text around it.  Because
-"floats" in these new environments do not float it is sometimes the
+LaTeX floats in these new environments do not float it is sometimes the
 case that they appear out of order, e.g. Figure n appears before
 Figure n-1.  Caveat emptor.
 
-The package is loaded without options.
+The documentation for this package is included at the end of the
+package source.  You should be able to read it on your system by
+issuing the following shell command: [[inline:sh][texdoc wrapfig]].  An option,
+[[latex:progstruct][nowrapfig]], is provided to not load it (Listing \ref{fig:nowrapfig}).
+This is a standard [[latex:proglang][Org-mode]] package that is loaded by default (Listing
+\ref{fig:load-wrapfig}).  The package is loaded without options.
 
-The documentation for this package is included at the end of the package source.
-You should be able to read it on your system by issuing the following
-shell command:
-
-#+source: read-wrapfig
-#+begin_src sh :exports code
-  texdoc wrapfig
-#+end_src
-
-This is a standard [[latex:proglang][Org-mode]] package that is loaded by default.  An
-option is provided to not load it.
-
-#+source: org-buffer-wrapfig
-#+begin_src org :exports code
-  #+LaTeX_CLASS_OPTIONS: [nowrapfig]
-#+end_src
- 
+#+BEGIN_listing
 #+source: option-wrapfig
 #+begin_src latex :exports code
   \newboolean{ORGART@nowrapfig}
   \DeclareOption{nowrapfig}{\setboolean{ORGART@nowrapfig}{true}}
 #+end_src
+#+LATEX: \caption[The nowrapfig option]{The nowrapfig option.}\label{fig:nowrapfig}
+#+END_listing
 
+#+BEGIN_listing
 #+source: load-wrapfig
 #+begin_src latex :exports code
   \ifthenelse{\boolean{ORGART@nowrapfig}}
   {}
   {\AtEndOfClass{\RequirePackage{wrapfig}}}
 #+end_src
+#+LATEX: \caption[Load the wrapfig package]{Load the wrapfig package.}\label{fig:load-wrapfig}
+#+END_listing
 
 *** Soul
-The [[latex:package][soul]] package is used primarily for underlining text.  It is
-loaded without options.
+The [[latex:package][soul]] package is used primarily for underlining text.  You can
+probably read the [[latex:package][soul]] documentation on your system by issuing the
+following shell command: [[inline:sh][texdoc soul]].  An option, [[latex:progstruct][nosoul]], is provided
+not to load it (Listing \ref{fig:nosoul}).  This is a standard
+[[latex:proglang][Org-mode]] package that is loaded by default (Listing
+\ref{fig:load-soul}).  It is loaded without options.
 
-You can probably read the [[latex:package][soul]] documentation on your system by
-issuing the following shell command:
-
-#+source: read-soul
-#+begin_src sh :exports code
-  texdoc soul
-#+end_src
-
-This is a standard [[latex:proglang][Org-mode]] package that is loaded by default.  An
-option is provided to not load it.
-
-#+source: org-buffer-soul
-#+begin_src org :exports code
-  #+LaTeX_CLASS_OPTIONS: [nosoul]
-#+end_src
- 
+#+BEGIN_listing
 #+source: option-soul
 #+begin_src latex :exports code
   \newboolean{ORGART@nosoul}
   \DeclareOption{nosoul}{\setboolean{ORGART@nosoul}{true}}
 #+end_src
+#+LATEX: \caption[The nosoul option]{The nosoul option.}\label{fig:nosoul}
+#+END_listing
 
+#+BEGIN_listing
 #+source: load-soul
 #+begin_src latex :exports code
   \ifthenelse{\boolean{ORGART@nosoul}}
   {}
   {\AtEndOfClass{\RequirePackage{soul}}}
 #+end_src
+#+LATEX: \caption[Load the soul package]{Load the soul package.}\label{fig:load-soul}
+#+END_listing
 
 *** T1enc                                                          :noexport:
 This is a standard [[latex:proglang][Org-mode]] package that is loaded by default.  An
@@ -1468,185 +1432,164 @@ option is provided to not load it.
 
 *** Textcomp
 This package provides support for the Text Companion fonts, which
-provide symbols used by [[latex:progstruct][org-entities]], in particular the Euro
-currency symbol.  It is loaded without options.
+provide symbols used by [[latex:progstruct][org-entities]], in particular the Euro currency
+symbol.  An option, [[latex:progstruct][notextcomp]], is provided not to load it (Listing
+\ref{fig:notextcomp}).  This is a standard [[latex:proglang][Org-mode]] package that is
+loaded by default (Listing \ref{fig:load-textcomp}).  It is loaded
+without options.
 
-This is a standard [[latex:proglang][Org-mode]] package that is loaded by default.  An
-option is provided to not load it.
-
-#+source: org-buffer-textcomp
-#+begin_src org :exports code
-  #+LaTeX_CLASS_OPTIONS: [notextcomp]
-#+end_src
- 
-
+#+BEGIN_listing
 #+source: option-textcomp
 #+begin_src latex :exports code
   \newboolean{ORGART@notextcomp}
   \DeclareOption{notextcomp}{\setboolean{ORGART@notextcomp}{true}}
 #+end_src
+#+LATEX: \caption[The notextcomp option]{The notextcomp option.}\label{fig:notextcomp}
+#+END_listing
 
+#+BEGIN_listing
 #+source: load-textcomp
 #+begin_src latex :exports code
   \ifthenelse{\boolean{ORGART@notextcomp}}
   {}
   {\AtEndOfClass{\RequirePackage{textcomp}}}
 #+end_src
-
+#+LATEX: \caption[Load the textcomp package]{Load the textcomp package.}\label{fig:load-textcomp}
+#+END_listing
 *** MarVoSym
 The [[latex:package][marvosym]] package provides support for Martin Vogel's Symbol
-font, some glyphs from which are required by [[latex:progstruct][org-entities]].  The
-package is loaded without options.
+font, some glyphs from which are required by [[latex:progstruct][org-entities]].
 
 You can probably read about the [[latex:package][marvosym]] package by issuing the
-following command in the shell:
+following command in the shell: [[inline:sh][texdoc marvosym]].  An option,
+[[latex:progstruct][nomarvosym]], is provided not to load it (Listing \ref{fig:nomarvosym}).
+This is a standard [[latex:proglang][Org-mode]] package that is loaded by default (Listing
+\ref{fig:load-marvosym}).  The package is loaded without options.
 
-#+source: read-marvosym
-#+begin_src sh :exports code
-  texdoc marvosym
-#+end_src
-
-This is a standard [[latex:proglang][Org-mode]] package that is loaded by default.  An
-option is provided to not load it.
-
-#+source: org-buffer-marvosym
-#+begin_src org :exports code
-  #+LaTeX_CLASS_OPTIONS: [nomarvosym]
-#+end_src
-
+#+BEGIN_listing
 #+source: option-marvosym
 #+begin_src latex :exports code
   \newboolean{ORGART@nomarvosym}
   \DeclareOption{nomarvosym}{\setboolean{ORGART@nomarvosym}{true}}
 #+end_src
+#+LATEX: \caption[The nomarvosym option]{The nomarvosym option.}\label{fig:nomarvosym}
+#+END_listing
 
+#+BEGIN_listing
 #+source: load-marvosym
 #+begin_src latex :exports code
   \ifthenelse{\boolean{ORGART@nomarvosym}}
   {}
   {\AtEndOfClass{\RequirePackage{marvosym}}}
 #+end_src
-
+#+LATEX: \caption[Load the marvosym package]{Load the marvosym package.}\label{fig:load-marvosym}
+#+END_listing
 *** Wasysym
-The [[latex:package][wasysym]] package makes available some symbol glyphs from the
-[[latex:package][wasy]] fonts.  It is needed to support some of the glyphs in
-[[latex:progstruct][org-entities]].  When it is loaded without options, this package clashes
-with the American Mathematical Society's [[latex:package][amsmath]] package.  Using
-the [[latex:progstruct][nointegrals]] option resolves this clash:
-
-#+source: wasysym-options
-#+begin_src org :exports code
-  ,#+LaTeX_CLASS_OPTIONS: [integrals, nointegrals]
-#+end_src
-
+The [[latex:package][wasysym]] package makes available some symbol glyphs from the [[latex:package][wasy]]
+fonts.  It is needed to support some of the glyphs in [[latex:progstruct][org-entities]].
 You can probably read the wasysym documentation on your system by
-issuing the following shell command:
+issuing the following shell command: [[inline:sh][texdoc wasysym]].
 
-#+source: read-wasysym
-#+begin_src sh :exports code
-  texdoc wasysym
-#+end_src
+When it is loaded without options, this package clashes with the
+American Mathematical Society's [[latex:package][amsmath]] package.  Using the
+[[latex:progstruct][nointegrals]] option resolves this clash.  The [[latex:progstruct][waysym]] key takes the
+following options (Listing \ref{fig:option-wasysym}):
+  - none :: Don't load the [[latex:package][wasysym]] package
+  - integrals :: Load the [[latex:package][wasysym]] package with the [[latex:progstruct][integrals]] option
+  - nointegrals :: Load the [[latex:package][wasysym]] package with the [[latex:progstruct][nointegrals]] option
 
-This is a standard [[latex:proglang][Org-mode]] package that is loaded by default.  An
-option is provided to not load it.
+This is a standard [[latex:proglang][Org-mode]] package that is loaded by default with the
+[[latex:progstruct][integrals]] option (Listing \ref{fig:load-wasysym}).
 
-#+source: org-buffer-wasysym
-#+begin_src org :exports code
-  #+LaTeX_CLASS_OPTIONS: [nowasysym]
-#+end_src
- 
-#+source: option-wasysym
+#+BEGIN_listing
+#+source: pgf-option-wasysym
 #+begin_src latex :exports code
   \newboolean{ORGART@nowasysym}
-  \DeclareOption{nowasysym}{\setboolean{ORGART@nowasysym}{true}}
-  \newboolean{ORGART@integrals}
-  \DeclareOption{integrals}{\setboolean{ORGART@integrals}{true}}
-  \newboolean{ORGART@nointegrals}
-  \DeclareOption{nointegrals}{\setboolean{ORGART@nointegrals}{true}}
+  \pgfkeys{ 
+    /ORGART/.cd, 
+    wasysym/.is choice,
+    wasysym/none/.code={\setboolean{ORGART@nowasysym}{true}},
+    wasysym/integrals/.code={\setboolean{ORGART@nowasysym}{true}
+    \AtEndOfClass{\RequirePackage[integrals]{wasysym}}},
+    wasysym/nointegrals/.code={\setboolean{ORGART@nowasysym}{true}
+    \AtEndOfClass{\RequirePackage[nointegrals]{wasysym}}}
+  } 
 #+end_src
+#+LATEX: \caption[The wasysym key]{The wasysym key.}\label{fig:option-wasysym}
+#+END_listing
 
+#+BEGIN_listing
 #+source: load-wasysym
 #+begin_src latex :exports code
   \ifthenelse{\boolean{ORGART@nowasysym}}
   {}
-  {%
-    \ifthenelse{\boolean{ORGART@integrals}}%
-    {\AtEndOfClass{\RequirePackage[integrals]{wasysym}}}%
-    {\AtEndOfClass{\RequirePackage[nointegrals]{wasysym}}}%
-  }
+  {\AtEndOfClass{\RequirePackage[integrals]{wasysym}}}
 #+end_src
+#+LATEX: \caption[Load the wasysym package]{Load the wasysym package.}\label{fig:load-wasysym}
+#+END_listing
 
 *** Latexsym
-The [[latex:package][latexsym]] package provides a few glyphs, one or more of which
-might be required by [[latex:progstruct][org-entities]].  According to the documentation,
-[[latex:package][latexsym]] isn't needed if the [[latex:package][amssymb]] package is loaded.
+The [[latex:package][latexsym]] package provides a few glyphs, one or more of which might
+be required by [[latex:progstruct][org-entities]].  You can probably read about the [[latex:package][latexsym]]
+package on your system by issuing the following shell command: [[inline:sh][texdoc
+latexsym]].  According to the documentation, [[latex:package][latexsym]] isn't needed if
+the [[latex:package][amssymb]] package is loaded.  An option, [[latex:progstruct][nolatexsym]], is provided not
+to load it (Listing \ref{fig:nolatexsym}).  This is a standard
+[[latex:proglang][Org-mode]] package that is loaded by default if the [[latex:package][amssymb]] package is
+not loaded (Listing \ref{fig:load-latexsym}).
 
-You can probably read about the [[latex:package][latexsym]] package on your system by issuing the
-following shell command:
-
-#+source: read-latexsym
-#+begin_src sh :exports code
-  texdoc latexsym
-#+end_src
-
-This is a standard [[latex:proglang][Org-mode]] package that is loaded by default.  An
-option is provided to not load it.
-
-#+source: org-buffer-latexsym
-#+begin_src org :exports code
-  #+LaTeX_CLASS_OPTIONS: [nolatexsym]
-#+end_src
- 
+#+BEGIN_listing
 #+source: option-latexsym
 #+begin_src latex :exports code
   \newboolean{ORGART@nolatexsym}
   \DeclareOption{nolatexsym}{\setboolean{ORGART@nolatexsym}{true}}
 #+end_src
+#+LATEX: \caption[The nolatexsym option]{The nolatexsym option.}\label{fig:nolatexsym}
+#+END_listing
 
+#+BEGIN_listing
 #+source: load-latexsym
 #+begin_src latex :exports code
-  \ifthenelse{\boolean{ORGART@nolatexsym}}
+  \ifthenelse{\boolean{ORGART@nolatexsym}\and\not\boolean{ORGART@noamssymb}}
   {}
   {\AtEndOfClass{\RequirePackage{latexsym}}}
 #+end_src
+#+LATEX: \caption[Load the latexsym package]{Load the latexsym package.}\label{fig:load-latexsym}
+#+END_listing
 
 *** Amssymb
-This package provides all the symbols defined in the American
+This package provides access to the symbols defined in the American
 Mathematical Society's [[http://www.ams.org/publications/authors/tex/amsfonts][symbol fonts]] =msam= and =msbm=.  They are
 required to support [[latex:progstruct][org-entities]].  It is superseded by the
 =mathdesign= package, which is used by various fonts.  If one of these
 is specified, then the [[latex:package][amssymb]] package is not loaded. If the package is
 loaded, then it is loaded without options.
 
-You can probably read the [[latex:package][amssymb]] package documentation by issuing
-the following shell command:
+You can probably read the [[latex:package][amssymb]] package documentation by issuing the
+following shell command: [[inline:sh][texdoc amssymb]].  An option, [[latex:progstruct][noamssymb]], is
+provided not to load it (Listing \ref{fig:noamssymb}).  This is a
+standard [[latex:proglang][Org-mode]] package that is loaded by default (Listing
+\ref{fig:load-amssymb}).
 
-#+source: read-amssymb
-#+begin_src sh :exports code
-  texdoc amssymb
-#+end_src
-
-This is a standard [[latex:proglang][Org-mode]] package that is loaded by default.  An
-option is provided not to load it.
-
-#+source: org-buffer-amssymb
-#+begin_src org :exports code
-  #+LaTeX_CLASS_OPTIONS: [noamssymb]
-#+end_src
-
+#+BEGIN_listing
 #+source: option-amssymb
 #+begin_src latex :exports code
   \newboolean{ORGART@noamssymb}
   \DeclareOption{noamssymb}{\setboolean{ORGART@noamssymb}{true}}
 #+end_src
+#+LATEX: \caption[The noamssymb option]{The noamssymb option.}\label{fig:noamssymb}
+#+END_listing
 
+#+BEGIN_listing
 #+source: load-amssymb
 #+begin_src latex :exports code
   \ifthenelse{\boolean{ORGART@noamssymb}}
   {}
   {\AtEndOfClass{\RequirePackage{amssymb}}}
 #+end_src
-  
+#+LATEX: \caption[Load the amssymb package]{Load the amssymb package.}\label{fig:load-amssymb}
+#+END_listing  
+
 *** Hyperref
 The [[latex:package][hyperref]] package turns LaTeX cross-referencing commands into
 hyperlinks, including the table of contents, bibliography, etc.  It is
@@ -1662,7 +1605,7 @@ without a value.  Options are passed in the usual way, and
 [[latex:classfile][Org-article]] simply passes them on to [[latex:package][hyperref]].
 
 #+source: hyperref-options
-#+begin_src org :exports code
+#+begin_src org :exports none
   ,#+LaTeX_CLASS_OPTIONS: [anchorcolor, backref, baseurl, bookmarks,
   bookmarksnumbered, bookmarksopen, bookmarksopenlevel, bookmarkstype,
   breaklinks, CJKbookmarks, citebordercolor, citecolor, colorlinks,
@@ -1687,27 +1630,18 @@ without a value.  Options are passed in the usual way, and
 
 
 You can probably read the [[latex:package][hyperref]] documentation by issuing the
-following shell command:
+following shell command: [[inline:sh][texdoc hyperref]].  An option, [[latex:progstruct][nohyperref]], is
+provided not to load it (Listing \ref{fig:nohyperref}).  This is a standard [[latex:proglang][Org-mode]] package that is
+loaded by default (Listing \ref{fig:load-hyperref}).
 
-#+source: read-hyperref
-#+begin_src sh :exports code
-  texdoc hyperref
-#+end_src
-
-
-This is a standard [[latex:proglang][Org-mode]] package that is loaded by default.  An
-option is provided not to load it.
-
-#+source: org-buffer-hyperref
-#+begin_src org :exports code
-  #+LaTeX_CLASS_OPTIONS: [nohyperref]
-#+end_src
-
+#+BEGIN_listing
 #+source: option-hyperref
 #+begin_src latex :exports code
   \newboolean{ORGART@nohyperref}
   \DeclareOption{nohyperref}{\setboolean{ORGART@nohyperref}{true}}
 #+end_src
+#+LATEX: \caption[The nohyperref option]{The nohyperref option.}\label{fig:nohyperref})
+#+END_listing
 
 If [[latex:package][hyperref]] is not loaded, then the [[latex:package][url]] package is loaded for the [[path-command][path]]
 command (Listing \ref{fig:load-hyperref}).  The [[latex:package][hyperref]] package asks
@@ -1722,14 +1656,15 @@ option when typesetting those long [[latex:proglang][Emacs Lisp]] variable names
 #+BEGIN_listing
 #+source: load-hyperref
 #+begin_src latex :exports code
-    \ifthenelse{\boolean{ORGART@nohyperref}}
-    {\AtEndOfClass{\RequirePackage[spaces,obeyspaces,hyphens]{url}
-        \DeclareUrlCommand\lispvar{\urlstyle{tt}}}}
-    {\AtBeginDocument{%
-        \RequirePackage[spaces,obeyspaces,hyphens]{url}
-        \RequirePackage{hyperref}
-        \DeclareUrlCommand\lispvar{\urlstyle{tt}}
-      }}
+  \ifthenelse{\boolean{ORGART@nohyperref}}
+  {\AtEndOfClass{\RequirePackage[spaces,obeyspaces,hyphens]{url}
+      \DeclareUrlCommand\lispvar{\urlstyle{tt}}}}
+  {\AtBeginDocument{%
+      \RequirePackage[spaces,obeyspaces,hyphens]{url}
+      \RequirePackage{hyperref}
+      \DeclareUrlCommand\lispvar{\urlstyle{tt}}
+      \def\theHfigure{\thesection.\arabic{figure}}
+    }}
 #+end_src
 #+LATEX: \caption[Load the hyperref and url packages]{Load the hyperref and url packages.}\label{fig:load-hyperref}
 #+END_listing
@@ -1737,7 +1672,7 @@ option when typesetting those long [[latex:proglang][Emacs Lisp]] variable names
 Options do not include =debug=.
 
 #+source: pass-to-hyperref
-#+begin_src latex :exports code
+#+begin_src latex :exports none
 \DeclareOption{anchorcolor}{%
    \PassOptionsToPackage{anchorcolor}{hyperref}}
 \DeclareOption{backref}{%
@@ -1936,15 +1871,13 @@ typeface used for text, the sans-serif typeface often used for heads
 and sub-heads, and the monospace typewriter typeface typically used to
 set code examples and the like.  
 
-The fonts that come with LaTeX distributions differ in their ability
-to set complex mathematical expressions.  [[latex:classfile][Org-article]] font sets with math support
-include [[garamond-font][Garamond]], [[palatino-font][Palatino]], [[times-font][Times]], and [[utopia-font][Utopia]].
 
 [[latex:classfile][Org-article]] offers a =fontset= key that can be used to specify sets of
-all three fonts.  The fonts in each set have been chosen to look good
+all three fonts (Listing \ref{fig:fontset}).  The fonts in each set have been chosen to look good
 with one another.  Each set takes its name after the serif font in the
 set.
 
+#+BEGIN_listing
 #+source: pgf-option-fontset
 #+begin_src latex :exports code
   \pgfkeys{ 
@@ -1952,25 +1885,29 @@ set.
     fontset/.is choice,
   } 
 #+end_src
+#+LATEX: \caption[The fontset key]{The fontset key.}\label{fig:fontset}
+#+END_listing
 
+The fonts that come with LaTeX distributions differ in their ability
+to set complex mathematical expressions.  [[latex:classfile][Org-article]] font sets with
+math support include [[garamond-font][Garamond]], [[kp-font][KP]], [[palatino-font][Palatino]], [[times-font][Times]], and [[utopia-font][Utopia]].  The
+[[libertine-font][Libertine]] and [[nimbus-font][Nimbus]] font sets are replacements for Times, but with
+extended character sets for typesetting a variety of languages.
 
 *** Bera
 # <<bera-font>>
 
-Bera is the LaTeX version of the Bitstream's Vera family of fonts.  It
-includes serif, sans-serif, and monospace fonts.
+Bera is the LaTeX version of the Bitstream's Vera family of fonts.
+The family includes serif, sans-serif, and monospace fonts designed to
+work well with one another.  The Bera fontset is selected by passing
+the value [[latex:progstruct][bera]] to the [[latex:progstruct][fontset]] key (Listing \ref{fig:bera}).
 
-#+source: org-buffer-bera
-#+begin_src org :exports code
-  #+LaTeX_CLASS_OPTIONS: [fontset=bera]
-#+end_src
-
+#+BEGIN_listing
 #+source: pgf-option-bera
 #+begin_src latex :exports code
   \pgfkeys{
     /ORGART/.cd,
     fontset/bera/.code={
-%      \setboolean{ORGART@noamssymb}{true}
       \AtBeginDocument{\ifpdf
         \RequirePackage[T1]{fontenc} 
         \RequirePackage[scaled]{beraserif}
@@ -1978,6 +1915,8 @@ includes serif, sans-serif, and monospace fonts.
         \RequirePackage[scaled]{beramono} % tt
         \fi}}}
 #+end_src
+#+LATEX: \caption[Define the bera value of the fontset key]{Define the bera value of the fontset key.}\label{fig:bera}
+#+END_listing
 
 *** Charter
 # <<charter-font>>
@@ -1985,15 +1924,11 @@ includes serif, sans-serif, and monospace fonts.
 [[http://en.wikipedia.org/wiki/Bitstream_Charter][Charter]] was designed to reproduce well on low-resolution 300 dpi
 printers.  It is paired here with Helvetica and Courier, like [[times-font][Times]],
 for which it is an alternative.  Helvetica is set a bit smaller to
-match the shape of the Charter font.
+match the shape of the Charter font.  These fonts conflict with the
+[[latex:package][amssymb]] package.  The font set can be selected by passing the value
+[[latex:progstruct][charter]] to the [[latex:progstruct][fontset]] key (Listing \ref{fig:charter}).
 
-These fonts conflict with the [[latex:package][amssymb]] package.
-
-#+source: org-buffer-charter
-#+begin_src org :exports code
-  #+LaTeX_CLASS_OPTIONS: [fontset=charter]
-#+end_src
- 
+#+BEGIN_listing 
 #+source: pgf-option-charter
 #+begin_src latex :exports code
   \pgfkeys{
@@ -2007,6 +1942,8 @@ These fonts conflict with the [[latex:package][amssymb]] package.
         \RequirePackage{courier} % tt
         \fi}}}
 #+end_src
+#+LATEX: \caption[Define the charter value of the fontset key]{Define the charter value of the fontset key.}\label{fig:charter}
+#+END_listing
 
 *** Garamond
 # <<garamond-font>>
@@ -2016,14 +1953,10 @@ after the sixteenth-century type designer, Claude Garamond.  It is an
 elegant typeface.  Garamond requires a bit more leading than normal.
 The sans-serif font is Latin Modern and the typewriter font is
 Courier.  Both were chosen to match the shape and stroke weight of
-Garamond.
+Garamond.  The font can be selected by passing the value [[latex:progstruct][garamond]] to
+the [[latex:progstruct][fontset]] key (Listing \ref{fig:garamond}).
 
-
-#+source: org-buffer-garamond
-#+begin_src org :exports code
-  #+LaTeX_CLASS_OPTIONS: [fontset=garamond]
-#+end_src
- 
+#+BEGIN_listing
 #+source: pgf-option-garamond
 #+begin_src latex :exports code
   \pgfkeys{
@@ -2038,17 +1971,17 @@ Garamond.
         \linespread{1.0609}
         \fi}}}
 #+end_src
+#+LATEX: \caption[Define the garamond value of the fontset key]{Define the garamond value of the fontset key.}\label{fig:garamond}
+#+END_listing
 
 *** KP family
+# <<kp-font>>
 
-The KP font family is produced by Christophe Caignaert for the Johannes Kepler project.  The
-family supports math.
+The [[http://tug.ctan.org/pkg/kpfonts][KP font family]] is produced by Christophe Caignaert for the Johannes Kepler project.  The
+family supports math.   The font set can be selected by passing the value
+[[latex:progstruct][kp]] to the [[latex:progstruct][fontset]] key (Listing \ref{fig:kp}).
 
-#+source: org-buffer-kp
-#+begin_src org :exports code
-  #+LaTeX_CLASS_OPTIONS: [fontset=kp]
-#+end_src
- 
+#+BEGIN_listing
 #+source: pgf-option-kp
 #+begin_src latex :exports code
   \pgfkeys{
@@ -2061,25 +1994,23 @@ family supports math.
         \RequirePackage{kpfonts}
         \fi}}}
 #+end_src
-
+#+LATEX: \caption[Define the kp value of the fontset option]{Define the kp value of the fontset option.}\label{fig:kp}
+#+END_listing
 *** Libertine
 # <<libertine-font>>
 
 The [[http://www.linuxlibertine.org/][Linux Libertine Project]] produces OpenSource fonts.  Libertine is a
-replacement for Times New Roman.  It was used to typeset the Wikipedia
-logo.  The monospace typewriter font is Latin Modern.
+replacement for Times New Roman and includes a companion sans-serif
+font.  It was used to typeset the Wikipedia logo.  The monospace
+typewriter font is Latin Modern.   The font set can be selected by passing the value
+[[latex:progstruct][libertine]] to the [[latex:progstruct][fontset]] key (Listing \ref{fig:libertine}).
 
-#+source: org-buffer-libertine
-#+begin_src org :exports code
-  #+LaTeX_CLASS_OPTIONS: [fontset=libertine]
-#+end_src
- 
+#+BEGIN_listing
 #+source: pgf-option-libertine
 #+begin_src latex :exports code
     \pgfkeys{
       /ORGART/.cd,
       fontset/libertine/.code={
-  %      \setboolean{ORGART@noamssymb}{true}
         \AtBeginDocument{\ifpdf
           \RequirePackage[T1]{fontenc} 
           \RequirePackage{libertine}
@@ -2087,7 +2018,8 @@ logo.  The monospace typewriter font is Latin Modern.
           \RequirePackage{lmodern} % tt
           \fi}}}
 #+end_src
-
+#+LATEX: \caption[Define the libertine value of the fontset key]{Define the libertine value of the fontset key.}\label{fig:libertine}
+#+END_listing
 *** Nimbus                                                     
 # <<nimbus-font>>
 
@@ -2096,21 +2028,15 @@ provides a rich collection of diacritical characters in the attempt to
 cover as many Latin-based scripts as possible.  The serif font is
 Termes, which is a replacement for Times Roman.  The sans-serif font
 is Heros, which is a replacement for Helvetica.  The monospace font is
-Cursor, which is a Courier replacement.
-
-Choose the Nimbus font set with the [[latex:progstruct][nimbus]] option.
-
-#+source: org-buffer-nimbus
-#+begin_src org :exports code
-  #+LaTeX_CLASS_OPTIONS: [fontset=nimbus]
-#+end_src
+Cursor, which is a Courier replacement.   The font set can be selected by passing the value
+[[latex:progstruct][nimbus]] to the [[latex:progstruct][fontset]] key (Listing \ref{fig:nimbus}).
  
+#+BEGIN_listing
 #+source: pgf-option-nimbus
 #+begin_src latex :exports code
     \pgfkeys{
       /ORGART/.cd,
       fontset/nimbus/.code={
-  %      \setboolean{ORGART@noamssymb}{true}
         \AtBeginDocument{\ifpdf
           \RequirePackage[T1]{fontenc}
           \RequirePackage{tgtermes}
@@ -2118,6 +2044,8 @@ Choose the Nimbus font set with the [[latex:progstruct][nimbus]] option.
           \RequirePackage{tgcursor} % tt
           \fi}}}
 #+end_src
+#+LATEX: \caption[Define the nimbus value of the fontset key]{Define the nimbus value of the fontset key.}\label{fig:nimbus}
+#+END_listing
 
 *** Palatino
 # <<palatino-font>>
@@ -2126,12 +2054,10 @@ The beautiful, old-style serif font, [[http://en.wikipedia.org/wiki/Palatino][Pa
 Zapf]].  It is somewhat heavier and easier to read than [[garamond-font][Garamond]].
 Palatino gets a bit more leading than normal.  It is paired here with
 Helvetica and Courier, as is [[times-font][Times]], for which it is an alternative.
+The font set can be selected by passing the value [[latex:progstruct][palatino]] to the
+[[latex:progstruct][fontset]] key (Listing \ref{fig:palatino}).
 
-#+source: org-buffer-palatino
-#+begin_src org :exports code
-  #+LaTeX_CLASS_OPTIONS: [fontset=palatino]
-#+end_src
-
+#+BEGIN_listing
 #+source: pgf-option-palatino
 #+begin_src latex :exports code
   \pgfkeys{
@@ -2144,6 +2070,8 @@ Helvetica and Courier, as is [[times-font][Times]], for which it is an alternati
         \RequirePackage{courier} % tt
         \fi}}}
 #+end_src
+#+LATEX: \caption[Define the palatino value of the fontset key]{Define the palatino value of the fontset key.}\label{fig:palatino}
+#+END_listing
 
 *** Times
 # <<times-font>>
@@ -2162,11 +2090,10 @@ developed in 1957 by [[http://en.wikipedia.org/wiki/Max_Miedinger][Max Miedinger
 if it is set slightly smaller than the serif font.  [[http://en.wikipedia.org/wiki/Courier_(typeface)][Courier]] was
 designed by Howard Kettler in 1955 for use in IBM typewriters.
 
-#+source: org-buffer-times
-#+begin_src org :exports code
-  #+LaTeX_CLASS_OPTIONS: [fontset=times]
-#+end_src
+The font set can be selected by passing the value [[latex:progstruct][times]] to the
+[[latex:progstruct][fontset]] key (Listing \ref{fig:times}).
 
+#+BEGIN_listing
 #+source: pgf-option-times
 #+begin_src latex :exports code
   \pgfkeys{
@@ -2180,21 +2107,20 @@ designed by Howard Kettler in 1955 for use in IBM typewriters.
         \RequirePackage{courier}
         \fi}}}
 #+end_src
-
+#+LATEX: \caption[Define the times value of the fontset key]{Define the times value of the fontset key.}\label{fig:times}
+#+END_listing
 *** Utopia
 # <<utopia-font>>
 
 [[http://en.wikipedia.org/wiki/Utopia_(typeface)][Utopia]] is a transitional serif font designed by [[http://en.wikipedia.org/wiki/Robert_Slimbach][Robert Slimbach]] for
 Adobe in 1989.  It became free software in 2006.  It is paired here
-with the Bera sans serif and monospaced fonts.
+with the Bera sans serif and monospaced fonts.  Note that the Utopia
+font clashes with the [[latex:package][amssymb]] package.
 
-Note that the Utopia font clashes with the [[latex:package][amssymb]] package.
+The font set can be selected by passing the value [[latex:progstruct][utopia]] to the
+[[latex:progstruct][fontset]] key (Listing \ref{fig:utopia}).
 
-#+source: org-buffer-utopia
-#+begin_src org :exports code
-  #+LaTeX_CLASS_OPTIONS: [fontset=utopia]
-#+end_src
-
+#+BEGIN_listing
 #+source: pgf-option-utopia
 #+begin_src latex :exports code
   \pgfkeys{
@@ -2208,7 +2134,8 @@ Note that the Utopia font clashes with the [[latex:package][amssymb]] package.
         \RequirePackage[scaled]{beramono} % tt
         \fi}}}
 #+end_src
-
+#+LATEX: \caption[Define the utopia value of the fontset key]{Define the utopia value of the fontset key.}\label{fig:utopia}
+#+END_listing
 ** Source block markup
 Two options are available for syntax highlighting and typesetting of
 source code blocks.  The [[latex:package][listings]] package is a pure LaTeX solution,
@@ -2285,19 +2212,20 @@ compatibility with the [[latex:package][minted]] package (Listing
     }
   }  
 #+end_src
-#+LATEX: \caption[The listings option]{The listings option.}\label{fig:listings-option}
+#+LATEX: \caption[The listings value of the source key]{The listings value of the source key.}\label{fig:listings-option}
 #+END_listing
 
 **** Listings setup
 # <<listings setup>>
 
 These settings configure Org-mode to export source blocks that
-[[latex:classfile][Org-article]] will recognize and handle.  Setting
-[[latex:lispvar][org-export-latex-listings]] to =listings= ensures that source code
-blocks in langauges that aren't listed in
-[[latex:lispvar][org-export-latex-custom-lang-environments]] are also typeset by the
-[[latex:progstruct][listings]] package.  
+[[latex:classfile][Org-article]] will recognize and handle (Listing
+\ref{fig:org-listings}).  Setting [[latex:lispvar][org-export-latex-listings]] to
+=listings= ensures that source code blocks in langauges that aren't
+listed in [[latex:lispvar][org-export-latex-custom-lang-environments]] are also typeset
+by the [[latex:progstruct][listings]] package.
 
+#+BEGIN_listing
 #+source: listings-setup
 #+begin_src emacs-lisp :exports code :results silent
     (setq org-export-latex-listings 'listings)
@@ -2308,8 +2236,9 @@ blocks in langauges that aren't listed in
             (latex "latexcode")
             (sh "shcode")))
 #+end_src
-
-**** Listings themes
+#+LATEX: \caption[Configure the Org-mode LaTeX exporter for the listings package]{Configure the Org-mode LaTeX exporter for the listings package.}\label{fig:org-listings}
+#+END_listing
+**** Listings themes                                               :noexport:
 Themes are defined for the listings package.  Themes treat source
 blocks in all languages identically.  They are provided for
 convenience.
@@ -2528,7 +2457,7 @@ language in the environment definition.
 | css        | css        | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {}                | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
 | ditaa      | ditaa      | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {}                | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
 | dot        | dotlang    | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {}                | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
-| emacs-lisp | commonlisp | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {Lisp}            | {}           | {}             | {\ttfamily\footnotesize} | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
+| emacs-lisp | commonlisp | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {Lisp}            | {}           | {}             | {\ttfamily\small}        | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
 | gnuplot    | gnuplot    | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {Gnuplot}         | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
 | haskell    | haskell    | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {Haskell}         | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
 | js         | js         | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {Java}            | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
@@ -2539,17 +2468,17 @@ language in the environment definition.
 | mscgen     | mscgen     | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {}                | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
 | ocaml      | ocaml      | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | [Objective]{Caml} | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
 | octave     | octave     | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {Octave}          | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
-| org        | org        | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {org}             | {}           | {}             | {\ttfamily\footnotesize} | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
+| org        | org        | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {org}             | {}           | {}             | {\ttfamily\small}        | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
 | oz         | oz         | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {Oz}              | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
 | perl       | perl       | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {Perl}            | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
 | plantuml   | plantuml   | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {}                | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
-| python     | python     | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {Python}          | {}           | {}             | {\ttfamily\footnotesize} | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
+| python     | python     | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {Python}          | {}           | {}             | {\ttfamily\small}        | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
 | R          | rlang      | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {R}               | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
 | ruby       | ruby       | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {Ruby}            | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
 | sass       | sass       | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {}                | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
 | scheme     | scheme     | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {}                | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
 | screen     | screen     | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {}                | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
-| sh         | sh         | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {sh}              | {}           | {}             | {\ttfamily\footnotesize} | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
+| sh         | sh         | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {sh}              | {}           | {}             | {\ttfamily\small}        | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
 | sql        | sql        | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {SQL}             | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
 | sqlite     | sqlite3    | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {SQL}             | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
 
@@ -2557,8 +2486,9 @@ language in the environment definition.
 **** Make listings environments
 
 This [[latex:proglang][Python]] script creates [[latex:progstruct][lstnewenvironment]] macros for each of the
-languages in the listings-lookup table.
+languages in the listings-lookup table (Listing \ref{fig:make-lstnew}).
 
+#+BEGIN_listing
 #+source: make-lstnewenvironment(x=listings-lookup)
 #+begin_src python :results output raw :exports code
   res = ''
@@ -2577,12 +2507,18 @@ languages in the listings-lookup table.
       res = res + s + '}}\n{}\n'
   print res
 #+end_src
+#+LATEX: \caption[Python code to make lstnewenvironment macros]{Python code to make lstnewenvironment macros.}\label{fig:make-lstnew}
+#+END_listing
 
+This source block (Listing \ref{fig:lstnew-to-class}) puts the output of Listing \ref{fig:make-lstnew}
+into the class file.
+#+BEGIN_listing
 #+source: make-lstnewenvironment-code
 #+begin_src latex :noweb tangle :exports code
 <<make-lstnewenvironment(x=listings-lookup)>>
 #+end_src
-
+#+LATEX: \caption[Put the lstnewenvironment macros in the class file]{Put the lstnewenvironment macros in the class file.}\label{fig:lstnew-to-class}
+#+END_listing
 
 **** Make inline list commands                                   
 
@@ -2604,9 +2540,10 @@ typesetting.
 #+LATEX: \caption[A macro to make language-specific shortcuts for Org-mode languages]{A macro to make language-specific shortcuts for Org-mode languages.}\label{fig:lstinline-macro}
 #+END_listing
 
-This [[latex:proglang][Python]] code block uses the lookup table to create a call to
+This [[latex:proglang][Python]] code block (Listing \ref{fig:makelstinline}) uses the lookup table to create a call to
 [[latex:progstruct][makelstinline]] for each of the languages in the table.
 
+#+BEGIN_listing
 #+source: make-lstinline(x=lstinline-lookup)
 #+begin_src python :results output raw :exports code
   res = ''
@@ -2625,28 +2562,36 @@ This [[latex:proglang][Python]] code block uses the lookup table to create a cal
       res = res + s + '}\n'
   print res
 #+end_src
+#+LATEX: \caption[Python code to make makelstinline macros]{Python code to make makelstinline macros.}\label{fig:makelstinline}
+#+END_listing
 
-This source block is used to put the LaTeX macros into the class file.
+This source block (Listing \ref{fig:make-lstinline-code}) is used to put the LaTeX macros into the class file.
 
+#+BEGIN_listing
 #+source: make-lstinline-code
 #+begin_src latex :noweb tangle :exports code
 <<make-lstinline(x=lstinline-lookup)>>
 #+end_src
-
+#+LATEX: \caption[Put the makelstinline macros in the class file]{Put the makelstinline macros in the class file.}\label{fig:make-lstinline-code}
+#+END_listing
 
 **** The listings configuration file
 
 This source block writes a file, =orgart_listings.cfg=, that can be
 used to input minted shortcuts into an Org-mode file that isn't using
-[[latex:classfile][Org-article]].
+[[latex:classfile][Org-article]] (Listing \ref{fig:listings-cfg}).  Typically, the configuration file would be input in the LaTeX header:
+=\input{orgart_listings.cfg}=.
+
+
+#+BEGIN_listing
 #+source: listings-cfg
 #+begin_src latex :tangle orgart_listings.cfg :noweb tangle :results raw :exports code
-  <<make-lstnewenvironment(x=listings-lookup)>>
+    <<make-lstnewenvironment(x=listings-lookup)>>
+    <<make-lstinline(x=lstinline-lookup)>>
 #+end_src
+#+LATEX: \caption[Make a configuration file for the listings package in Org-mode]{Make a configuration file for the listings package in Org-mode.}\label{fig:listings-cfg}
+#+END_listing
 
-
-Typically, the configuration file would be input in the LaTeX header:
-: #+LATEX_HEADER: \input{orgart_listings.cfg}
 
 
 **** Listings code
@@ -2689,20 +2634,19 @@ alternative to the listings package.  It relies on an external piece
 of software called Pygments that needs to be installed separately.
 
 **** Installing Pygments
-On a Debian/Ubuntu linux system this can be done with
-
-#+begin_src sh
-sudo aptitude install python-pygments
-#+end_src
+On a Debian/Ubuntu linux system [[latex:package][pygments]] can be installed with this
+shell command: [[inline:sh][sudo aptitude install python-pygments]].
 
 **** Org-mode setup
 # <<minted setup>>
 
-This code block sets `org-export-latex-listings' so that [[latex:package][minted]] is
-used to syntax highlight and typeset source code, defines the
-languages that [[latex:package][minted]] will work on, and configures the call to
-[[latex:proglang][pdflatex]] so it can interface with the external calls made by [[latex:package][minted]].
+This code block (Listing \ref{fig:minted-setup}) sets
+`org-export-latex-listings' so that [[latex:package][minted]] is used to syntax highlight
+and typeset source code, defines the languages that [[latex:package][minted]] will work
+on, and configures the call to [[latex:proglang][pdflatex]] so it can interface with the
+external calls made by [[latex:package][minted]].
 
+#+BEGIN_listing
 #+source: minted-setup
 #+begin_src emacs-lisp :exports code :results silent
   (setq org-export-latex-listings 'minted)
@@ -2714,43 +2658,41 @@ languages that [[latex:package][minted]] will work on, and configures the call t
   (setq org-latex-to-pdf-process
         '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
 #+end_src
+#+LATEX: \caption[Configure the Org-mode LaTeX exporter for the minted package]{Configure the Org-mode LaTeX exporter for the minted package.}\label{fig:minted-setup}
+#+END_listing
 
 **** Using minted
 
-To use minted to typeset source code blocks, add the following option.
-#+source: org-buffer-minted
-#+begin_src org :exports code
-  #+LaTeX_CLASS_OPTIONS: [source=minted] 
-#+end_src
+To use minted to typeset source code blocks, pass the [[latex:progstruct][minted]] value to
+the [[latex:progstruct][source]] key (Listing \ref{fig:minted-source}).  This loads the
+[[latex:package][minted]] package, makes the macros that setup the minted environments
+and commands for inline listings, sets the default placement of floats
+created by the [[latex:progstruct][listing command]], and sets the header of the list of
+listings set by the [[latex:progstruct][listoflistings]] command.
 
+#+BEGIN_listing
 #+source: pgf-option-source-minted
 #+begin_src latex :noweb tangle :exports code
   \pgfkeys{ 
     /ORGART/.cd, 
     source/minted/.code={
-      \newboolean{ORGARTminted}
       \AtEndOfClass{
         \RequirePackage{minted}
         <<make-newminted-code>>
         <<make-newmint-code>>
         \floatplacement{listing}{htb!}
         \listoflistingscaption{List of Listings}
-        }}
-  }  
+        }}}  
 #+end_src
+#+LATEX: \caption[The minted value of the source key]{The minted value of the source key.}\label{fig:minted-source}
+#+END_listing
 
 **** Minted styles
-Minted defines styles, which are color schemes used in syntax highlighting
-of code.  Minted styles are accessible with a =key = value= interface with
-the option [[latex:progstruct][mintedstyle]].  
-
-#+source: org-buffer-mintedstyle
-#+begin_src org :exports code
-  #+LaTeX_CLASS_OPTIONS: [mintedstyle=<style>]
-#+end_src
-
-
-The available options for <style> are:
+Minted defines styles, which are color schemes used in syntax
+highlighting of code.  Minted styles are accessible with a =key =
+value= interface with the key [[latex:progstruct][mintedstyle]] (Listing
+\ref{fig:option-mintedstyle}).  The [[latex:progstruct][mintedstyle]] key can take the
+following values:
    - monokai
    - perldoc
    - borland
@@ -2812,14 +2754,14 @@ write out =newmint= and =newminted= macros.  These macros expand
 to LaTeX environments that have access to the information needed to
 highlight syntax and typeset a particular computer language.
 
-Each row in the table holds information for a language
-supported by [[latex:proglang][Org-mode]].  The first two columns contain the [[latex:proglang][Org-mode]]
-name for the language and the [[latex:package][minted]] name.  The other 29 columns are
-for [[latex:package][minted]] variables.  The table is too large to reproduce on the
-printed page, so a corner of it is presented here.
+Each row in the table holds information for a language supported by
+[[latex:proglang][Org-mode]].  The first two columns contain the [[latex:proglang][Org-mode]] name for the
+language and the [[latex:package][minted]] name.  The other 29 columns are for [[latex:package][minted]]
+variables.  The table is too large to reproduce on the printed page,
+so a corner of it is presented in Table \ref{tab:newminted}.
 
 #+CAPTION: A corner of the newminted lookup table
-#+LABEL: {tab:newminted}
+#+LABEL: tab:newminted
 
 | Org          | Minted      | baselinestretch | bgcolor | firstline |
 | *default*    | *default*   | auto            | nil     |         1 |
@@ -2922,10 +2864,10 @@ blocks in any language by modifying the appropriate cell in the table.
 
 **** Make newminted
 
-This hacky [[latex:proglang][python]] source code block transforms the [[latex:proglang][Org-mode]] table into
-LaTeX macros for the class file.
+This [[latex:proglang][Python]] source code block transforms the newminted-lookup table into
+LaTeX macros for the class file (Listing \ref{fig:newminted-macros}).
 
-
+#+BEGIN_listing
 #+source: make-newminted(x=newminted-lookup)
 #+begin_src python :results output raw :exports code
   res = ''
@@ -2944,20 +2886,26 @@ LaTeX macros for the class file.
       res = res + s + '}\n'
   print res
 #+end_src
+#+LATEX: \caption[Python code to make newminted macros]{Python code to make newminted macros.}\label{fig:newminted-macros}
+#+END_listing
 
+This source block in Listing \ref{fig:newminted-cfg} is used to put the LaTeX macros into the class file.
 
-This source block is used to put the LaTeX macros into the class file.
-
+#+BEGIN_listing
 #+source: make-newminted-code
 #+begin_src latex :noweb tangle :exports code
 <<make-newminted(x=newminted-lookup)>>
 #+end_src
+#+LATEX: \caption[Put the newminted macros into the class file]{Put the newminted macros into the class file.}\label{fig:newminted-cfg}
+#+END_listing
 
 **** Make newmint
 
-This hacky [[latex:proglang][python]] source code block transforms the [[latex:proglang][Org-mode]] table into
-LaTeX macros for the class file.
+The [[latex:proglang][Python]] source code block in Listing \ref{fig:make-newmint}
+transforms the newmint-lookup table into LaTeX macros for the class
+file.
 
+#+BEGIN_listing
 #+source: make-newmint(x=newmint-lookup)
 #+begin_src python :results output raw :exports code
   res = ''
@@ -2976,24 +2924,33 @@ LaTeX macros for the class file.
       res = res + s + '}\n'
   print res
 #+end_src
+#+LATEX: \caption[Python code to make the newmint macros]{Python code to make the newmint macros.}\label{fig:make-newmint}
+#+END_listing
 
+The source block in Listing \ref{fig:make-newmint-code} is used to put the LaTeX macros into the class file.
 
-This source block is used to put the LaTeX macros into the class file.
-
+#+BEGIN_listing
 #+source: make-newmint-code
 #+begin_src latex :noweb tangle :exports code
 <<make-newmint(x=newmint-lookup)>>
 #+end_src
+#+LATEX: \caption[Put the newmint macros in the class file]{Put the newmint macros in the class file.}\label{fig:make-newmint-code}
+#+END_listing
 
 **** Configuration file
 
 This source block writes a file, =orgart_minted.cfg=, that can be used to input
-minted shortcuts into an Org-mode file that isn't using [[latex:classfile][Org-article]].
+minted shortcuts into an Org-mode file that isn't using [[latex:classfile][Org-article]]
+(Listing \ref{fig:minted-cfg}).
+
+#+BEGIN_listing
 #+source: minted-cfg
 #+begin_src latex :tangle orgart_minted.cfg :noweb tangle :exports code
   <<make-newmint(x=newmint-lookup)>>
   <<make-newminted(x=newminted-lookup)>>  
 #+end_src
+#+LATEX: \caption[Make a configuration file for the minted package in Org-mode]{Make a configuration file for the minted package in Org-mode.}\label{fig:minted-cfg}
+#+END_listing
 
 Typically, the configuration file would be input in the LaTeX header:
 : #+LATEX_HEADER: \input{orgart_minted.cfg}
@@ -3048,11 +3005,10 @@ Typically, the configuration file would be input in the LaTeX header:
 
 ** Other packages
 Packages not included in the [[latex:proglang][Org-mode]] list of default packages are
-made available in [[latex:classfile][Org-article]].  These include facilities to
-apply microtypographic adjustments to suitable fonts, set the line
-spacing of the document to double space, set lists more compactly than
-the standard LaTeX [[latex:classfile][article]], and typeset source code listings
-using one of several color or black and white themes.
+made available in [[latex:classfile][Org-article]].  These include facilities to apply
+microtypographic adjustments to suitable fonts, set the line spacing
+of the document to double space, and set lists more compactly than the
+standard LaTeX [[latex:classfile][article]].
 
 *** Microtype
 
@@ -3061,22 +3017,10 @@ extensions of pdfTeX.  Prominent among these are font expansion and
 character protrusion, which together result in fewer bad line breaks
 and a visually even right margin.  
 
-You can probably read the [[latex:package][microtype]] documentation, which runs to
-more than 200 pages, on your system by issuing the shell command:
-
-#+source: read-microtype
-#+begin_src sh :exports code
-  texdoc microtype
-#+end_src
-
-
-This package is not loaded by default.  An option is provided to load
-it.
-
-#+source: org-buffer-microtype
-#+begin_src org :exports code
-  #+LaTeX_CLASS_OPTIONS: [microtype]
-#+end_src
+You can probably read the [[latex:package][microtype]] documentation, which runs to more
+than 200 pages, on your system by issuing the shell command: [[inline:sh][texdoc
+microtype]].  This package is not loaded by default.  An option is
+provided to load it (Listings \ref{fig:microtype-option}, \ref{fig:load-microtype}).
 
 #+BEGIN_listing
 #+source: option-microtype
@@ -3087,6 +3031,7 @@ it.
 #+LATEX: \caption[Setting the microtype option]{Setting the microtype option.}\label{fig:microtype-option}
 #+END_listing
 
+#+BEGIN_listing
 #+source: load-microtype
 #+begin_src latex :exports code
     \ifthenelse{\boolean{ORGART@microtype}}
@@ -3096,50 +3041,45 @@ it.
     \fi}%
   {}
 #+end_src
-
+#+LATEX: \caption[Load the microtype package]{Load the microtype package.}\label{fig:load-microtype}
+#+END_listing
 *** Setspace
+# <<setspace>>
 
 The [[latex:package][setspace]] package is used here for the sole purpose of creating
 double-spaced documents, such as manuscripts submitted to some
-publishing houses.  If it is loaded, then the option [[latex:progstruct][doublespace]]
-will produce a double-spaced document.
+publishing houses.  This package is not loaded by default.  An option,
+[[latex:progstruct][doublespace]]  (Listing \ref{fig:setspace-options}), is provided to load
+[[latex:package][setspace]] (Listing \ref{fig:load-setspace}) and set linespacing to
+doublespacing (Listing \ref{fig:setspace-code}).
 
-This package is not loaded by default.  An option is provided to load
-it, and to set linespacing to doublespace.
-
-#+source: org-buffer-setspace
-#+begin_src org :exports code
-  #+LaTeX_CLASS_OPTIONS: [setspace,doublespace]
-#+end_src
- 
 #+BEGIN_listing
 #+source: option-setspace
 #+begin_src latex :exports code
-  \newboolean{ORGART@setspace}
   \newboolean{ORGART@doublespace}
-  \DeclareOption{setspace}{\setboolean{ORGART@setspace}{true}}
   \DeclareOption{doublespace}{\setboolean{ORGART@doublespace}{true}}
 #+end_src
 #+LATEX: \caption[Set up options for the setspace package]{Set up options for the setspace package.}\label{fig:setspace-options}
 #+END_listing
 
+#+BEGIN_listing
 #+source: load-setspace
 #+begin_src latex :exports code
-  \ifthenelse{\boolean{ORGART@setspace}}
+  \ifthenelse{\boolean{ORGART@doublespace}}
   {\RequirePackage{setspace}}
   {}
 #+end_src
+#+LATEX: \caption[Loading the setspace package]{Loading the setspace package.}\label{fig:load-setspace}
+#+END_listing
 
 #+BEGIN_listing
 #+source: setspace-code
 #+begin_src latex :exports code
-  \ifthenelse{\boolean{ORGART@setspace}}%
-  {\ifthenelse{\boolean{ORGART@doublespace}}%
-  {\doublespacing}%
-  {\singlespacing}}%
+  \ifthenelse{\boolean{ORGART@doublespace}}
+  {\doublespacing}
   {}%
 #+end_src
-#+LATEX: \caption[Setting the document line spacing]{Setting the document line spacing.}\label{fig:setspace}
+#+LATEX: \caption[Setting the document line spacing]{Setting the document line spacing.}\label{fig:setspace-code}
 #+END_listing
 
 *** Paralist
@@ -3162,15 +3102,12 @@ of the list enumeration inside the paragraph:
   - compact :: Use compact lists, with little space between items
   - inpara :: Use compact lists for itemize and description
               environments, but set enumerated lists inside paragraphs
+  - inparai :: Line [[latex:progstruct][inpara]], but the label used for enumeration is a
+               lowercase roman numeral in parentheses
   - inparacustom :: Like [[latex:progstruct][inpara]], but the label used for enumeration
-                    can be customized with the [[latex:progstruct][customlabel]] key
+                    can be customized with the [[latex:progstruct][customlabel]] key (NOT WORKING)
   - customlabel :: a formatting string for the label, e.g., i), (i),
-                   a), A), I), 1), {example} a.
-
-#+source: org-buffer-paralist
-#+begin_src org :exports code
-  #+LaTeX_CLASS_OPTIONS: [lists=<value>]
-#+end_src
+                   a), A), I), 1), {example} a. (NOT WORKING)
 
 #+BEGIN_listing
 #+source: pgf-option-paralist
@@ -3263,33 +3200,29 @@ Eric Fraga wrote a GANTT chart constructor, powered by an [[latex:proglang][Org-
 table.  It relies on two pieces of software:
   - a LaTeX package, [[latex:package][gantt.sty]], which you will need to download and
     install, and
-  - an [[latex:proglang][Emacs lisp]] source code block in the  [[http://orgmode.org/manual/Library-of-Babel.html#Library-of-Babel][Library of Babel]].
+  - an [[latex:proglang][Emacs lisp]] source code block in the [[http://orgmode.org/manual/Library-of-Babel.html#Library-of-Babel][Library of Babel]].
 
 [[latex:classfile][Org-article]] users will need to download the style file [[latex:package][gantt.sty]] and
 install it, either in the directory in which the LaTeX file will be
 compiled or at an appropriate place in the TeX directory structure.
 
-The [[latex:progstruct][curl]] command works to grab [[latex:package][gantt.sty]] from Worg.  You can evaluate
-this source code block with =C-c C-c=, or cut and paste it into
-a shell and evaluate it there.
+The [[latex:progstruct][curl]] command works to grab [[latex:package][gantt.sty]] from Worg (Listing
+\ref{fig:download-gantt}).  You can evaluate this source code block
+with =C-c C-c=, or cut and paste it into a shell and evaluate it
+there.
 
+#+BEGIN_listing
 #+source: get-gantt.sty
 #+begin_src sh
   curl http://repo.or.cz/w/Worg.git/blob_plain/HEAD:/code/latex/gantt.sty > gantt.sty
 #+end_src
+#+LATEX: \caption[Download gantt.sty from Worg]{Download gantt.sty from Worg.}\label{fig:download-gantt}
+#+END_listing
 
 **** The GANTT Option
 
-The [[latex:package][gantt.sty]] package can be loaded by adding the following line to the
-[[latex:proglang][Org-mode]] buffer.
-
-#+source: org-buffer-gantt
-#+begin_src org :exports code
-  #+LaTeX_CLASS_OPTIONS: [gantt]
-#+end_src
-
-The following two bits of code implement the [[latex:progstruct][gantt]] option in
-[[latex:classfile][Org-article]].
+The [[latex:package][gantt.sty]] package can be loaded with the [[latex:progstruct][gantt]] option (Listings
+\ref{fig:option-gantt}, \ref{fig:load-gantt}).
 
 #+BEGIN_listing
 #+source: option-gantt
@@ -3300,24 +3233,27 @@ The following two bits of code implement the [[latex:progstruct][gantt]] option 
 #+LATEX: \caption[Set up option for table-driven GANTT charts]{Set up option for table-driven GANTT charts.}\label{fig:option-gantt}
 #+END_listing
 
+#+BEGIN_listing
 #+source: load-gantt
 #+begin_src latex :exports code
   \ifthenelse{\boolean{ORGART@gantt}}
   {\AtEndOfClass{\RequirePackage{gantt}}}
   {}
 #+end_src
+#+LATEX: \caption[Load the gantt package]{Load the gantt package.}\label{fig:load-gantt}
+#+END_listing
 
 **** Preparing the input table
 
-  The following table describes the tasks and other relevant
+  Table \ref{tab:gantt} describes the tasks and other relevant
   information for a project.  Each line is an /entry/ and there are
   three types of entry allowed in this table:
 
-  - task :: an actual task that has a start time, a duration and an end time.
+  - task :: an actual task that has a start time, a duration and an end time
   - milestone :: a specific milestone in the project that has a start
                time alone
   - date :: a point in time that will be drawn as a vertical line in the
-          GANTT chart (e.g. start of each year).
+          GANTT chart (e.g., start of each year)
 
   Each element of the chart will be annotated with the content of the
   /label/ column of each entry.  The first column of the table is
@@ -3348,17 +3284,22 @@ The following two bits of code implement the [[latex:progstruct][gantt]] option 
 
 **** Creating the GANTT chart
 In the [[latex:proglang][Org-mode]] buffer, the call to the code in the Library of Babel
-passes =ganttesttable= to the function =elispgantt=.  Note that the
-header argument is set in the function call.
+passes =ganttesttable= to the function =elispgantt= (Listing \ref{fig:elispgantt}).  Note that the
+header argument is set in the function call.  The results are wrapped
+in =#+BEGIN_LaTeX= ... =#+END_LaTeX= so they are interpreted as LaTeX
+code by the [[latex:proglang][Org-mode]] LaTeX exporter.  
 
+
+#+BEGIN_listing
 #+begin_src org :exports code
 ,#+lob: elispgantt(table=gantttesttable) :results output latex
 #+end_src
+#+LATEX: \caption[Call to the elispgantt function in the Library of Babel]{Call to the elispgantt function in the Library of Babel.}\label{fig:elispgantt}
+#+END_listing
 
-The results are wrapped in =#+BEGIN_LaTeX= ... =#+END_LaTeX=.  
 
 #+source: elispgantt-output
-#+begin_src org :exports code
+#+begin_src org :exports none
 
 \pgfdeclarelayer{background}
 \pgfdeclarelayer{foreground}
