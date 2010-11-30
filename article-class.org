@@ -15,7 +15,7 @@
 #+XSLT: 
 #+BABEL: :exports code
 #+LaTeX_CLASS: org-article
-#+LaTeX_CLASS_OPTIONS: [koma,letterpaper,fontset=bera,11pt,source=listings,microtype,lists=inparai,colorlinks=true,urlcolor=blue,secnum=section,gantt]
+#+LaTeX_CLASS_OPTIONS: [koma,letterpaper,fontset=bera,11pt,source=listings,microtype,lists=inparaa,colorlinks=true,urlcolor=SteelBlue4,linkcolor=Firebrick4,secnum=section,gantt]
 #+LATEX_HEADER: \usepackage[AUTO]{inputenc}
 
 
@@ -3093,20 +3093,19 @@ issuing the shell command:  [[inline:sh][texdoc paralist]].
 
 List typesetting is configured with the [[latex:progstruct][lists]] key which recognizes the
 following values: [[latex:progstruct][latex]], [[latex:progstruct][compact]], and several varieties of the value
-[[latex:progstruct][inpara]], each of which begin with [[latex:progstruct][inpara]] and are followed by the format
-of the list enumeration inside the paragraph:
+[[latex:progstruct][inpara]], each of which begin with [[latex:progstruct][inpara]] and define different label formats
+for the list enumeration inside the paragraph:
 
   - latex :: Use standard LaTeX lists, which are set with generous
              space between items
   - compact :: Use compact lists, with little space between items
   - inpara :: Use compact lists for itemize and description
               environments, but set enumerated lists inside paragraphs
-  - inparai :: Line [[latex:progstruct][inpara]], but the label used for enumeration is a
+  - inparai :: Like [[latex:progstruct][inpara]], but the label used for enumeration is a
                lowercase roman numeral in parentheses
-  - inparacustom :: Like [[latex:progstruct][inpara]], but the label used for enumeration
-                    can be customized with the [[latex:progstruct][customlabel]] key (NOT WORKING)
-  - customlabel :: a formatting string for the label, e.g., i), (i),
-                   a), A), I), 1), {example} a. (NOT WORKING)
+  - inparaa :: Like [[latex:progstruct][inpara]], but the label used for enumeration is a
+               lowercase letter in parentheses
+
 
 #+BEGIN_listing
 #+source: pgf-option-paralist
@@ -3268,8 +3267,8 @@ The [[latex:package][gantt.sty]] package can be loaded with the [[latex:progstru
 In the [[latex:proglang][Org-mode]] buffer, the call to the code in the Library of Babel
 passes the name of the =ganttesttable= to the function [[latex:progstruct][elispgantt]]
 (Listing \ref{fig:elispgantt}).  Note that the header argument is set
-in the function call.  The results are wrapped in [[latex:progstruct][#+BEGIN_LaTeX]]
-... [[latex:progstruct][#+END_LaTeX]] so they are interpreted as LaTeX code by the
+in the function call.  The results are wrapped in =#+BEGIN_LaTeX]=
+... =#+END_LaTeX= so they are interpreted as LaTeX code by the
 [[latex:proglang][Org-mode]] LaTeX exporter.
 
 
