@@ -3113,7 +3113,6 @@ of the list enumeration inside the paragraph:
 #+begin_src latex :exports code
     \pgfkeys{ 
       /ORGART/.cd, 
-      customlabel/.store in=\ORGART@customlabel,
       lists/.is choice,
       lists/latex/.code={},
       lists/compact/.code={\AtEndOfClass{%
@@ -3131,12 +3130,11 @@ of the list enumeration inside the paragraph:
         \let\itemize\compactitem
         \let\description\compactdesc
         \renewenvironment{enumerate}{\begin{inparaenum}[(i)]}{\end{inparaenum}}}},
-     lists/inparacustom/.code={\AtEndOfClass{%
-        \RequirePackage{paralist}}
-        \AtBeginDocument{
+     lists/inparaa/.code={\AtEndOfClass{%
+        \RequirePackage{paralist}
         \let\itemize\compactitem
         \let\description\compactdesc
-        \renewenvironment{enumerate}{\begin{inparaenum}[\ORGART@customlabel]}{\end{inparaenum}}}}
+        \renewenvironment{enumerate}{\begin{inparaenum}[(a)]}{\end{inparaenum}}}},
   }  
 #+end_src
 #+LATEX: \caption[Set up option for lists]{Set up options for lists.}\label{fig:paralist-option}
@@ -3228,9 +3226,10 @@ The [[latex:package][gantt.sty]] package can be loaded with the [[latex:progstru
 
 **** Preparing the input table
 
-  Table \ref{tab:gantt} describes the tasks and other relevant
-  information for a project.  Each line is an /entry/ and there are
-  three types of entry allowed in this table:
+  Table \ref{tab:gantt} presents an example of an [[latex:proglang][Org-mode]] table that
+  describes the tasks and other relevant information for a project.
+  Each line is an /entry/ and there are three types of entry allowed
+  in this table:
 
   - task :: an actual task that has a start time, a duration and an end time
   - milestone :: a specific milestone in the project that has a start
@@ -3267,10 +3266,11 @@ The [[latex:package][gantt.sty]] package can be loaded with the [[latex:progstru
 
 **** Creating the GANTT chart
 In the [[latex:proglang][Org-mode]] buffer, the call to the code in the Library of Babel
-passes =ganttesttable= to the function =elispgantt= (Listing \ref{fig:elispgantt}).  Note that the
-header argument is set in the function call.  The results are wrapped
-in =#+BEGIN_LaTeX= ... =#+END_LaTeX= so they are interpreted as LaTeX
-code by the [[latex:proglang][Org-mode]] LaTeX exporter.  
+passes the name of the =ganttesttable= to the function [[latex:progstruct][elispgantt]]
+(Listing \ref{fig:elispgantt}).  Note that the header argument is set
+in the function call.  The results are wrapped in [[latex:progstruct][#+BEGIN_LaTeX]]
+... [[latex:progstruct][#+END_LaTeX]] so they are interpreted as LaTeX code by the
+[[latex:proglang][Org-mode]] LaTeX exporter.
 
 
 #+BEGIN_listing
