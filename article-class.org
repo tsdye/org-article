@@ -18,12 +18,13 @@
 #+LaTeX_CLASS_OPTIONS: [koma,letterpaper,fontset=bera,11pt,source=listings,microtype,lists=inparaa,colorlinks=true,urlcolor=SteelBlue4,linkcolor=Firebrick4,secnum=section,gantt]
 #+LATEX_HEADER: \usepackage[AUTO]{inputenc}
 
-
+# <<abstract_environment>>
 #+BEGIN_abstract
 This document contains the code and documentation for the [[latex:classfile][Org-article]]
 LaTeX class.  The [[latex:classfile][Org-article]] class is designed to work with the
-output of the [[latex:proglang][Org-mode]] LaTeX exporter.  It offers some features
-that might make it easy for non-programmers or LaTeX novices to use:
+output of the [[latex:proglang][Org-mode]] LaTeX exporter.  It offers some features that
+might make it easy for non-programmers or LaTeX novices to use,
+including:
   4. self-contained configuration;
   1. several choices of fonts;
   2. flexible arrangement of the abstract, table of contents, and
@@ -133,9 +134,9 @@ using the TeXLive LaTeX distribution.
 
 [[latex:classfile][Org-article]] requires that the [[latex:proglang][Org-mode]] environment be set up before LaTeX
 export.  How the environment is set up will depend on the LaTeX packages you
-typically load, 
+typically load. 
 
-There are two ways to set up [[latex:classfile][Org-article]] and your choice will probably
+There are two ways to set up [[latex:classfile][Org-article]]; your choice will probably
 depend on the value of the variable [[latex:lispvar][org-export-latex-packages-alist]].
 If this variable is nil (or it refers to packages that you always want
 loaded), then the following setup should work for you.  It asks
@@ -379,6 +380,97 @@ size of the font.
   ,#+LaTeX_CLASS: org-article
   ,#+LaTeX_CLASS_OPTIONS: [koma,letterpaper,utopia,11pt,listings-es,microtype,paralist,colorlinks=true,urlcolor=blue,secnum=section]
 #+end_src
+
+* Work flows
+** Changing the class file
+A new class file can be tangled at any time to reflect changes or
+additions.  One reason to tangle a new class file is to change the
+syntax highlighting and typesetting of source code blocks, a process
+that is highly configurable with [[latex:classfile][Org-article]].
+
+[[latex:classfile][Org-article]] supports both the [[latex:package][listings]] package and the [[latex:package][minted]] package
+for syntax highlighting and typesetting source code.  The two packages
+take slightly different approaches to these tasks; [[latex:classfile][Org-article]] tries
+to submerge these differences so you can use one or the other package
+without having to change your [[latex:proglang][Org-mode]] file.  You can learn more about
+the [[latex:package][listings]] package [[listings-package][here]], and more about the [[latex:package][minted]] package [[minted-package][here]].
+
+Configuration for both packages is accomplished by changing the values
+of cells in lookup tables and generating a new class file by tangling
+this document with =C-c C-v t=.  There are two lookup tables for each
+of the packages, one for configuring source block output and another
+for configuring inline code snippets.  Each of the lookup tables is
+organized with the package options as column heads and the languages
+supported by [[latex:proglang][Org-mode]] along the rows.
+
+Here are the lookup tables to configure [[listings-code-block][listings code blocks]] and
+[[listings-inline][listings inline code snippets.]]   And here are the tables to configure
+[[minted-code-block][minted code blocks]] and [[minted-inline][minted inline code snippets]].
+
+** Setting common options
+# <<org-article_options>>
+
+[[latex:classfile][Org-article]] passes options to the LaTeX packages that it uses.  As a
+result, there are very many options.  This section attempts to point
+out some options that are likely to be used frequently.
+
+*** Look and feel
+The overall look and feel of your pdf document is governed by the
+choice of either the [[latex:progstruct][article]] or [[latex:progstruct][koma]] option.  The [[latex:progstruct][article]] option will
+yield a document that looks like a scientific journal article.  The
+[[latex:progstruct][koma]] option achieves a somewhat more modern, but conservative, look,
+primarily by using the sans-serif font for display elements.  You can
+learn more [[article-base-class-options][here]], but will have to read the class manuals for a full
+description of all the options.
+
+*** Table of contents
+[[latex:classfile][Org-article]] lets you organize all the "frontmatter" as you wish.  This
+document, for instance, places the abstract before the table of
+contents, and includes a list of figures and a list of listings.  You
+can see this example [[abstract-environment][here]].
+
+You can also set the level to which sections will be numbered, as
+described [[section-numbering][here]], and the depth of the table of contents, as described [[table-of-contents][here]].
+
+*** Lists
+[[latex:classfile][Org-article]] can typeset compact lists and set enumerated lists in
+paragraphs (an example of this is in the abstract of this document).
+You can learn more about lists [[paralist][here]].
+
+*** Fonts
+[[latex:classfile][Org-article]] makes available a variety of font sets--serif, sans-serif,
+and monospace fonts that look good with one another.  Your choice of
+font set will be determined partly by whether or not your document
+typesets math.  If so, you'll want to pick a font set with math
+support.  You can learn more about font sets [[font-packages][here]].
+
+*** Hyperlinks
+[[latex:classfile][Org-article]] uses the [[latex:package][hyperref]] package to put hyperlinks in the pdf
+file.  This package is very highly configurable.  Perhaps the most
+used options have to do with how hyperlinks are marked up in the pdf
+document.  If you plan to print out the pdf file, and don't want links
+to be set off in the hardcopy, then you should use the default,
+=colorlinks=false=.  Setting =colorlinks=true= will yield, well,
+colored links.  Colors can be set by any method recognized by the
+excellent [[latex:package][xcolor]] package.  [[latex:classfile][Org-article]] uses X11 color names, so you
+can achieve somewhat muted but traditionally colored links with
+options like =urlcolor=SteelBlue4= and =linkcolor=Firebrick4=.
+
+** Marking up the Org-mode document
+*** Block-level markup
+If you want your source code blocks to have captions and (optionally)
+present your readers with a List of Listings following the Table of
+Contents, then you should [[special_blocks][follow the instructions here]].   
+
+This file also uses an [[latex:progstruct][abstract]] environment, which you can see [[abstract_environment][here]].
+
+*** Inline markup
+This file makes heavy use of inline markup for semantic elements in
+the domain of computer programming using [[latex:proglang][Org-mode's]] extensible link
+syntax.  A new link type, [[latex:progstruct][latex]], is used to pass short bits of text to
+LaTeX commands.  Another link type, [[latex:progstruct][inline]], is used to typeset and
+highlight the syntax code snippets inline using either the [[latex:package][listings]] or
+[[latex:package][minted]] packages.  Inline markup is described [[in-line_markup][here]].
 
 * The class file
    :PROPERTIES:
@@ -678,7 +770,7 @@ It is possible to introduce semantic markup in Org-mode files and
 markup conventions.
 
 ** In-line markup
-# <<in-line markup>>
+# <<in-line_markup>>
 
 Arbitrary semantic markup in [[latex:proglang][Org-mode]] files is implemented by
 defining new link types with [[latex:lispvar][org-add-link-type]].  Two new links are
@@ -784,7 +876,7 @@ In addition, a =lispvar= command that will break long [[latex:proglang][Emacs Li
 variable names at hyphens is also provided (see Listing
 \ref{fig:load-hyperref}).  It is typically invoked as follows: \\  =[[latex:lispvar][a-long-and-descriptive-emacs-lisp-var]]=
 ** Block-level markup
-# <<special blocks>>
+# <<special_blocks>>
 
 Block-level markup is accomplished with the help of the
 [[latex:package][org-special-blocks]] package.  It is used in this file to wrap the
@@ -833,11 +925,8 @@ buffer, styles listings by putting a black box around them.
 #+END_listing
 
 Note that the [[latex:progstruct][listing]] environment is implemented in [[latex:classfile][Org-article]] using
-the [[latex:package][float]] package to ensure compatability with the environment defined
-in the [[latex:package][minted]] package and to take advantage of the [[latex:package][float]] package being
-one of the default packages loaded by [[latex:proglang][Org-mode]].  The [[latex:classfile][KOMA script
-scrartcl]] class complains about this and advises that its own package,
-[[latex:package][tocbasic]], be used instead.
+either the [[latex:package][float]] package or the [[latex:package][tocbasic]] package, depending on whether
+the [[latex:classfile][article]] or [[latex:classfile][scrartcl]] class if being used.  
 
 * LaTeX packages
    :PROPERTIES:
@@ -846,7 +935,7 @@ scrartcl]] class complains about this and advises that its own package,
 # <<latex-packages>>
 
 ** Article base class options
-
+# <<article-base-class-options>>
 [[latex:classfile][Org-article]] offers a choice of two base classes:  the
 standard LaTeX [[latex:classfile][article]] class, and the [[http://www.ctan.org/tex-archive/macros/latex/contrib/koma-script/][KOMA-script]]
 [[latex:classfile][scrartcl]] class.  The KOMA-script [[latex:classfile][scrartcl]] class is compatible with the
@@ -983,6 +1072,8 @@ binding with a clip, one might pass the following options to the class
 #+end_src
 
 *** Table of contents
+# <<table-of-contents>>
+
 In the default configuration, the [[latex:proglang][Org-mode]] LaTeX exporter includes a
 function that sandwiches the LaTeX =\tableofcontents= command between
 a command that sets the depth of the headings that appear in the table
@@ -1866,6 +1957,7 @@ Options do not include =debug=.
 #+end_src
 
 ** Font packages
+# <<font-packages>>
 LaTeX documents might need three text fonts, one for the serif
 typeface used for text, the sans-serif typeface often used for heads
 and sub-heads, and the monospace typewriter typeface typically used to
@@ -2159,6 +2251,8 @@ package using [[latex:classfile][Org-article]].
 #+END_listing
 
 *** Listings
+# <<listings-package>>
+
 The [[latex:package][listings]] package is a source code printer for LaTeX.  According to
 posts in =comp.text.tex= in mid-2010, the [[latex:package][listings]] package is no
 longer maintained.  
@@ -2413,41 +2507,43 @@ language has been set to =nil=.  This forces specification of a
 language in the environment definition.
 
 ***** Lstlisting lookup table                                      :noexport:
+# <<listings-code-block>>
 #+tblname: listings-lookup
 | Org        | Listings        | aboveskip      | belowskip      | firstline | lastline | showlines | emptylines | gobble | style | language          | alsolanguage | defaultdialect | basicstyle               | identifierstyle     | commentstyle               | stringstyle           | keywordstyle          | classoffset | extendedchars | inputencoding | upquote | tabsize | showtabs | showspaces | showstringspaces | formfeed  | numbers | stepnumber | numberfirstline | numberstyle | numbersep | numberblanklines | firstnumber | thelstnumber       | linewidth  | xleftmargin | xrightmargin | resetmargins | breaklines | breakatwhitespace | prebreak | postbreak | breakindent | breakautoindent | frame  | frameround | framesep | rulesep | framerule | framexleftmargin | framexrightmargin | framextopmargin | framexbottommargin | backgroundcolor      | rulecolor          | fillcolor | rulesepcolor | index | indexstyle     | columns  | flexiblecolumns | basewidth      | fontadjust | texcl | mathescape | escapechar | escapeinside | escapebegin | escapeend |
 | *default*  | *default*       | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | nil               | {}           | {}             | {}                       | {}                  | \itshape                   | {}                    | \bfseries             |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false        | false      | false             | {}       | {}        | 20pt        | true            | none   | ffff       | 3pt      | 2pt     | 0.4pt     | 0pt              | 0pt               | 0pt             | 0pt                | nil                  | nil                | nil       | nil          | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
 | asymptote  | asymptotecode   | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {}                | {}           | {}             | {}                       | {}                  | \itshape                   | {}                    | \bfseries             |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false        | false      | false             | {}       | {}        | 20pt        | true            | none   | ffff       | 3pt      | 2pt     | 0.4pt     | 0pt              | 0pt               | 0pt             | 0pt                | nil                  | nil                | nil       | nil          | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
 | C          | ccode           | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | [ANSI]{C}         | {}           | {}             | {}                       | {}                  | \itshape                   | {}                    | \bfseries             |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false        | false      | false             | {}       | {}        | 20pt        | true            | none   | ffff       | 3pt      | 2pt     | 0.4pt     | 0pt              | 0pt               | 0pt             | 0pt                | nil                  | nil                | nil       | nil          | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
 | clojure    | clojurecode     | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {}                | {}           | {}             | {}                       | {}                  | \itshape                   | {}                    | \bfseries             |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false        | false      | false             | {}       | {}        | 20pt        | true            | none   | ffff       | 3pt      | 2pt     | 0.4pt     | 0pt              | 0pt               | 0pt             | 0pt                | nil                  | nil                | nil       | nil          | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
-| css        | csscode         | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {}                | {}           | {}             | {\ttfamily\footnotesize} | \color{DodgerBlue3} | \itshape\color{SlateGray3} | \color{DarkSeaGreen4} | \bfseries             |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false        | false      | false             | {}       | {}        | 20pt        | true            | single | ffff       | 3pt      | 2pt     | 0.4pt     | 0pt              | 0pt               | 0pt             | 0pt                | \color{MistyRose1}   | \color{MistyRose4} | nil       | nil          | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
+| css        | csscode         | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {}                | {}           | {}             | {\ttfamily\footnotesize} | \color{DodgerBlue3} | \itshape\color{SlateGray3} | \color{DarkSeaGreen4} | \bfseries             |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false        | false      | false             | {}       | {}        | 20pt        | true            | single | ffff       | 3pt      | 2pt     | 1pt       | 0pt              | 0pt               | 0pt             | 0pt                | \color{Snow1}        | \color{MistyRose4} | nil       | nil          | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
 | ditaa      | ditaacode       | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {ditaa}           | {}           | {}             | {}                       | {}                  | \itshape                   | {}                    | \bfseries             |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false        | false      | false             | {}       | {}        | 20pt        | true            | none   | ffff       | 3pt      | 2pt     | 0.4pt     | 0pt              | 0pt               | 0pt             | 0pt                | nil                  | nil                | nil       | nil          | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
 | dot        | dotlangcode     | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {dot}             | {}           | {}             | {}                       | {}                  | \itshape                   | {}                    | \bfseries             |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false        | false      | false             | {}       | {}        | 20pt        | true            | none   | ffff       | 3pt      | 2pt     | 0.4pt     | 0pt              | 0pt               | 0pt             | 0pt                | nil                  | nil                | nil       | nil          | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
-| emacs-lisp | common-lispcode | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {Lisp}            | {}           | {}             | {\ttfamily\footnotesize} | \color{DodgerBlue3} | \itshape\color{SlateGray3} | \color{DarkSeaGreen4} | \bfseries\color{Red3} |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false        | true       | false             | {}       | {}        | 20pt        | true            | single | ffff       | 3pt      | 2pt     | 0.4pt     | 0pt              | 0pt               | 0pt             | 0pt                | \color{Snow1}        | \color{SlateGray4} | nil       | nil          | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
+| emacs-lisp | common-lispcode | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {Lisp}            | {}           | {}             | {\ttfamily\footnotesize} | \color{DodgerBlue3} | \itshape\color{SlateGray3} | \color{DarkSeaGreen4} | \bfseries\color{Red3} |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false        | true       | false             | {}       | {}        | 20pt        | true            | single | ffff       | 3pt      | 2pt     | 1pt       | 0pt              | 0pt               | 0pt             | 0pt                | \color{Snow1}        | \color{SlateGray4} | nil       | nil          | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
 | gnuplot    | gnuplotcode     | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {Gnuplot}         | {}           | {}             | {}                       | {}                  | \itshape                   | {}                    | \bfseries             |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false        | false      | false             | {}       | {}        | 20pt        | true            | none   | ffff       | 3pt      | 2pt     | 0.4pt     | 0pt              | 0pt               | 0pt             | 0pt                | nil                  | nil                | nil       | nil          | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
 | haskell    | haskellcode     | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {Haskell}         | {}           | {}             | {}                       | {}                  | \itshape                   | {}                    | \bfseries             |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false        | false      | false             | {}       | {}        | 20pt        | true            | none   | ffff       | 3pt      | 2pt     | 0.4pt     | 0pt              | 0pt               | 0pt             | 0pt                | nil                  | nil                | nil       | nil          | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
 | js         | jscode          | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {Java}            | {}           | {}             | {}                       | {}                  | \itshape                   | {}                    | \bfseries             |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false        | false      | false             | {}       | {}        | 20pt        | true            | none   | ffff       | 3pt      | 2pt     | 0.4pt     | 0pt              | 0pt               | 0pt             | 0pt                | nil                  | nil                | nil       | nil          | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
-| latex      | latexcode       | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | [LaTeX]{TeX}      | {}           | {}             | {\ttfamily\footnotesize} | \color{DodgerBlue3} | \itshape\color{SlateGray3} | \color{DarkSeaGreen4} | \bfseries\color{Red3} |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false        | truee      | false             | {}       | {}        | 20pt        | true            | single | ffff       | 3pt      | 2pt     | 0.4pt     | 0pt              | 0pt               | 0pt             | 0pt                | \color{Ivory1}       | \color{Ivory4}     | nil       | nil          | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
+| latex      | latexcode       | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | [LaTeX]{TeX}      | {}           | {}             | {\ttfamily\footnotesize} | \color{DodgerBlue3} | \itshape\color{SlateGray3} | \color{DarkSeaGreen4} | \bfseries\color{Red3} |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false        | truee      | false             | {}       | {}        | 20pt        | true            | single | ffff       | 3pt      | 2pt     | 1pt       | 0pt              | 0pt               | 0pt             | 0pt                | \color{Snow1}        | \color{Ivory4}     | nil       | nil          | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
 | ledger     | ledgercode      | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {}                | {}           | {}             | {}                       | {}                  | \itshape                   | {}                    | \bfseries             |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false        | false      | false             | {}       | {}        | 20pt        | true            | none   | ffff       | 3pt      | 2pt     | 0.4pt     | 0pt              | 0pt               | 0pt             | 0pt                | nil                  | nil                | nil       | nil          | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
 | lisp       | clcode          | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {Lisp}            | {}           | {}             | {}                       | {}                  | \itshape                   | {}                    | \bfseries             |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false        | false      | false             | {}       | {}        | 20pt        | true            | none   | ffff       | 3pt      | 2pt     | 0.4pt     | 0pt              | 0pt               | 0pt             | 0pt                | nil                  | nil                | nil       | nil          | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
 | matlab     | matlabcode      | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {Matlab}          | {}           | {}             | {}                       | {}                  | \itshape                   | {}                    | \bfseries             |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false        | false      | false             | {}       | {}        | 20pt        | true            | none   | ffff       | 3pt      | 2pt     | 0.4pt     | 0pt              | 0pt               | 0pt             | 0pt                | nil                  | nil                | nil       | nil          | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
 | mscgen     | mscgencode      | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {}                | {}           | {}             | {}                       | {}                  | \itshape                   | {}                    | \bfseries             |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false        | false      | false             | {}       | {}        | 20pt        | true            | none   | ffff       | 3pt      | 2pt     | 0.4pt     | 0pt              | 0pt               | 0pt             | 0pt                | nil                  | nil                | nil       | nil          | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
 | ocaml      | ocamlcode       | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | [Objective]{Caml} | {}           | {}             | {}                       | {}                  | \itshape                   | {}                    | \bfseries             |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false        | false      | false             | {}       | {}        | 20pt        | true            | none   | ffff       | 3pt      | 2pt     | 0.4pt     | 0pt              | 0pt               | 0pt             | 0pt                | nil                  | nil                | nil       | nil          | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
 | octave     | octavecode      | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {Octave}          | {}           | {}             | {}                       | {}                  | \itshape                   | {}                    | \bfseries             |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false        | false      | false             | {}       | {}        | 20pt        | true            | none   | ffff       | 3pt      | 2pt     | 0.4pt     | 0pt              | 0pt               | 0pt             | 0pt                | nil                  | nil                | nil       | nil          | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
-| org        | textcode        | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {org}             | {}           | {}             | {\ttfamily\footnotesize} | \color{DodgerBlue3} | \itshape\color{SlateGray3} | \color{DarkSeaGreen4} | \bfseries\color{Red3} |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false        | true       | false             | {}       | {}        | 20pt        | true            | single | ffff       | 3pt      | 2pt     | 0.4pt     | 0pt              | 0pt               | 0pt             | 0pt                | \color{LightYellow1} | \color{Yellow4}    | nil       | nil          | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
+| org        | textcode        | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {org}             | {}           | {}             | {\ttfamily\footnotesize} | \color{DodgerBlue3} | \itshape\color{SlateGray3} | \color{DarkSeaGreen4} | \bfseries\color{Red3} |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false        | true       | false             | {}       | {}        | 20pt        | true            | single | ffff       | 3pt      | 2pt     | 1pt       | 0pt              | 0pt               | 0pt             | 0pt                | \color{Snow1}        | \color{Yellow4}    | nil       | nil          | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
 | oz         | ozcode          | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {Oz}              | {}           | {}             | {}                       | {}                  | \itshape                   | {}                    | \bfseries             |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false        | false      | false             | {}       | {}        | 20pt        | true            | none   | ffff       | 3pt      | 2pt     | 0.4pt     | 0pt              | 0pt               | 0pt             | 0pt                | nil                  | nil                | nil       | nil          | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
 | perl       | perlcode        | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {Perl}            | {}           | {}             | {}                       | {}                  | \itshape                   | {}                    | \bfseries             |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false        | false      | false             | {}       | {}        | 20pt        | true            | none   | ffff       | 3pt      | 2pt     | 0.4pt     | 0pt              | 0pt               | 0pt             | 0pt                | nil                  | nil                | nil       | nil          | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
 | plantuml   | plantumlcode    | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {}                | {}           | {}             | {}                       | {}                  | \itshape                   | {}                    | \bfseries             |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false        | false      | false             | {}       | {}        | 20pt        | true            | none   | ffff       | 3pt      | 2pt     | 0.4pt     | 0pt              | 0pt               | 0pt             | 0pt                | nil                  | nil                | nil       | nil          | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
-| python     | pythoncode      | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {Python}          | {}           | {}             | {\ttfamily\footnotesize} | \color{DodgerBlue3} | \itshape\color{SlateGray3} | \color{DarkSeaGreen4} | \bfseries\color{Red3} |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false        | true       | false             | {}       | {}        | 20pt        | true            | single | ffff       | 3pt      | 2pt     | 0.4pt     | 0pt              | 0pt               | 0pt             | 0pt                | \color{LightBlue1}   | \color{Blue4}      | nil       | nil          | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
+| python     | pythoncode      | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {Python}          | {}           | {}             | {\ttfamily\footnotesize} | \color{DodgerBlue3} | \itshape\color{SlateGray3} | \color{DarkSeaGreen4} | \bfseries\color{Red3} |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false        | true       | false             | {}       | {}        | 20pt        | true            | single | ffff       | 3pt      | 2pt     | 1pt       | 0pt              | 0pt               | 0pt             | 0pt                | \color{Snow1}        | \color{Blue4}      | nil       | nil          | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
 | R          | rlangcode       | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {R}               | {}           | {}             | {}                       | {}                  | \itshape                   | {}                    | \bfseries             |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false        | false      | false             | {}       | {}        | 20pt        | true            | none   | ffff       | 3pt      | 2pt     | 0.4pt     | 0pt              | 0pt               | 0pt             | 0pt                | nil                  | nil                | nil       | nil          | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
 | ruby       | rubycode        | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {Ruby}            | {}           | {}             | {}                       | {}                  | \itshape                   | {}                    | \bfseries             |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false        | false      | false             | {}       | {}        | 20pt        | true            | none   | ffff       | 3pt      | 2pt     | 0.4pt     | 0pt              | 0pt               | 0pt             | 0pt                | nil                  | nil                | nil       | nil          | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
 | sass       | sasscode        | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {}                | {}           | {}             | {}                       | {}                  | \itshape                   | {}                    | \bfseries             |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false        | false      | false             | {}       | {}        | 20pt        | true            | none   | ffff       | 3pt      | 2pt     | 0.4pt     | 0pt              | 0pt               | 0pt             | 0pt                | nil                  | nil                | nil       | nil          | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
 | scheme     | schemecode      | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {}                | {}           | {}             | {}                       | {}                  | \itshape                   | {}                    | \bfseries             |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false        | false      | false             | {}       | {}        | 20pt        | true            | none   | ffff       | 3pt      | 2pt     | 0.4pt     | 0pt              | 0pt               | 0pt             | 0pt                | nil                  | nil                | nil       | nil          | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
 | screen     | screencode      | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {}                | {}           | {}             | {}                       | {}                  | \itshape                   | {}                    | \bfseries             |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false        | false      | false             | {}       | {}        | 20pt        | true            | none   | ffff       | 3pt      | 2pt     | 0.4pt     | 0pt              | 0pt               | 0pt             | 0pt                | nil                  | nil                | nil       | nil          | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
-| sh         | shcode          | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {sh}              | {}           | {}             | {\ttfamily\footnotesize} | \color{DodgerBlue3} | \itshape\color{SlateGray3} | \color{DarkSeaGreen4} | \bfseries\color{Red3} |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false        | true       | false             | {}       | {}        | 20pt        | true            | single | ffff       | 3pt      | 2pt     | 0.4pt     | 0pt              | 0pt               | 0pt             | 0pt                | \color{LightPink1}   | \color{Red4}       | nil       | nil          | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
+| sh         | shcode          | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {sh}              | {}           | {}             | {\ttfamily\footnotesize} | \color{DodgerBlue3} | \itshape\color{SlateGray3} | \color{DarkSeaGreen4} | \bfseries\color{Red3} |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false        | true       | false             | {}       | {}        | 20pt        | true            | single | ffff       | 3pt      | 2pt     | 1pt       | 0pt              | 0pt               | 0pt             | 0pt                | \color{Snow1}        | \color{Red4}       | nil       | nil          | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
 | sql        | sqlcode         | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {SQL}             | {}           | {}             | {}                       | {}                  | \itshape                   | {}                    | \bfseries             |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false        | false      | false             | {}       | {}        | 20pt        | true            | none   | ffff       | 3pt      | 2pt     | 0.4pt     | 0pt              | 0pt               | 0pt             | 0pt                | nil                  | nil                | nil       | nil          | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
 | sqlite     | sqlite3code     | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {SQL}             | {}           | {}             | {}                       | {}                  | \itshape                   | {}                    | \bfseries             |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false        | false      | false             | {}       | {}        | 20pt        | true            | none   | ffff       | 3pt      | 2pt     | 0.4pt     | 0pt              | 0pt               | 0pt             | 0pt                | nil                  | nil                | nil       | nil          | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
 
 ***** Lstinline lookup table                                       :noexport:
+# <<listings-inline>>
 #+tblname: lstinline-lookup
 | Org        | Listings   | aboveskip      | belowskip      | firstline | lastline | showlines | emptylines | gobble | style | language          | alsolanguage | defaultdialect | basicstyle               | identifierstyle | commentstyle | stringstyle | keywordstyle | classoffset | extendedchars | inputencoding | upquote | tabsize | showtabs | showspaces | showstringspaces | formfeed  | numbers | stepnumber | numberfirstline | numberstyle | numbersep | numberblanklines | firstnumber | thelstnumber       | linewidth  | xleftmargin | xrightmargin | breaklines | resetmargins | breakatwhitespace | prebreak | postbreak | breakindent | breakautoindent | index | indexstyle     | columns  | flexiblecolumns | basewidth      | fontadjust | texcl | mathescape | escapechar | escapeinside | escapebegin | escapeend |
 | *default*  | *default*  | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | nil               | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
@@ -2628,6 +2724,7 @@ used by the [[latex:package][minted]] package (Listing \ref{fig:listings-code}).
 #+LATEX: \caption[Code to configure the listings package]{Code to configure the listings package.}\label{fig:listings-code}
 #+END_listing
 *** Minted
+# <<minted-package>>
 
 Minted is a LaTeX package for formatting source code.  It is an
 alternative to the listings package.  It relies on an external piece
@@ -2784,7 +2881,7 @@ compiled with the new class file, changes in the table will be
 reflected on the pdf output.
 
 **** Newmint lookup table                                          :noexport:
-
+# <<minted-inline>>
 This table holds default minted values for each of the languages
 supported by Org-mode.  You can change how minted typesets source code
 snippets in any language by modifying the appropriate cell in the table.
@@ -2824,6 +2921,7 @@ snippets in any language by modifying the appropriate cell in the table.
 | sqlite       | sqlite3     | auto            | nil     |         1 |           1 | tt         | auto       | auto          | auto      | nil       | none   | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | \color{black} | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE | 0pt         | 0pt          |
 
 **** Newminted lookup table                                        :noexport:
+# <<minted-code-block>>
 This table holds default minted values for each of the languages
 supported by Org-mode.  You can change how minted typesets source code
 blocks in any language by modifying the appropriate cell in the table.
@@ -3082,6 +3180,7 @@ doublespacing (Listing \ref{fig:setspace-code}).
 #+END_listing
 
 *** Paralist
+# <<paralist>>
 
 The [[latex:package][paralist]] package was designed to meet the widespread request for
 more tightly set lists in the standard LaTeX classes.  If it is
