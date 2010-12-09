@@ -490,13 +490,16 @@ with the typographic touches evident in Table \ref{tab:test-table}.
   \begin{table}[htb!]
   \centering
   \footnotesize
-  \caption[A test caption]{A test caption.}
+  \caption{A table to test the tabularx environment}
   \label{tab:test-table}
   <<booktabs(table=test-table,align="lY",env="tabularx",width="\\textwidth")>>  
   \end{table}
 #+end_src
 
-Instructions for using [[latex:package][tabularx]] with [[latex:proglang][Org-mode]] are [[tabularx_package][here]].
+Instructions for using [[latex:package][tabularx]] with [[latex:proglang][Org-mode]] are [[tabularx_package][here]].  The method
+used to export tables involves tangling a file with the table code and
+then using a line like =#+LaTeX:\input{filename}= to read the table code
+back into the document.
 
 *** A test table                                                   :noexport:
 
