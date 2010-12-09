@@ -1,7 +1,7 @@
 #+TITLE:     The Org-article LaTeX class
 #+AUTHOR:    Tom Dye
 #+EMAIL:     tsd at tsdye dot com
-#+DATE:      2010-09-18 Sat
+#+DATE:      \today
 #+DESCRIPTION: 
 #+KEYWORDS: 
 #+LANGUAGE:  en
@@ -29,9 +29,10 @@ including:
   1. several choices of fonts;
   2. flexible arrangement of the abstract, table of contents, and
      lists of tables, figures, and source code listings; 
-  3. semantic markup in the domain of computer programming;  and
+  3. semantic markup in the domain of computer programming;
   4. a common interface for syntax highlighting and typesetting source
-     code blocks.  
+     code blocks; and
+  5. access to the full power that LaTeX can bring to typesetting tables.
 The pdf version of this document is created with the [[latex:classfile][Org-article]] class
      directly from the [[latex:proglang][Org-mode]] source document, without any
      subsequent tweaking of the LaTeX export.
@@ -480,13 +481,14 @@ highlight the syntax code snippets inline using either the [[latex:package][list
 With the [[latex:progstruct][tabularx]] option, [[latex:classfile][Org-article]] is able to harness the full
 power of LaTeX to typeset book-quality tables.  The key to this is a
 Library of Babel function written by Eric Schulte called [[latex:progstruct][booktabs]] that
-allows the user to specify the tabular environment, a column
-alignment specification, and a table width.  Now, you can create
-tables with [[latex:proglang][Org-mode's]] terrific table editor and export them to LaTeX
-with the typographic touches evident in Table \ref{tab:test-table}.
+allows the user to specify the tabular environment, a column alignment
+specification, and a table width (Listing \ref{fig:use-tabularx}).
+Now, you can create tables with [[latex:proglang][Org-mode's]] terrific table editor and
+export them to LaTeX with the typographic touches evident in Table
+\ref{tab:test-table}.
 
-#+LaTeX:\input{mytest}
-#+begin_src latex :tangle mytest.tex :exports none
+#+BEGIN_listing
+#+begin_src latex :exports results :results latex
   \begin{table}[htb!]
   \centering
   \footnotesize
@@ -495,6 +497,30 @@ with the typographic touches evident in Table \ref{tab:test-table}.
   <<booktabs(table=test-table,align="lY",env="tabularx",width="\\textwidth")>>  
   \end{table}
 #+end_src
+#+LaTeX: \caption[Use the tabularx environment]{Use the tabularx environment.}
+#+LaTeX: \label{fig:use-tabularx}
+#+END_listing
+
+#+results:
+#+BEGIN_LaTeX
+\begin{table}[htb!]
+\centering
+\footnotesize
+\caption{A table to test the tabularx environment}
+\label{tab:test-table}
+
+\begin{tabularx}{\textwidth}{lY}
+\toprule
+Column one & Column two \\
+\midrule
+A narrow column & This is a long column whose contents will be wrapped at the end of the text block on the printed page. \\
+Another column & This one is not so long, and hopefully will all fit on one line \\
+\bottomrule
+\end{tabularx}
+  
+\end{table}
+#+END_LaTeX
+
 
 Instructions for using [[latex:package][tabularx]] with [[latex:proglang][Org-mode]] are [[tabularx_package][here]].  The method
 used to export tables involves tangling a file with the table code and
