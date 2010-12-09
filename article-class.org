@@ -480,12 +480,14 @@ highlight the syntax code snippets inline using either the [[latex:package][list
 With the [[latex:progstruct][tabularx]] option, [[latex:classfile][Org-article]] is able to harness the full
 power of LaTeX to typeset book-quality tables.  The key to this is a
 Library of Babel function written by Eric Schulte called [[latex:progstruct][booktabs]] that
-allows the user to specify the tabular environment, an column
-alignment specification, and a table width.
+allows the user to specify the tabular environment, a column
+alignment specification, and a table width.  Now, you can create
+tables with [[latex:proglang][Org-mode's]] terrific table editor and export them to LaTeX
+with the typographic touches evident in Table \ref{tab:test-table}.
 
 #+LaTeX:\input{mytest}
 #+begin_src latex :tangle mytest.tex :exports none
-  \begin{table}
+  \begin{table}[htb!]
   \centering
   \footnotesize
   \caption[A test caption]{A test caption.}
@@ -493,6 +495,8 @@ alignment specification, and a table width.
   <<booktabs(table=test-table,align="lY",env="tabularx",width="\\textwidth")>>  
   \end{table}
 #+end_src
+
+Instructions for using [[latex:package][tabularx]] with [[latex:proglang][Org-mode]] are [[tabularx_package][here]].
 
 *** A test table                                                   :noexport:
 
@@ -3376,7 +3380,7 @@ width of tables can be specified and the width of one or more columns
 can be calculated automatically.
 
 The package is not loaded by default.  To load it, specify the
-[[latex:progstruct][tabularx]] option (Listing \ref{fig:tabularx-option}.  New column types
+[[latex:progstruct][tabularx]] option (Listing \ref{fig:tabularx-option}).  New column types
 X, Y and P are defined if the [[latex:package][tabularx]] package has been loaded.
 
   - The X column type indicates a column whose width is determined
