@@ -15,7 +15,7 @@
 #+XSLT: 
 #+BABEL: :exports code
 #+LaTeX_CLASS: org-article
-#+LaTeX_CLASS_OPTIONS: [koma,letterpaper,fontset=bera,11pt,source=listings,microtype,lists=inparaa,colorlinks=true,urlcolor=SteelBlue4,linkcolor=Firebrick4,secnum=section,gantt]
+#+LaTeX_CLASS_OPTIONS: [koma,letterpaper,fontset=bera,11pt,source=listings,microtype,lists=inparaa,colorlinks=true,urlcolor=SteelBlue4,linkcolor=Firebrick4,secnum=section,gantt,tabularx,captions=tableheading]
 #+LATEX_HEADER: \usepackage[AUTO]{inputenc}
 
 # <<abstract_environment>>
@@ -77,6 +77,8 @@ Some features of [[latex:classfile][Org-article]] include:
        using [[latex:package][pgfkeys]] and [[latex:package][pgfopts]]
   - Semantic markup :: Facilities are provided for markup in
        the domain of computer programming
+  - Tables :: The full power of LaTeX is harnessed to typeset tables
+              using a function from the Library of Babel
 
 ** How to get this Org-mode document
    :PROPERTIES:
@@ -382,6 +384,7 @@ size of the font.
 #+end_src
 
 * Work flows
+
 ** Changing the class file
 A new class file can be tangled at any time to reflect changes or
 additions.  One reason to tangle a new class file is to change the
@@ -457,6 +460,7 @@ can achieve somewhat muted but traditionally colored links with
 options like =urlcolor=SteelBlue4= and =linkcolor=Firebrick4=.
 
 ** Marking up the Org-mode document
+
 *** Block-level markup
 If you want your source code blocks to have captions and (optionally)
 present your readers with a List of Listings following the Table of
@@ -471,6 +475,32 @@ syntax.  A new link type, [[latex:progstruct][latex]], is used to pass short bit
 LaTeX commands.  Another link type, [[latex:progstruct][inline]], is used to typeset and
 highlight the syntax code snippets inline using either the [[latex:package][listings]] or
 [[latex:package][minted]] packages.  Inline markup is described [[in-line_markup][here]].
+
+** Exporting tables
+With the [[latex:progstruct][tabularx]] option, [[latex:classfile][Org-article]] is able to harness the full
+power of LaTeX to typeset book-quality tables.  The key to this is a
+Library of Babel function written by Eric Schulte called [[latex:progstruct][booktabs]] that
+allows the user to specify the tabular environment, an column
+alignment specification, and a table width.
+
+#+LaTeX:\input{mytest}
+#+begin_src latex :tangle mytest.tex :exports none
+  \begin{table}
+  \centering
+  \footnotesize
+  \caption[A test caption]{A test caption.}
+  \label{tab:test-table}
+  <<booktabs(table=test-table,align="lY",env="tabularx",width="\\textwidth")>>  
+  \end{table}
+#+end_src
+
+*** A test table                                                   :noexport:
+
+#+tblname: test-table
+| Column one      | Column two                                                                                             |
+|-----------------+--------------------------------------------------------------------------------------------------------|
+| A narrow column | This is a long column whose contents will be wrapped at the end of the text block on the printed page. |
+| Another column  | This one is not so long, and hopefully will all fit on one line                                        |
 
 * The class file
    :PROPERTIES:
@@ -657,6 +687,7 @@ useful.
   <<option-microtype>>
   <<pgf-option-paralist>>
   <<option-setspace>>
+  <<option-tabularx>>
   <<pgf-option-source>>
   <<pgf-option-mintedstyle>>
   <<option-gantt>>
@@ -730,6 +761,7 @@ package-specific code can be kept together in [[latex-packages][LaTeX packages]]
   <<load-microtype>>
   <<load-setspace>>
   <<load-xcolor>>
+  <<load-tabularx>>
   <<load-gantt>>
   <<load-hyperref>>  
 #+end_src
@@ -2322,13 +2354,17 @@ by the [[latex:progstruct][listings]] package.
 #+BEGIN_listing
 #+source: listings-setup
 #+begin_src emacs-lisp :exports code :results silent
-    (setq org-export-latex-listings 'listings)
-    (setq org-export-latex-custom-lang-environments
-          '((python "pythoncode")
-            (emacs-lisp "common-lispcode")
-            (org "textcode")
-            (latex "latexcode")
-            (sh "shcode")))
+  (setq org-export-latex-listings 'listings)
+  (setq org-export-latex-custom-lang-environments
+        '((python "pythoncode")
+          (emacs-lisp "common-lispcode")
+          (org "textcode")
+          (latex "latexcode")
+          (sh "shcode")))
+  (setq org-latex-to-pdf-process
+        '("pdflatex -interaction nonstopmode -output-directory %o %f"
+          "pdflatex -interaction nonstopmode -output-directory %o %f"
+          "pdflatex -interaction nonstopmode -output-directory %o %f"))
 #+end_src
 #+LATEX: \caption[Configure the Org-mode LaTeX exporter for the listings package]{Configure the Org-mode LaTeX exporter for the listings package.}\label{fig:org-listings}
 #+END_listing
@@ -2506,8 +2542,25 @@ passed to the new LaTeX environment.  Note that the default value for
 language has been set to =nil=.  This forces specification of a
 language in the environment definition.
 
-***** Lstlisting lookup table                                      :noexport:
+***** Lstlisting lookup table                                      
 # <<listings-code-block>>
+
+A corner of the [[latex:progstruct][listings-lookup]] table (Table \ref{tab:lstlistings}) is
+presented here because the full table is too wide for the printed
+page.
+
+#+CAPTION: A corner of the listings-lookup table
+#+LABEL: tab:lstlistings
+
+| Org        | Listings        | aboveskip      | belowskip      | firstline |
+| *default*  | *default*       | =\medskipamount= | =\medskipamount= |         1 |
+| asymptote  | asymptotecode   | =\medskipamount= | =\medskipamount= |         1 |
+| C          | ccode           | =\medskipamount= | =\medskipamount= |         1 |
+| clojure    | clojurecode     | =\medskipamount= | =\medskipamount= |         1 |
+| css        | csscode         | =\medskipamount= | =\medskipamount= |         1 |
+| ditaa      | ditaacode       | =\medskipamount= | =\medskipamount= |         1 |
+
+****** The table itself                                            :noexport:
 #+tblname: listings-lookup
 | Org        | Listings        | aboveskip      | belowskip      | firstline | lastline | showlines | emptylines | gobble | style | language          | alsolanguage | defaultdialect | basicstyle               | identifierstyle     | commentstyle               | stringstyle           | keywordstyle          | classoffset | extendedchars | inputencoding | upquote | tabsize | showtabs | showspaces | showstringspaces | formfeed  | numbers | stepnumber | numberfirstline | numberstyle | numbersep | numberblanklines | firstnumber | thelstnumber       | linewidth  | xleftmargin | xrightmargin | resetmargins | breaklines | breakatwhitespace | prebreak | postbreak | breakindent | breakautoindent | frame  | frameround | framesep | rulesep | framerule | framexleftmargin | framexrightmargin | framextopmargin | framexbottommargin | backgroundcolor      | rulecolor          | fillcolor | rulesepcolor | index | indexstyle     | columns  | flexiblecolumns | basewidth      | fontadjust | texcl | mathescape | escapechar | escapeinside | escapebegin | escapeend |
 | *default*  | *default*       | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | nil               | {}           | {}             | {}                       | {}                  | \itshape                   | {}                    | \bfseries             |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false        | false      | false             | {}       | {}        | 20pt        | true            | none   | ffff       | 3pt      | 2pt     | 0.4pt     | 0pt              | 0pt               | 0pt             | 0pt                | nil                  | nil                | nil       | nil          | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
@@ -2542,8 +2595,25 @@ language in the environment definition.
 | sql        | sqlcode         | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {SQL}             | {}           | {}             | {}                       | {}                  | \itshape                   | {}                    | \bfseries             |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false        | false      | false             | {}       | {}        | 20pt        | true            | none   | ffff       | 3pt      | 2pt     | 0.4pt     | 0pt              | 0pt               | 0pt             | 0pt                | nil                  | nil                | nil       | nil          | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
 | sqlite     | sqlite3code     | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | {SQL}             | {}           | {}             | {}                       | {}                  | \itshape                   | {}                    | \bfseries             |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false        | false      | false             | {}       | {}        | 20pt        | true            | none   | ffff       | 3pt      | 2pt     | 0.4pt     | 0pt              | 0pt               | 0pt             | 0pt                | nil                  | nil                | nil       | nil          | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
 
-***** Lstinline lookup table                                       :noexport:
+***** Lstinline lookup table
 # <<listings-inline>>
+
+A corner of the [[latex:progstruct][lstinline-lookup]] table (Table \ref{tab:lstinline}) is
+presented here because the full table is too wide for the printed
+page.
+
+#+CAPTION: A corner of the lstinline-lookup table
+#+LABEL: tab:lstinline
+| Org        | Listings   | aboveskip      | belowskip      | firstline |
+| *default*  | *default*  | =\medskipamount= | =\medskipamount= |         1 |
+| asymptote  | asymptote  | =\medskipamount= | =\medskipamount= |         1 |
+| C          | cpp        | =\medskipamount= | =\medskipamount= |         1 |
+| clojure    | clojure    | =\medskipamount= | =\medskipamount= |         1 |
+| css        | css        | =\medskipamount= | =\medskipamount= |         1 |
+| ditaa      | ditaa      | =\medskipamount= | =\medskipamount= |         1 |
+
+****** The table itself                                            :noexport:
+
 #+tblname: lstinline-lookup
 | Org        | Listings   | aboveskip      | belowskip      | firstline | lastline | showlines | emptylines | gobble | style | language          | alsolanguage | defaultdialect | basicstyle               | identifierstyle | commentstyle | stringstyle | keywordstyle | classoffset | extendedchars | inputencoding | upquote | tabsize | showtabs | showspaces | showstringspaces | formfeed  | numbers | stepnumber | numberfirstline | numberstyle | numbersep | numberblanklines | firstnumber | thelstnumber       | linewidth  | xleftmargin | xrightmargin | breaklines | resetmargins | breakatwhitespace | prebreak | postbreak | breakindent | breakautoindent | index | indexstyle     | columns  | flexiblecolumns | basewidth      | fontadjust | texcl | mathescape | escapechar | escapeinside | escapebegin | escapeend |
 | *default*  | *default*  | \medskipamount | \medskipamount |         1 |  9999999 | false     |          0 |      0 | {}    | nil               | {}           | {}             | {}                       | {}              | \itshape     | {}          | \bfseries    |           0 | true          | {}            | false   |       8 | false    | false      | false            | \bigbreak | none    |          1 | false           | {}          | 10pt      | true             | auto        | \arabic{lstnumber} | \linewidth | 0pt         | 0pt          | false      | false        | false             | {}       | {}        | 20pt        | true            | nil   | \lstindexmacro | [c]fixed | false           | {0.6em,0.45em} | false      | false | false      | {}         | {}           | {}          | {}        |
@@ -2753,7 +2823,9 @@ external calls made by [[latex:package][minted]].
           (org "textcode")
           (latex "latexcode")))
   (setq org-latex-to-pdf-process
-        '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
+        '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+          "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+          "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
 #+end_src
 #+LATEX: \caption[Configure the Org-mode LaTeX exporter for the minted package]{Configure the Org-mode LaTeX exporter for the minted package.}\label{fig:minted-setup}
 #+END_listing
@@ -2841,7 +2913,7 @@ The class creates macros for marking up code snippets, using the
 [[latex:progstruct][newmint]] command of the [[latex:package][minted]] package.  Adding a code snippet is as
 easy as =C-c C-l inline:python x=str(y)=, which yields the following:
 
-This is some [[latex:proglang][Python]] code inline:  [[inline:python][x = str(y)]].
+This is some [[latex:proglang][Python]] code inline:  [[inline:python][x = str(y)]]
 
 
 **** Newmint and newminted lookup tables
@@ -2854,18 +2926,9 @@ highlight syntax and typeset a particular computer language.
 Each row in the table holds information for a language supported by
 [[latex:proglang][Org-mode]].  The first two columns contain the [[latex:proglang][Org-mode]] name for the
 language and the [[latex:package][minted]] name.  The other 29 columns are for [[latex:package][minted]]
-variables.  The table is too large to reproduce on the printed page,
-so a corner of it is presented in Table \ref{tab:newminted}.
-
-#+CAPTION: A corner of the newminted lookup table
-#+LABEL: tab:newminted
-
-| Org          | Minted      | baselinestretch | bgcolor | firstline |
-| *default*    | *default*   | auto            | nil     |         1 |
-| asymptote    | asymptote   | auto            | nil     |         1 |
-| C            | cpp         | auto            | nil     |         1 |
-| clojure      | clojure     | auto            | nil     |         1 | 
-| css          | css         | auto            | nil     |         1 |
+variables.  The tables are too large to reproduce on the printed page,
+so corners of them are presented in Tables \ref{tab:newminted} and
+\ref{tab:newmint}. 
 
 The *default* row holds the [[latex:package][minted]] defaults.  The [[latex:proglang][Python]] scripts that
 use the table to configure [[latex:package][minted]] use this row to determine whether or
@@ -2880,52 +2943,83 @@ class file with =C-c C-v t=.  When the exported LaTeX source code is
 compiled with the new class file, changes in the table will be
 reflected on the pdf output.
 
-**** Newmint lookup table                                          :noexport:
+**** Newmint lookup table                                       
 # <<minted-inline>>
 This table holds default minted values for each of the languages
 supported by Org-mode.  You can change how minted typesets source code
-snippets in any language by modifying the appropriate cell in the table.
+snippets in any language by modifying the appropriate cell in the
+table.  Only a corner of the table is shown here because the full
+table is too wide for the printed page.
+
+#+CAPTION: A corner of the newmint lookup table
+#+LABEL: tab:newmint
+
+| Org          | Minted      | baselinestretch | bgcolor | firstline |
+| *default*    | *default*   | auto            | nil     |         1 |
+| asymptote    | asymptote   | auto            | nil     |         1 |
+| C            | cpp         | auto            | nil     |         1 |
+| clojure      | clojure     | auto            | nil     |         1 |
+| css          | css         | auto            | nil     |         1 |
+| ditaa        | ditaa       | auto            | nil     |         1 |
+
+
+
+***** The table itself                                             :noexport:
 
 #+tblname: newmint-lookup
-| Org          | Minted      | baselinestretch | bgcolor | firstline | firstnumber | fontfamily | fontseries | fontsize      | fontshape | formatcom | frame  | framerule | framesep | gobble | lastline | linenos | mathescape | numberblanklines | numbersep | obeytabs | resetmargins | rulecolor     | samepage | showspaces | showtabs | stepnumber | tabsize | texcl | xleftmargin | xrightmargin |
-| *default*    | *default*   | auto            | nil     |         1 |           1 | tt         | auto       | auto          | auto      | nil       | none   | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | \color{black} | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE | 0pt         | 0pt          |
-| asymptote    | asymptote   | auto            | nil     |         1 |           1 | tt         | auto       | auto          | auto      | nil       | none   | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | \color{black} | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE | 0pt         | 0pt          |
-| C            | cpp         | auto            | nil     |         1 |           1 | tt         | auto       | auto          | auto      | nil       | none   | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | \color{black} | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE | 0pt         | 0pt          |
-| clojure      | clojure     | auto            | nil     |         1 |           1 | tt         | auto       | auto          | auto      | nil       | none   | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | \color{black} | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE | 0pt         | 0pt          |
-| css          | css         | auto            | nil     |         1 |           1 | tt         | auto       | auto          | auto      | nil       | none   | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | \color{black} | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE | 0pt         | 0pt          |
-| ditaa        | ditaa       | auto            | nil     |         1 |           1 | tt         | auto       | auto          | auto      | nil       | none   | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | \color{black} | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE | 0pt         | 0pt          |
-| dot          | dotlang     | auto            | nil     |         1 |           1 | tt         | auto       | auto          | auto      | nil       | none   | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | \color{black} | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE | 0pt         | 0pt          |
-| emacs-lisp   | common-lisp | auto            | nil     |         1 |           1 | tt         | auto       | auto          | auto      | nil       | none   | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | \color{black} | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE | 0pt         | 0pt          |
-| gnuplot      | gnuplot     | auto            | nil     |         1 |           1 | tt         | auto       | auto          | auto      | nil       | none   | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | \color{black} | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE | 0pt         | 0pt          |
-| haskell      | haskell     | auto            | nil     |         1 |           1 | tt         | auto       | auto          | auto      | nil       | none   | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | \color{black} | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE | 0pt         | 0pt          |
-| js           | js          | auto            | nil     |         1 |           1 | tt         | auto       | auto          | auto      | nil       | none   | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | \color{black} | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE | 0pt         | 0pt          |
-| latex        | latex       | auto            | nil     |         1 |           1 | tt         | auto       | auto          | auto      | nil       | none   | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | \color{black} | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE | 0pt         | 0pt          |
-| ledger       | ledger      | auto            | nil     |         1 |           1 | tt         | auto       | auto          | auto      | nil       | none   | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | \color{black} | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE | 0pt         | 0pt          |
-| lisp         | cl          | auto            | nil     |         1 |           1 | tt         | auto       | auto          | auto      | nil       | none   | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | \color{black} | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE | 0pt         | 0pt          |
-| matlab       | matlab      | auto            | nil     |         1 |           1 | tt         | auto       | auto          | auto      | nil       | none   | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | \color{black} | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE | 0pt         | 0pt          |
-| mscgen       | mscgen      | auto            | nil     |         1 |           1 | tt         | auto       | auto          | auto      | nil       | none   | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | \color{black} | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE | 0pt         | 0pt          |
-| ocaml        | ocaml       | auto            | nil     |         1 |           1 | tt         | auto       | auto          | auto      | nil       | none   | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | \color{black} | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE | 0pt         | 0pt          |
-| octave       | octave      | auto            | nil     |         1 |           1 | tt         | auto       | auto          | auto      | nil       | none   | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | \color{black} | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE | 0pt         | 0pt          |
-| org          | text        | auto            | nil     |         1 |           1 | tt         | auto       | auto          | auto      | nil       | none   | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | \color{black} | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE | 0pt         | 0pt          |
-| oz (contrib) | oz          | auto            | nil     |         1 |           1 | tt         | auto       | auto          | auto      | nil       | none   | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | \color{black} | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE | 0pt         | 0pt          |
-| perl         | perl        | auto            | nil     |         1 |           1 | tt         | auto       | auto          | auto      | nil       | none   | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | \color{black} | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE | 0pt         | 0pt          |
-| plantuml     | plantuml    | auto            | nil     |         1 |           1 | tt         | auto       | auto          | auto      | nil       | none   | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | \color{black} | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE | 0pt         | 0pt          |
-| python       | python      | auto            | nil     |         1 |           1 | tt         | auto       | \footnotesize | auto      | nil       | single | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | \color{black} | FALSE    | TRUE       | FALSE    |          1 |       8 | FALSE | 0pt         | 0pt          |
-| R            | rlang       | auto            | nil     |         1 |           1 | tt         | auto       | auto          | auto      | nil       | none   | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | \color{black} | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE | 0pt         | 0pt          |
-| ruby         | ruby        | auto            | nil     |         1 |           1 | tt         | auto       | auto          | auto      | nil       | none   | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | \color{black} | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE | 0pt         | 0pt          |
-| sass         | sass        | auto            | nil     |         1 |           1 | tt         | auto       | auto          | auto      | nil       | none   | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | \color{black} | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE | 0pt         | 0pt          |
-| scheme       | scheme      | auto            | nil     |         1 |           1 | tt         | auto       | auto          | auto      | nil       | none   | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | \color{black} | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE | 0pt         | 0pt          |
-| screen       | screen      | auto            | nil     |         1 |           1 | tt         | auto       | auto          | auto      | nil       | none   | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | \color{black} | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE | 0pt         | 0pt          |
-| sh           | sh          | auto            | nil     |         1 |           1 | tt         | auto       | auto          | auto      | nil       | none   | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | \color{black} | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE | 0pt         | 0pt          |
-| sql          | sql         | auto            | nil     |         1 |           1 | tt         | auto       | auto          | auto      | nil       | none   | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | \color{black} | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE | 0pt         | 0pt          |
-| sqlite       | sqlite3     | auto            | nil     |         1 |           1 | tt         | auto       | auto          | auto      | nil       | none   | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | \color{black} | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE | 0pt         | 0pt          |
+| Org          | Minted      | baselinestretch | bgcolor | firstline | firstnumber | fontfamily | fontseries | fontsize | fontshape | formatcom | frame | framerule | framesep | gobble | lastline | linenos | mathescape | numberblanklines | numbersep | obeytabs | resetmargins | rulecolor     | samepage | showspaces | showtabs | stepnumber | tabsize | texcl | xleftmargin | xrightmargin |
+| *default*    | *default*   | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | \color{black} | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE | 0pt         | 0pt          |
+| asymptote    | asymptote   | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | \color{black} | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE | 0pt         | 0pt          |
+| C            | cpp         | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | \color{black} | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE | 0pt         | 0pt          |
+| clojure      | clojure     | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | \color{black} | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE | 0pt         | 0pt          |
+| css          | css         | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | \color{black} | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE | 0pt         | 0pt          |
+| ditaa        | ditaa       | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | \color{black} | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE | 0pt         | 0pt          |
+| dot          | dotlang     | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | \color{black} | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE | 0pt         | 0pt          |
+| emacs-lisp   | common-lisp | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | \color{black} | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE | 0pt         | 0pt          |
+| gnuplot      | gnuplot     | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | \color{black} | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE | 0pt         | 0pt          |
+| haskell      | haskell     | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | \color{black} | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE | 0pt         | 0pt          |
+| js           | js          | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | \color{black} | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE | 0pt         | 0pt          |
+| latex        | latex       | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | \color{black} | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE | 0pt         | 0pt          |
+| ledger       | ledger      | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | \color{black} | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE | 0pt         | 0pt          |
+| lisp         | cl          | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | \color{black} | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE | 0pt         | 0pt          |
+| matlab       | matlab      | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | \color{black} | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE | 0pt         | 0pt          |
+| mscgen       | mscgen      | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | \color{black} | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE | 0pt         | 0pt          |
+| ocaml        | ocaml       | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | \color{black} | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE | 0pt         | 0pt          |
+| octave       | octave      | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | \color{black} | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE | 0pt         | 0pt          |
+| org          | text        | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | \color{black} | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE | 0pt         | 0pt          |
+| oz (contrib) | oz          | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | \color{black} | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE | 0pt         | 0pt          |
+| perl         | perl        | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | \color{black} | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE | 0pt         | 0pt          |
+| plantuml     | plantuml    | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | \color{black} | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE | 0pt         | 0pt          |
+| python       | python      | auto            | nil     |         1 |           1 | tt         | auto       | \small   | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | \color{black} | FALSE    | TRUE       | FALSE    |          1 |       8 | FALSE | 0pt         | 0pt          |
+| R            | rlang       | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | \color{black} | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE | 0pt         | 0pt          |
+| ruby         | ruby        | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | \color{black} | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE | 0pt         | 0pt          |
+| sass         | sass        | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | \color{black} | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE | 0pt         | 0pt          |
+| scheme       | scheme      | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | \color{black} | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE | 0pt         | 0pt          |
+| screen       | screen      | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | \color{black} | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE | 0pt         | 0pt          |
+| sh           | sh          | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | \color{black} | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE | 0pt         | 0pt          |
+| sql          | sql         | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | \color{black} | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE | 0pt         | 0pt          |
+| sqlite       | sqlite3     | auto            | nil     |         1 |           1 | tt         | auto       | auto     | auto      | nil       | none  | 0.4pt     | \fboxsep |      0 | nil      | FALSE   | FALSE      | TRUE             | 12pt      | FALSE    | FALSE        | \color{black} | FALSE    | FALSE      | FALSE    |          1 |       8 | FALSE | 0pt         | 0pt          |
 
-**** Newminted lookup table                                        :noexport:
+**** Newminted lookup table                                        
 # <<minted-code-block>>
 This table holds default minted values for each of the languages
 supported by Org-mode.  You can change how minted typesets source code
-blocks in any language by modifying the appropriate cell in the table.
+blocks in any language by modifying the appropriate cell in the
+table.  Only a corner of the table is shown here because the full
+table is too wide for the printed page.
 
+#+CAPTION: A corner of the newminted lookup table
+#+LABEL: tab:newminted
+
+| Org          | Minted      | baselinestretch | bgcolor | firstline |
+| *default*    | *default*   | auto            | nil     |         1 |
+| asymptote    | asymptote   | auto            | nil     |         1 |
+| C            | c           | auto            | nil     |         1 |
+| clojure      | clojure     | auto            | nil     |         1 |
+| css          | css         | auto            | nil     |         1 |
+| ditaa        | ditaa       | auto            | nil     |         1 |
+
+***** The table itself                                             :noexport:
 #+tblname: newminted-lookup
 | Org          | Minted      | baselinestretch | bgcolor | firstline | firstnumber | fontfamily | fontseries | fontsize      | fontshape | formatcom | frame  | framerule | framesep | gobble | lastline | linenos | mathescape | numberblanklines | numbersep | obeytabs | resetmargins | rulecolor     | samepage | showspaces | showtabs | stepnumber | tabsize | texcl | xleftmargin | xrightmargin |
 | *default*    | *default*   | auto            | nil     |         1 |           1 | tt         | auto       | auto          | auto      | nil       | none   | 0.4pt     | \fboxsep |      0 | nil      | false   | false      | TRUE             | 12pt      | false    | false        | \color{black} | false    | false      | false    |          1 |       8 | false | 0pt         | 0pt          |
@@ -3263,16 +3357,70 @@ it.
 
 #+source: option-topcapt
 #+begin_src latex :exports code
-  \newboolean{topcapt}
-  \DeclareOption{topcapt}{\setboolean{topcapt}{true}}
+  \newboolean{ORGARt@topcapt}
+  \DeclareOption{topcapt}{\setboolean{ORGART@topcapt}{true}}
 #+end_src
 
 #+source: load-topcapt
 #+begin_src latex :exports code
-  \ifthenelse{\boolean{topcapt}}
+  \ifthenelse{\boolean{ORGART@topcapt}}
     {\RequirePackage{topcapt}}
     {}
 #+end_src
+
+*** Tabularx
+# <<tabularx_package>>
+
+The [[latex:package][tabularx]] package extends the LaTeX [[latex:progstruct][tabular]] environment so the
+width of tables can be specified and the width of one or more columns
+can be calculated automatically.
+
+The package is not loaded by default.  To load it, specify the
+[[latex:progstruct][tabularx]] option (Listing \ref{fig:tabularx-option}.  New column types
+X, Y and P are defined if the [[latex:package][tabularx]] package has been loaded.
+
+  - The X column type indicates a column whose width is determined
+    automatically and whose content is set fully justified (this can
+    be unsightly in a narrow column)
+  - The Y column type indicates a column whose width is determined
+    automatically and whose content is set ragged right (in contrast to X,
+    which justifies its content)
+  - The P column type accepts a length as its only argument, and sets
+    the contents ragged right in a column of that width, e.g., =P{25pt}=
+
+#+BEGIN_listing
+#+source: option-tabularx
+#+begin_src latex :exports code
+  \newboolean{ORGART@tabularx}
+  \DeclareOption{tabularx}{
+    \setboolean{ORGART@tabularx}{true}
+    \AtBeginDocument{
+      \newcolumntype{Y}{>{\RaggedRight\arraybackslash}X}
+      \newcolumntype{P}[1]{>{\RaggedRight\arraybackslash}p{#1}}}}
+#+end_src
+#+LaTeX: \caption[Define the tabularx option]{Define the tabularx option.}
+#+LaTeX: \label{fig:tabularx-option}
+#+END_listing
+
+If the [[latex:package][tabularx]] package is loaded, then the [[latex:package][ragged2e]] and [[latex:package][booktabs]]
+packages are also loaded (Listing \ref{fig:load-tabularx}).  The
+[[latex:package][ragged2e]] package provides an enhanced algorithm for setting text
+ragged right, which is used to good effect by the [[latex:package][tabularx]] package
+when it wraps text in narrow columns.  The [[latex:package][booktabs]] package defines
+rules (thin lines) for the top, bottom and middle of a table.
+
+#+BEGIN_listing
+#+source: load-tabularx
+#+begin_src latex :exports code
+  \ifthenelse{\boolean{ORGART@tabularx}}
+    {\RequirePackage{tabularx}
+    \RequirePackage{ragged2e}
+    \RequirePackage{booktabs}}
+  {}
+#+end_src
+#+LaTeX: \caption[Load the tabularx and ragged2e packages]{Load the tabularx and ragged2e packages.}  
+#+LATEX: \label{fig:load-tabularx}
+#+END_listing
 
 *** GANTT charts
 Eric Fraga wrote a GANTT chart constructor, powered by an [[latex:proglang][Org-mode]]
