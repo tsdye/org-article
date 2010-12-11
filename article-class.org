@@ -97,7 +97,8 @@ repository.
 #+begin_src sh :exports code
   git clone git://github.com/tsdye/org-article.git
 #+end_src
-#+LATEX: \caption[Shell command to clone the Org-article repository]{Shell command to clone the Org-article repository at GitHub.}\label{fig:clone}
+[[caption:Shell command to clone the Org-article repository][Shell command to clone the Org-article repository at GitHub.]]
+# <<fig:clone>>
 #+END_listing
 
 ** How to make and install the class file
@@ -126,7 +127,8 @@ using the TeXLive LaTeX distribution.
   sudo mktexlsr
   kpsewhich org-article.cls
 #+end_src
-#+LATEX: \caption[Installing Org-article on an OS X system]{Installing Org-article on an OS X system.}\label{fig:install}
+[[caption:Installing Org-article on an OS X system][Installing Org-article on an OS X system.]]
+# <<fig:install>>
 #+END_listing
 
 ** LaTeX export setup
@@ -192,7 +194,8 @@ used.
                ("\\paragraph{%s}" . "\\paragraph*{%s}")
                ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
 #+end_src
-#+LATEX: \caption[Configuration when Org-mode doesn't load LaTeX packages]{Configuration when Org-mode doesn't load LaTeX packages.}\label{fig:setup-one}
+[[caption:Configuration when Org-mode doesn't load LaTeX packages][Configuration when Org-mode doesn't load LaTeX packages.]]
+# <<fig:setup-one>>
 #+END_listing
 
 *** Set up if org-export-latex-packages-alist is not nil
@@ -216,7 +219,8 @@ the following setup should work.
                  ("\\paragraph{%s}" . "\\paragraph*{%s}")
                  ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
 #+end_src
-#+LATEX: \caption[Configuration when Org-mode also loads LaTeX packages]{Configuration when Org-mode also loads LaTeX packages.}\label{fig:setup-two}
+[[caption:Configuration when Org-mode also loads LaTeX packages][Configuration when Org-mode also loads LaTeX packages.]]
+# <<fig:setup-two>>
 #+END_listing
 
 In this case, you will need to specify the [[latex:package][inputenc]] package in the
@@ -259,12 +263,14 @@ Both of the code blocks rely on [[latex:progstruct][noweb]] expansion.
 #+begin_src emacs-lisp :noweb tangle :exports code :results silent
   <<define-latex-link>>
   <<define-inline-link>>
+  <<define-caption-link>>
   <<format-no-toc>>
   <<babel-load-languages>>
   <<special-blocks>>
   <<minted-setup>>
 #+end_src
-#+LATEX: \caption[Minted configuration]{Minted configuration.}\label{fig:minted-config}
+[[caption:Minted configuration][Minted configuration.]]
+# <<fig:minted-config>>
 #+END_listing
 
 #+BEGIN_listing
@@ -272,12 +278,14 @@ Both of the code blocks rely on [[latex:progstruct][noweb]] expansion.
 #+begin_src emacs-lisp :noweb tangle :exports code :results silent
   <<define-latex-link>>
   <<define-inline-link>>
+  <<define-caption-link>>
   <<format-no-toc>>
   <<babel-load-languages>>
   <<special-blocks>>
   <<listings-setup>>
 #+end_src
-#+LATEX: \caption[Listings configuration]{Listings configuration.}\label{fig:listings-config}
+[[caption:Listings%20configuration][Listings configuration.]]
+# <<fig:listings-config>>
 #+END_listing
 
 This document contains [[latex:proglang][Python]], LaTeX, and
@@ -294,7 +302,8 @@ enable these languages as shown in Listing \ref{fig:babel-config}.
      (latex . t)
      (python . t)))
 #+end_src
-#+LATEX: \caption[Babel configuration]{Babel configuration.}\label{fig:babel-config}
+[[caption:Babel configuration][Babel configuration.]]
+# <<fig:babel-config>>
 #+END_listing
 ** Requirements
 [[latex:classfile][Org-article]] requires a working LaTeX installation.  Most of the
@@ -488,6 +497,7 @@ export them to LaTeX with the typographic touches evident in Table
 \ref{tab:test-table}.
 
 #+BEGIN_listing
+#+source: tabularx-export
 #+begin_src latex :exports results :results latex
   \begin{table}[htb!]
   \centering
@@ -497,17 +507,18 @@ export them to LaTeX with the typographic touches evident in Table
   <<booktabs(table=test-table,align="lY",env="tabularx",width="\\textwidth")>>  
   \end{table}
 #+end_src
+
 #+LaTeX: \caption[Use the tabularx environment]{Use the tabularx environment.}
-#+LaTeX: \label{fig:use-tabularx}
+# <<fig:use-tabularx>>
 #+END_listing
 
-#+results:
+#+results: tabularx-export
 #+BEGIN_LaTeX
 \begin{table}[htb!]
 \centering
 \footnotesize
 \caption{A table to test the tabularx environment}
-\label{tab:test-table}
+# <<tab:test-table>>
 
 \begin{tabularx}{\textwidth}{lY}
 \toprule
@@ -522,10 +533,7 @@ Another column & This one is not so long, and hopefully will all fit on one line
 #+END_LaTeX
 
 
-Instructions for using [[latex:package][tabularx]] with [[latex:proglang][Org-mode]] are [[tabularx_package][here]].  The method
-used to export tables involves tangling a file with the table code and
-then using a line like =#+LaTeX:\input{filename}= to read the table code
-back into the document.
+Instructions for using [[latex:package][tabularx]] with [[latex:proglang][Org-mode]] are [[tabularx_package][here]].
 
 *** A test table                                                   :noexport:
 
@@ -564,7 +572,8 @@ The LaTeX class file has six standard parts (Listing \ref{fig:class-structure}):
   <<package-loading-part>>
   <<class-code-part>>
 #+end_src
-#+LATEX: \caption[Structure of the LaTeX class file]{Structure of the LaTeX class file.}\label{fig:class-structure}
+[[caption:Structure of the LaTeX class file][Structure of the LaTeX class file.]]
+# <<fig:class-structure>>
 #+END_listing
 ** Identification part
 
@@ -582,7 +591,8 @@ here.
   \NeedsTeXFormat{LaTeX2e}
   \ProvidesClass{org-article}[2010/11/25 0.3 (TSD)]
 #+end_src
-#+LATEX: \caption[The identification part of the class file]{The identification part of the class file.}\label{fig:identification-part}
+[[caption:The identification part of the class file][The identification part of the class file.]]
+# <<fig:identification-part>>
 #+END_listing
 
 ** Initial code part
@@ -603,7 +613,8 @@ The initial code part loads packages needed to process the class file
   \RequirePackage{ifpdf}
   \RequirePackage{pgfopts}
 #+end_src
-#+LATEX: \caption[The initial code part of the class file]{The initial code part of the class file.}\label{fig:initial-code}
+[[caption:The initial code part of the class file][The initial code part of the class file.]]
+# <<fig:initial-code>>
 #+END_listing
   
 ** Declaration of options part
@@ -641,7 +652,8 @@ typesetting a printed page.
   <<other-package-options>>
   <<pass-options-to-packages>>
 #+end_src
-#+LATEX: \caption[Declaration of options part]{Declaration of options part.}\label{fig:declaration-options}
+[[caption:Declaration of options part][Declaration of options part.]]
+# <<fig:declaration-options>>
 #+END_listing
 
 The LaTeX packages that Org-mode loads by default are listed here
@@ -664,7 +676,8 @@ excludes the [[latex:package][inputenc]] package.
   <<option-amssymb>>
   <<option-hyperref>>
 #+end_src
-#+LATEX: \caption[Options for the Org-mode default LaTeX packages]{Options for the Org-mode default LaTeX packages.}\label{fig:org-mode-default-options}
+[[caption:Options for the Org-mode default LaTeX packages][Options for the Org-mode default LaTeX packages.]]
+# <<fig:org-mode-default-options>>
 #+END_listing
 
 The font sets defined by [[latex:classfile][Org-article]] are listed here (Listing
@@ -684,7 +697,8 @@ The font sets defined by [[latex:classfile][Org-article]] are listed here (Listi
   <<pgf-option-times>>
   <<pgf-option-utopia>>
 #+end_src
-#+LATEX: \caption[Options for font sets]{Options for font sets.}\label{fig:fontset-options}
+[[caption:Options for font sets][Options for font sets.]]
+# <<fig:fontset-options>>
 #+END_listing
 
 The base class options include the choice of which class to load and
@@ -699,7 +713,8 @@ setting the depth of the table of contents and section numbering
   <<pgf-option-tocdepth>>
   <<pgf-option-secnum>>
 #+end_src
-#+LATEX: \caption[Base class options]{Base class options.}\label{fig:base-class-options}
+[[caption:Base class options][Base class options.]]
+# <<fig:base-class-options>>
 #+END_listing
 
 Options are provided to load several other packages that might be
@@ -725,7 +740,8 @@ useful.
   <<pgf-option-mintedstyle>>
   <<option-gantt>>
 #+end_src
-#+LATEX: \caption[Other package options]{Other package options.}\label{fig:other-package-options}
+[[caption:Other package options][Other package options.]]
+# <<fig:other-package-options>>
 #+END_listing
 
 Options defined by the base class, either the standard [[latex:classfile][article]] or the
@@ -737,7 +753,8 @@ don't have to be declared here (Listing \ref{fig:pass-options}).
 #+begin_src latex :noweb tangle :exports code
   <<pass-to-hyperref>>
 #+end_src
-#+LATEX: \caption[Pass options to packages]{Pass options to packages.}\label{fig:pass-options}
+[[caption:Pass options to packages][Pass options to packages.]]
+# <<fig:pass-options>>
 #+END_listing
 
 ** Execution of options part
@@ -753,7 +770,8 @@ memory used to store user options.
   \ProcessPgfOptions{/ORGART}
   \ProcessOptions\relax
 #+end_src
-#+LATEX: \caption[Execution of options]{Execution of options.}\label{fig:execution-of-options}
+[[caption:Execution of options][Execution of options.]]
+# <<fig:execution-of-options>>
 #+END_listing
 
 ** Package loading part
@@ -798,7 +816,8 @@ package-specific code can be kept together in [[latex-packages][LaTeX packages]]
   <<load-gantt>>
   <<load-hyperref>>  
 #+end_src
-#+LATEX: \caption[The package loading part]{The package loading part.}\label{fig:package-loading}
+[[caption:The package loading part][The package loading part.]]
+# <<fig:package-loading>>
 #+END_listing
 
 ** Class code part
@@ -821,7 +840,8 @@ are defined in the [[latex-packages][LaTeX packages]] section.
   <<proglangs-code>>
   <<progstructs-code>>
 #+end_src
-#+LATEX: \caption[The class code part]{The class code part.}\label{fig:class-code}
+[[caption:The class code part][The class code part.]]
+# <<fig:class-code>>
 #+END_listing
 
 * Semantic markup
@@ -838,12 +858,13 @@ markup conventions.
 # <<in-line_markup>>
 
 Arbitrary semantic markup in [[latex:proglang][Org-mode]] files is implemented by
-defining new link types with [[latex:lispvar][org-add-link-type]].  Two new links are
-defined here.  The [[latex-link-type][first code block]]
-defines a new link type, [[latex:progstruct][latex]], whose [[latex:progstruct][path]] argument can hold the
-name of any LaTeX command (Listing \ref{fig:latex-link}).  A link such as
-=[latex:proglang][Org-mode]= will export =\proglang{Org-mode}= to the
-LaTeX file (Listing).
+defining new link types with [[latex:lispvar][org-add-link-type]].  Several new links are
+defined here.  
+
+The [[latex-link-type][first code block]] defines a new link type, [[latex:progstruct][latex]], whose [[latex:progstruct][path]]
+argument can hold the name of any LaTeX command (Listing
+\ref{fig:latex-link}).  A link such as =[latex:proglang][Org-mode]=
+will export =\proglang{Org-mode}= to the LaTeX file (Listing).
 
 #+BEGIN_listing
 # <<latex-link-type>>
@@ -859,13 +880,15 @@ LaTeX file (Listing).
        (format "\\%s{%s}" path desc)))))
   
 #+end_src
-#+LATEX: \caption[Define a new link type, latex, for in-line markup]{Define a new link type, latex, for in-line markup.}\label{fig:latex-link}
+[[caption:Define a new link type, latex, for in-line markup][Define a new link type, latex, for in-line markup.]]
+# <<fig:latex-link>>
 #+END_listing
 
-[[latex:classfile][Org-article]] defines [[markup-code-snippets][several macros]] for marking up code
-snippets.  A separate link type is needed because the markup is
-delimited by slashes rather than the curly braces typical of LaTeX.
-This is handled by the "inline" link (Listing \ref{fig:inline-link}).
+[[latex:classfile][Org-article]] defines [[markup-code-snippets][several macros]] for marking up code snippets with
+the [[latex:package][listings]] and [[latex:package][minted]] packages.  A separate link type is needed to
+use these macros because the markup is delimited by slashes rather
+than the curly braces typical of LaTeX.  This is handled by the
+"inline" link (Listing \ref{fig:inline-link}).
 
 #+BEGIN_listing
 # <<inline-link-type>>
@@ -880,10 +903,35 @@ This is handled by the "inline" link (Listing \ref{fig:inline-link}).
       ((eq format 'latex)
        (format "\\%s/%s/" path desc)))))  
 #+end_src
-#+LATEX: \caption[Define a new link type, inline, for in-line source snippets]{Define a new link type, inline, for in-line source snippets.}\label{fig:inline-link}
+[[caption:Define a new link type, inline, for in-line source snippets][Define a new link type, inline, for in-line source snippets.]]
+# <<fig:inline-link>>
 #+END_listing
 Note that both of the new link definitions assume a [[latex:proglang][CSS]] stylsheet that
 defines classes with the same names as their corresponding LaTeX macros.
+
+This link establishes a caption that works with both LaTeX and html
+and can be used to mark blocks that Org-mode doesn't recognize by
+default.  Note that you currently have to enter these links by hand
+and not with the usual =org-insert-link= function, which doesn't allow
+spaces in the =PATH= argument.
+
+#+BEGIN_listing
+# <<caption-link-type>>
+#+source: define-caption-link
+#+begin_src emacs-lisp :exports code :results silent
+  (org-add-link-type
+   "caption" nil
+   (lambda (path desc format)
+     (cond
+      ((eq format 'html)
+       (format "<span class=\"caption\">%s</span>" desc))
+      ((eq format 'latex)
+       (format "\\caption[%s]{%s}" path desc)))))  
+#+end_src
+[[caption:A new caption link type][A new caption link type.]]
+# <<fig:caption-link>>
+#+END_listing
+
 
 Using custom links in this way, it is possible to make the [[latex:proglang][Org-mode]]
 LaTeX exporter honor the semantic markup defined in arbitrary LaTeX
@@ -916,7 +964,8 @@ all of these in the same way.
   \let\package=\textsf
   \let\classfile=\textsf
 #+end_src
-#+LATEX: \caption[Markup of programming language, class, and package names]{Markup of programming language, class, and package names.}\label{fig:proglangs}
+[[caption:Markup of programming language, class, and package names][Markup of programming language, class, and package names.]]
+# <<fig:proglangs>>
 #+END_listing
 
 For example,  =[[latex:proglangs][Org-mode]]= will set [[latex:proglang][Org-mode]] in sans serif font, as you
@@ -934,7 +983,8 @@ examples are set at a slightly smaller size.
   \let\progstruct=\texttt
   \newcommand{\progexample}[1]{{\ttfamily\small #1}}
 #+end_src
-#+LATEX: \caption[Semantic markup of programming structures]{Semantic markup of programming structures.}\label{fig:progstructs}
+[[caption:Semantic markup of programming structures][Semantic markup of programming structures.]]
+# <<fig:progstructs>>
 #+END_listing
 
 In addition, a =lispvar= command that will break long [[latex:proglang][Emacs Lisp]]
@@ -973,7 +1023,8 @@ block with =C-c C-c=.
 #+begin_src emacs-lisp :exports code :results silent
   (require 'org-special-blocks)
 #+end_src
-#+LATEX: \caption[Require org-special-blocks]{Require org-special-blocks.}\label{fig:org-special-blocks}
+[[caption:Require org-special-blocks][Require org-special-blocks.]]
+# <<fig:org-special-blocks>>
 #+END_listing
 
 The [[latex:package][org-special-blocks]] package leaves it up to the user to see that
@@ -986,7 +1037,8 @@ buffer, styles listings by putting a black box around them.
 #+begin_src org :exports code
  #+STYLE: <style>.listing {margin: 1em; padding: 1em; border: 1px solid black}</style>
 #+end_src
-#+LATEX: \caption[A simple CSS style for listings]{A simple CSS style for listings.}\label{fig:css}
+[[caption:A simple CSS style for listings][A simple CSS style for listings.]]
+# <<fig:css>>
 #+END_listing
 
 Note that the [[latex:progstruct][listing]] environment is implemented in [[latex:classfile][Org-article]] using
@@ -1025,7 +1077,8 @@ the following shell command: [[inline:sh][texdoc koma]].
   \newboolean{ORGART@article}
   \DeclareOption{article}{\setboolean{ORGART@article}{true}}
 #+end_src
-#+LATEX: \caption[Set up the article option]{Set up the article option.}\label{fig:option-article}
+[[caption:Set up the article option][Set up the article option.]]
+# <<fig:option-article>>
 #+END_listing
 
 #+BEGIN_listing
@@ -1034,7 +1087,8 @@ the following shell command: [[inline:sh][texdoc koma]].
   \newboolean{ORGART@koma}
   \DeclareOption{koma}{\setboolean{ORGART@koma}{true}}
 #+end_src
-#+LATEX: \caption[Set up the koma option]{Set up the koma option.}\label{fig:option-koma}
+[[caption:Set up the koma option][Set up the koma option.]]
+# <<fig:option-koma>>
 #+END_listing
 
 #+BEGIN_listing
@@ -1044,7 +1098,8 @@ the following shell command: [[inline:sh][texdoc koma]].
   {\LoadClassWithOptions{scrartcl}}
   {\LoadClassWithOptions{article}}
 #+end_src
-#+LATEX: \caption[Load the base class]{Load the base class.}\label{fig:load-base-class}
+[[caption:Load the base class][Load the base class.]]
+# <<fig:load-base-class>>
 #+END_listing
 
 *** Paper size
@@ -1069,7 +1124,8 @@ horizontal.
   #+LaTeX_CLASS_OPTIONS: [b5paper]
   #+LaTeX_CLASS_OPTIONS: [landscape]
 #+end_src
-#+LATEX: \caption[Base class paper size options]{Base class paper size options.}\label{fig:paper-sizes}
+[[caption:Base class paper size options][Base class paper size options.]]
+# <<fig:paper-sizes>>
 #+END_listing
 
 The [[http://www.ctan.org/tex-archive/macros/latex/contrib/koma-script/][KOMA-script]] [[latex:classfile][scrartcl]] class has options for a fuller range of the
@@ -1086,7 +1142,8 @@ Listing \ref{fig:koma-paper-sizes}, X is replaced by an integer [0, 1,
   #+LaTeX_CLASS_OPTIONS: [cXpaper]
   #+LaTeX_CLASS_OPTIONS: [dXpaper]  
 #+end_src
-#+LATEX: \caption[Paper sizes available only with the KOMA scrartcl class]{Paper sizes available only with the KOMA scrartcl class.}\label{fig:koma-paper-sizes}
+[[caption:Paper sizes available only with the KOMA scrartcl class][Paper sizes available only with the KOMA scrartcl class.]]
+# <<fig:koma-paper-sizes>>
 #+END_listing
 
 *** Font size
@@ -1105,7 +1162,8 @@ according to the document design of the base class.
   ,#+LaTeX_CLASS_OPTIONS: [11pt]
   ,#+LaTeX_CLASS_OPTIONS: [12pt]
 #+end_src
-#+LATEX: \caption[Standard font sizes]{Standard font sizes.}\label{fig:font-sizes}
+[[caption:Standard font sizes][Standard font sizes.]]
+# <<fig:font-sizes>>
 #+END_listing
 
 *** Text block and margins
@@ -1172,7 +1230,8 @@ LaTeX [[latex:progstruct][maketitle]] command (Listing \ref{fig:format-no-toc}).
               depth)))
   (setq org-export-latex-format-toc-function 'org-export-latex-no-toc)
 #+end_src
-#+LATEX: \caption[Configure org-export-latex-format-toc-function]{Configure org-export-latex-format-toc-function.}\label{fig:format-no-toc}
+[[caption:Configure org-export-latex-format-toc-function][Configure org-export-latex-format-toc-function.]]
+# <<fig:format-no-toc>>
 #+END_listing
 
 The table of contents depth is set with the [[latex:progstruct][tocdepth]] key:
@@ -1194,7 +1253,8 @@ to articles.
     tocdepth/subparagraph/.code={\AtBeginDocument{\setcounter{tocdepth}{5}}}
   } 
 #+end_src
-#+LATEX: \caption[The tocdepth key]{The tocdepth key.}\label{fig:tocdepth}
+[[caption:The tocdepth key][The tocdepth key.]]
+# <<fig:tocdepth>>
 #+END_listing
 *** Section numbering
 # <<section-numbering>>
@@ -1223,7 +1283,8 @@ section numbering altogether; =section=, =subsection=;
     secnum/subparagraph/.code={\AtBeginDocument{\setcounter{secnumdepth}{5}}}
   } 
 #+end_src
-#+LATEX: \caption[The secnum key]{The secnum key.}\label{fig:secnum}
+[[caption:The secnum key][The secnum key.]]
+# <<fig:secnum>>
 #+END_listing
 
 *** Equations
@@ -1241,7 +1302,8 @@ the default
   ,#+LaTeX_CLASS_OPTIONS: [leqno]
   ,#+LaTeX_CLASS_OPTIONS: [fleqn]
 #+end_src
-#+LATEX: \caption[Options for equation numbering]{Options for equation numbering.}\label{fig:equations}
+[[caption:Options for equation numbering][Options for equation numbering.]]
+# <<fig:equations>>
 #+END_listing
 *** Table captions
 
@@ -1359,7 +1421,8 @@ that the package won't be loaded.
   {}
   {\AtEndOfClass{\RequirePackage[T1]{fontenc}}}
 #+end_src
-#+LATEX: \caption[Loading the fontenc package]{Loading the fontenc package.}\label{fig:load-fontenc}
+[[caption:Loading the fontenc package][Loading the fontenc package.]]
+# <<fig:load-fontenc>>
 #+END_listing
 
 #+BEGIN_listing
@@ -1368,7 +1431,8 @@ that the package won't be loaded.
   \newboolean{ORGART@nofontenc}  
   \DeclareOption{nofontenc}{\setboolean{ORGART@nofontenc}{true}}
 #+end_src
-#+LATEX: \caption[The nofontenc option]{The nofontenc option.}\label{fig:nofontenc}
+[[caption:The nofontenc option][The nofontenc option.]]
+# <<fig:nofontenc>>
 #+END_listing
 
 Options passed to [[latex:classfile][Org-article]] are passed on to the [[latex:package][fontenc]] package
@@ -1381,7 +1445,8 @@ Options passed to [[latex:classfile][Org-article]] are passed on to the [[latex:
     \PassOptionsToPackage{\CurrentOption}{fontenc}
   }
 #+end_src
-#+LATEX: \caption[Passing options to the fontenc package]{Passing options to the fontenc package.}\label{fig:options-to-fontenc}
+[[caption:Passing options to the fontenc package][Passing options to the fontenc package.]]
+# <<fig:options-to-fontenc>>
 #+END_listing
 *** Fixltx2e
 The [[latex:package][fixltx2e]] package applies fixes to LaTeX2e that would break older
@@ -1398,7 +1463,8 @@ not to load it (Listing \ref{fig:nofixltx2e}).  This is a standard
   \newboolean{ORGART@nofixltx2e}
   \DeclareOption{nofixltx2e}{\setboolean{ORGART@nofixltx2e}{true}}
 #+end_src
-#+LATEX: \caption[The nofixltx2e option]{The nofixltx2e option.}\label{fig:nofixltx2e}
+[[caption:The nofixltx2e option][The nofixltx2e option.]]
+# <<fig:nofixltx2e>>
 #+END_listing
 
 #+BEGIN_listing
@@ -1408,7 +1474,8 @@ not to load it (Listing \ref{fig:nofixltx2e}).  This is a standard
   {}
   {\AtEndOfClass{\RequirePackage{fixltx2e}}}
 #+end_src
-#+LATEX: \caption[Load the fixltx2e package]{Load the fixltx2e package.}\label{fig:load-fixltx2e}
+[[caption:Load the fixltx2e package][Load the fixltx2e package.]]
+# <<fig:load-fixltx2e>>
 #+END_listing
 
 *** Graphicx
@@ -1430,7 +1497,8 @@ that is loaded by default (Listing \ref{fig:load-graphicx}).
   \newboolean{ORGART@nographicx}
   \DeclareOption{nographicx}{\setboolean{ORGART@nographicx}{true}}
 #+end_src
-#+LATEX: \caption[The nographicx option]{The nographicx option.}\label{fig:nographicx}
+[[caption:The nographicx option][The nographicx option.]]
+# <<fig:nographicx>>
 #+END_listing
 
 #+BEGIN_listing
@@ -1440,7 +1508,8 @@ that is loaded by default (Listing \ref{fig:load-graphicx}).
   {}
   {\AtEndOfClass{\RequirePackage{graphicx}}}
 #+end_src
-#+LATEX: \caption[Load the graphicx package]{Load the graphicx package.}\label{fig:load-graphicx}
+[[caption:Load the graphicx package][Load the graphicx package.]]
+# <<fig:load-graphicx>>
 #+END_listing
 
 *** Longtable
@@ -1462,7 +1531,8 @@ This is a standard [[latex:proglang][Org-mode]] package that is loaded by defaul
   \newboolean{ORGART@nolongtable}
   \DeclareOption{nolongtable}{\setboolean{ORGART@nolongtable}{true}}
 #+end_src
-#+LATEX: \caption[The nolongtable option]{The nolongtable option.}\label{fig:nolongtable}
+[[caption:The nolongtable option][The nolongtable option.]]
+# <<fig:nolongtable>>
 #+END_listing
 
 #+BEGIN_listing
@@ -1472,7 +1542,8 @@ This is a standard [[latex:proglang][Org-mode]] package that is loaded by defaul
   {}
   {\AtEndOfClass{\RequirePackage{longtable}}}
 #+end_src
-#+LATEX: \caption[Load the longtable package]{Load the longtable package.}\label{fig:load-longtable}
+[[caption:Load the longtable package][Load the longtable package.]]
+# <<fig:load-longtable>>
 #+END_listing
 *** Float
 Tables and figures in LaTeX are treated as floating objects.
@@ -1497,7 +1568,8 @@ the KOMA-script [[latex:classfile][scrartcl]] class is used.
   {\RequirePackage{tocbasic}}
   {\RequirePackage{float}}
 #+end_src
-#+LATEX: \caption[Loading the float or tocbasic packages]{Loading the float or tocbasic packages.}\label{fig:load-float}
+[[caption:Loading the float or tocbasic packages][Loading the float or tocbasic packages.]]
+# <<fig:load-float>>
 #+END_listing
 
 You can probably read about the [[latex:package][float]] package on your system by
@@ -1524,7 +1596,8 @@ This is a standard [[latex:proglang][Org-mode]] package that is loaded by defaul
   \newboolean{ORGART@nowrapfig}
   \DeclareOption{nowrapfig}{\setboolean{ORGART@nowrapfig}{true}}
 #+end_src
-#+LATEX: \caption[The nowrapfig option]{The nowrapfig option.}\label{fig:nowrapfig}
+[[caption:The nowrapfig option][The nowrapfig option.]]
+# <<fig:nowrapfig>>
 #+END_listing
 
 #+BEGIN_listing
@@ -1534,7 +1607,8 @@ This is a standard [[latex:proglang][Org-mode]] package that is loaded by defaul
   {}
   {\AtEndOfClass{\RequirePackage{wrapfig}}}
 #+end_src
-#+LATEX: \caption[Load the wrapfig package]{Load the wrapfig package.}\label{fig:load-wrapfig}
+[[caption:Load the wrapfig package][Load the wrapfig package.]]
+# <<fig:load-wrapfig>>
 #+END_listing
 
 *** Soul
@@ -1551,7 +1625,8 @@ not to load it (Listing \ref{fig:nosoul}).  This is a standard
   \newboolean{ORGART@nosoul}
   \DeclareOption{nosoul}{\setboolean{ORGART@nosoul}{true}}
 #+end_src
-#+LATEX: \caption[The nosoul option]{The nosoul option.}\label{fig:nosoul}
+[[caption:The nosoul option][The nosoul option.]]
+# <<fig:nosoul>>
 #+END_listing
 
 #+BEGIN_listing
@@ -1561,7 +1636,8 @@ not to load it (Listing \ref{fig:nosoul}).  This is a standard
   {}
   {\AtEndOfClass{\RequirePackage{soul}}}
 #+end_src
-#+LATEX: \caption[Load the soul package]{Load the soul package.}\label{fig:load-soul}
+[[caption:Load the soul package][Load the soul package.]]
+# <<fig:load-soul>>
 #+END_listing
 
 *** T1enc                                                          :noexport:
@@ -1600,7 +1676,8 @@ without options.
   \newboolean{ORGART@notextcomp}
   \DeclareOption{notextcomp}{\setboolean{ORGART@notextcomp}{true}}
 #+end_src
-#+LATEX: \caption[The notextcomp option]{The notextcomp option.}\label{fig:notextcomp}
+[[caption:The notextcomp option][The notextcomp option.]]
+# <<fig:notextcomp>>
 #+END_listing
 
 #+BEGIN_listing
@@ -1610,7 +1687,8 @@ without options.
   {}
   {\AtEndOfClass{\RequirePackage{textcomp}}}
 #+end_src
-#+LATEX: \caption[Load the textcomp package]{Load the textcomp package.}\label{fig:load-textcomp}
+[[caption:Load the textcomp package][Load the textcomp package.]]
+# <<fig:load-textcomp>>
 #+END_listing
 *** MarVoSym
 The [[latex:package][marvosym]] package provides support for Martin Vogel's Symbol
@@ -1628,7 +1706,8 @@ This is a standard [[latex:proglang][Org-mode]] package that is loaded by defaul
   \newboolean{ORGART@nomarvosym}
   \DeclareOption{nomarvosym}{\setboolean{ORGART@nomarvosym}{true}}
 #+end_src
-#+LATEX: \caption[The nomarvosym option]{The nomarvosym option.}\label{fig:nomarvosym}
+[[caption:The nomarvosym option][The nomarvosym option.]]
+# <<fig:nomarvosym>>
 #+END_listing
 
 #+BEGIN_listing
@@ -1638,7 +1717,8 @@ This is a standard [[latex:proglang][Org-mode]] package that is loaded by defaul
   {}
   {\AtEndOfClass{\RequirePackage{marvosym}}}
 #+end_src
-#+LATEX: \caption[Load the marvosym package]{Load the marvosym package.}\label{fig:load-marvosym}
+[[caption:Load the marvosym package][Load the marvosym package.]]
+# <<fig:load-marvosym>>
 #+END_listing
 *** Wasysym
 The [[latex:package][wasysym]] package makes available some symbol glyphs from the [[latex:package][wasy]]
@@ -1671,7 +1751,8 @@ This is a standard [[latex:proglang][Org-mode]] package that is loaded by defaul
     \AtEndOfClass{\RequirePackage[nointegrals]{wasysym}}}
   } 
 #+end_src
-#+LATEX: \caption[The wasysym key]{The wasysym key.}\label{fig:option-wasysym}
+[[caption:The wasysym key][The wasysym key.]]
+# <<fig:option-wasysym>>
 #+END_listing
 
 #+BEGIN_listing
@@ -1681,7 +1762,8 @@ This is a standard [[latex:proglang][Org-mode]] package that is loaded by defaul
   {}
   {\AtEndOfClass{\RequirePackage[integrals]{wasysym}}}
 #+end_src
-#+LATEX: \caption[Load the wasysym package]{Load the wasysym package.}\label{fig:load-wasysym}
+[[caption:Load the wasysym package][Load the wasysym package.]]
+# <<fig:load-wasysym>>
 #+END_listing
 
 *** Latexsym
@@ -1700,7 +1782,8 @@ not loaded (Listing \ref{fig:load-latexsym}).
   \newboolean{ORGART@nolatexsym}
   \DeclareOption{nolatexsym}{\setboolean{ORGART@nolatexsym}{true}}
 #+end_src
-#+LATEX: \caption[The nolatexsym option]{The nolatexsym option.}\label{fig:nolatexsym}
+[[caption:The nolatexsym option][The nolatexsym option.]]
+# <<fig:nolatexsym>>
 #+END_listing
 
 #+BEGIN_listing
@@ -1710,7 +1793,8 @@ not loaded (Listing \ref{fig:load-latexsym}).
   {}
   {\AtEndOfClass{\RequirePackage{latexsym}}}
 #+end_src
-#+LATEX: \caption[Load the latexsym package]{Load the latexsym package.}\label{fig:load-latexsym}
+[[caption:Load the latexsym package][Load the latexsym package.]]
+# <<fig:load-latexsym>>
 #+END_listing
 
 *** Amssymb
@@ -1733,7 +1817,8 @@ standard [[latex:proglang][Org-mode]] package that is loaded by default (Listing
   \newboolean{ORGART@noamssymb}
   \DeclareOption{noamssymb}{\setboolean{ORGART@noamssymb}{true}}
 #+end_src
-#+LATEX: \caption[The noamssymb option]{The noamssymb option.}\label{fig:noamssymb}
+[[caption:The noamssymb option][The noamssymb option.]]
+# <<fig:noamssymb>>
 #+END_listing
 
 #+BEGIN_listing
@@ -1743,7 +1828,8 @@ standard [[latex:proglang][Org-mode]] package that is loaded by default (Listing
   {}
   {\AtEndOfClass{\RequirePackage{amssymb}}}
 #+end_src
-#+LATEX: \caption[Load the amssymb package]{Load the amssymb package.}\label{fig:load-amssymb}
+[[caption:Load the amssymb package][Load the amssymb package.]]
+# <<fig:load-amssymb>>
 #+END_listing  
 
 *** Hyperref
@@ -1796,7 +1882,8 @@ loaded by default (Listing \ref{fig:load-hyperref}).
   \newboolean{ORGART@nohyperref}
   \DeclareOption{nohyperref}{\setboolean{ORGART@nohyperref}{true}}
 #+end_src
-#+LATEX: \caption[The nohyperref option]{The nohyperref option.}\label{fig:nohyperref})
+[[caption:The nohyperref option][The nohyperref option.]]
+# <<fig:nohyperref>>)
 #+END_listing
 
 If [[latex:package][hyperref]] is not loaded, then the [[latex:package][url]] package is loaded for the [[path-command][path]]
@@ -1822,7 +1909,8 @@ option when typesetting those long [[latex:proglang][Emacs Lisp]] variable names
       \def\theHfigure{\thesection.\arabic{figure}}
     }}
 #+end_src
-#+LATEX: \caption[Load the hyperref and url packages]{Load the hyperref and url packages.}\label{fig:load-hyperref}
+[[caption:Load the hyperref and url packages][Load the hyperref and url packages.]]
+# <<fig:load-hyperref>>
 #+END_listing
 
 Options do not include =debug=.
@@ -2042,7 +2130,8 @@ set.
     fontset/.is choice,
   } 
 #+end_src
-#+LATEX: \caption[The fontset key]{The fontset key.}\label{fig:fontset}
+[[caption:The fontset key][The fontset key.]]
+# <<fig:fontset>>
 #+END_listing
 
 The fonts that come with LaTeX distributions differ in their ability
@@ -2072,7 +2161,8 @@ the value [[latex:progstruct][bera]] to the [[latex:progstruct][fontset]] key (L
         \RequirePackage[scaled]{beramono} % tt
         \fi}}}
 #+end_src
-#+LATEX: \caption[Define the bera value of the fontset key]{Define the bera value of the fontset key.}\label{fig:bera}
+[[caption:Define the bera value of the fontset key][Define the bera value of the fontset key.]]
+# <<fig:bera>>
 #+END_listing
 
 *** Charter
@@ -2099,7 +2189,8 @@ match the shape of the Charter font.  These fonts conflict with the
         \RequirePackage{courier} % tt
         \fi}}}
 #+end_src
-#+LATEX: \caption[Define the charter value of the fontset key]{Define the charter value of the fontset key.}\label{fig:charter}
+[[caption:Define the charter value of the fontset key][Define the charter value of the fontset key.]]
+# <<fig:charter>>
 #+END_listing
 
 *** Garamond
@@ -2128,7 +2219,8 @@ the [[latex:progstruct][fontset]] key (Listing \ref{fig:garamond}).
         \linespread{1.0609}
         \fi}}}
 #+end_src
-#+LATEX: \caption[Define the garamond value of the fontset key]{Define the garamond value of the fontset key.}\label{fig:garamond}
+[[caption:Define the garamond value of the fontset key][Define the garamond value of the fontset key.]]
+# <<fig:garamond>>
 #+END_listing
 
 *** KP family
@@ -2151,7 +2243,8 @@ family supports math.   The font set can be selected by passing the value
         \RequirePackage{kpfonts}
         \fi}}}
 #+end_src
-#+LATEX: \caption[Define the kp value of the fontset option]{Define the kp value of the fontset option.}\label{fig:kp}
+[[caption:Define the kp value of the fontset option][Define the kp value of the fontset option.]]
+# <<fig:kp>>
 #+END_listing
 *** Libertine
 # <<libertine-font>>
@@ -2175,7 +2268,8 @@ typewriter font is Latin Modern.   The font set can be selected by passing the v
           \RequirePackage{lmodern} % tt
           \fi}}}
 #+end_src
-#+LATEX: \caption[Define the libertine value of the fontset key]{Define the libertine value of the fontset key.}\label{fig:libertine}
+[[caption:Define the libertine value of the fontset key][Define the libertine value of the fontset key.]]
+# <<fig:libertine>>
 #+END_listing
 *** Nimbus                                                     
 # <<nimbus-font>>
@@ -2201,7 +2295,8 @@ Cursor, which is a Courier replacement.   The font set can be selected by passin
           \RequirePackage{tgcursor} % tt
           \fi}}}
 #+end_src
-#+LATEX: \caption[Define the nimbus value of the fontset key]{Define the nimbus value of the fontset key.}\label{fig:nimbus}
+[[caption:Define the nimbus value of the fontset key][Define the nimbus value of the fontset key.]]
+# <<fig:nimbus>>
 #+END_listing
 
 *** Palatino
@@ -2227,7 +2322,8 @@ The font set can be selected by passing the value [[latex:progstruct][palatino]]
         \RequirePackage{courier} % tt
         \fi}}}
 #+end_src
-#+LATEX: \caption[Define the palatino value of the fontset key]{Define the palatino value of the fontset key.}\label{fig:palatino}
+[[caption:Define the palatino value of the fontset key][Define the palatino value of the fontset key.]]
+# <<fig:palatino>>
 #+END_listing
 
 *** Times
@@ -2264,7 +2360,8 @@ The font set can be selected by passing the value [[latex:progstruct][times]] to
         \RequirePackage{courier}
         \fi}}}
 #+end_src
-#+LATEX: \caption[Define the times value of the fontset key]{Define the times value of the fontset key.}\label{fig:times}
+[[caption:Define the times value of the fontset key][Define the times value of the fontset key.]]
+# <<fig:times>>
 #+END_listing
 *** Utopia
 # <<utopia-font>>
@@ -2291,7 +2388,8 @@ The font set can be selected by passing the value [[latex:progstruct][utopia]] t
         \RequirePackage[scaled]{beramono} % tt
         \fi}}}
 #+end_src
-#+LATEX: \caption[Define the utopia value of the fontset key]{Define the utopia value of the fontset key.}\label{fig:utopia}
+[[caption:Define the utopia value of the fontset key][Define the utopia value of the fontset key.]]
+# <<fig:utopia>>
 #+END_listing
 ** Source block markup
 Two options are available for syntax highlighting and typesetting of
@@ -2312,7 +2410,8 @@ package using [[latex:classfile][Org-article]].
   <<pgf-option-source-listings>>  
   <<pgf-option-source-minted>>
 #+end_src
-#+LATEX: \caption[Set up option for source code highlighting and typesetting]{Set up option for source code highlighting and typesetting.}\label{fig:option-source}
+[[caption:Set up option for source code highlighting and typesetting][Set up option for source code highlighting and typesetting.]]
+# <<fig:option-source>>
 #+END_listing
 
 *** Listings
@@ -2371,7 +2470,8 @@ compatibility with the [[latex:package][minted]] package (Listing
     }
   }  
 #+end_src
-#+LATEX: \caption[The listings value of the source key]{The listings value of the source key.}\label{fig:listings-option}
+[[caption:The listings value of the source key][The listings value of the source key.]]
+# <<fig:listings-option>>
 #+END_listing
 
 **** Listings setup
@@ -2399,7 +2499,8 @@ by the [[latex:progstruct][listings]] package.
           "pdflatex -interaction nonstopmode -output-directory %o %f"
           "pdflatex -interaction nonstopmode -output-directory %o %f"))
 #+end_src
-#+LATEX: \caption[Configure the Org-mode LaTeX exporter for the listings package]{Configure the Org-mode LaTeX exporter for the listings package.}\label{fig:org-listings}
+[[caption:Configure the Org-mode LaTeX exporter for the listings package][Configure the Org-mode LaTeX exporter for the listings package.]]
+# <<fig:org-listings>>
 #+END_listing
 **** Listings themes                                               :noexport:
 Themes are defined for the listings package.  Themes treat source
@@ -2419,7 +2520,8 @@ convenience.
   <<pgf-option-listingstheme-sv>>
   <<pgf-option-listingstheme-es>>
 #+end_src
-#+LATEX: \caption[Set up options for listings package themes]{Set up options for listings package themes.}\label{fig:option-listingstheme}
+[[caption:Set up options for listings package themes][Set up options for listings package themes.]]
+# <<fig:option-listingstheme>>
 #+END_listing
 
 The =bw= theme offers footnote size text in a frame, set in black and
@@ -2706,7 +2808,8 @@ languages in the listings-lookup table (Listing \ref{fig:make-lstnew}).
       res = res + s + '}}\n{}\n'
   print res
 #+end_src
-#+LATEX: \caption[Python code to make lstnewenvironment macros]{Python code to make lstnewenvironment macros.}\label{fig:make-lstnew}
+[[caption:Python code to make lstnewenvironment macros][Python code to make lstnewenvironment macros.]]
+# <<fig:make-lstnew>>
 #+END_listing
 
 This source block (Listing \ref{fig:lstnew-to-class}) puts the output of Listing \ref{fig:make-lstnew}
@@ -2716,7 +2819,8 @@ into the class file.
 #+begin_src latex :noweb tangle :exports code
 <<make-lstnewenvironment(x=listings-lookup)>>
 #+end_src
-#+LATEX: \caption[Put the lstnewenvironment macros in the class file]{Put the lstnewenvironment macros in the class file.}\label{fig:lstnew-to-class}
+[[caption:Put the lstnewenvironment macros in the class file][Put the lstnewenvironment macros in the class file.]]
+# <<fig:lstnew-to-class>>
 #+END_listing
 
 **** Make inline list commands                                   
@@ -2736,7 +2840,8 @@ typesetting.
     \expandafter\newcommand\csname\makelstinline@shortname\endcsname[1][]{ 
       \lstinline[#2]##1}}
 #+end_src
-#+LATEX: \caption[A macro to make language-specific shortcuts for Org-mode languages]{A macro to make language-specific shortcuts for Org-mode languages.}\label{fig:lstinline-macro}
+[[caption:A macro to make language-specific shortcuts for Org-mode languages][A macro to make language-specific shortcuts for Org-mode languages.]]
+# <<fig:lstinline-macro>>
 #+END_listing
 
 This [[latex:proglang][Python]] code block (Listing \ref{fig:makelstinline}) uses the lookup table to create a call to
@@ -2761,7 +2866,8 @@ This [[latex:proglang][Python]] code block (Listing \ref{fig:makelstinline}) use
       res = res + s + '}\n'
   print res
 #+end_src
-#+LATEX: \caption[Python code to make makelstinline macros]{Python code to make makelstinline macros.}\label{fig:makelstinline}
+[[caption:Python code to make makelstinline macros][Python code to make makelstinline macros.]]
+# <<fig:makelstinline>>
 #+END_listing
 
 This source block (Listing \ref{fig:make-lstinline-code}) is used to put the LaTeX macros into the class file.
@@ -2771,7 +2877,8 @@ This source block (Listing \ref{fig:make-lstinline-code}) is used to put the LaT
 #+begin_src latex :noweb tangle :exports code
 <<make-lstinline(x=lstinline-lookup)>>
 #+end_src
-#+LATEX: \caption[Put the makelstinline macros in the class file]{Put the makelstinline macros in the class file.}\label{fig:make-lstinline-code}
+[[caption:Put the makelstinline macros in the class file][Put the makelstinline macros in the class file.]]
+# <<fig:make-lstinline-code>>
 #+END_listing
 
 **** The listings configuration file
@@ -2788,7 +2895,8 @@ used to input minted shortcuts into an Org-mode file that isn't using
     <<make-lstnewenvironment(x=listings-lookup)>>
     <<make-lstinline(x=lstinline-lookup)>>
 #+end_src
-#+LATEX: \caption[Make a configuration file for the listings package in Org-mode]{Make a configuration file for the listings package in Org-mode.}\label{fig:listings-cfg}
+[[caption:Make a configuration file for the listings package in Org-mode][Make a configuration file for the listings package in Org-mode.]]
+# <<fig:listings-cfg>>
 #+END_listing
 
 
@@ -2824,7 +2932,8 @@ used by the [[latex:package][minted]] package (Listing \ref{fig:listings-code}).
     \floatplacement{listing}{htb!}
   }
 #+end_src
-#+LATEX: \caption[Code to configure the listings package]{Code to configure the listings package.}\label{fig:listings-code}
+[[caption:Code to configure the listings package][Code to configure the listings package.]]
+# <<fig:listings-code>>
 #+END_listing
 *** Minted
 # <<minted-package>>
@@ -2860,7 +2969,8 @@ external calls made by [[latex:package][minted]].
           "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
           "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
 #+end_src
-#+LATEX: \caption[Configure the Org-mode LaTeX exporter for the minted package]{Configure the Org-mode LaTeX exporter for the minted package.}\label{fig:minted-setup}
+[[caption:Configure the Org-mode LaTeX exporter for the minted package][Configure the Org-mode LaTeX exporter for the minted package.]]
+# <<fig:minted-setup>>
 #+END_listing
 
 **** Using minted
@@ -2886,7 +2996,8 @@ listings set by the [[latex:progstruct][listoflistings]] command.
         \listoflistingscaption{List of Listings}
         }}}  
 #+end_src
-#+LATEX: \caption[The minted value of the source key]{The minted value of the source key.}\label{fig:minted-source}
+[[caption:The minted value of the source key][The minted value of the source key.]]
+# <<fig:minted-source>>
 #+END_listing
 
 **** Minted styles
@@ -2935,7 +3046,8 @@ following values:
     mintedstyle/native/.code={\AtBeginDocument{\usemintedstyle{native}}}
   } 
 #+end_src
-#+LATEX: \caption[Set up options for minted package styles]{Set up options for minted package styles.}\label{fig:option-mintedstyle}
+[[caption:Set up options for minted package styles][Set up options for minted package styles.]]
+# <<fig:option-mintedstyle>>
 #+END_listing
 
 
@@ -3111,7 +3223,8 @@ LaTeX macros for the class file (Listing \ref{fig:newminted-macros}).
       res = res + s + '}\n'
   print res
 #+end_src
-#+LATEX: \caption[Python code to make newminted macros]{Python code to make newminted macros.}\label{fig:newminted-macros}
+[[caption:Python code to make newminted macros][Python code to make newminted macros.]]
+# <<fig:newminted-macros>>
 #+END_listing
 
 This source block in Listing \ref{fig:newminted-cfg} is used to put the LaTeX macros into the class file.
@@ -3121,7 +3234,8 @@ This source block in Listing \ref{fig:newminted-cfg} is used to put the LaTeX ma
 #+begin_src latex :noweb tangle :exports code
 <<make-newminted(x=newminted-lookup)>>
 #+end_src
-#+LATEX: \caption[Put the newminted macros into the class file]{Put the newminted macros into the class file.}\label{fig:newminted-cfg}
+[[caption:Put the newminted macros into the class file][Put the newminted macros into the class file.]]
+# <<fig:newminted-cfg>>
 #+END_listing
 
 **** Make newmint
@@ -3149,7 +3263,8 @@ file.
       res = res + s + '}\n'
   print res
 #+end_src
-#+LATEX: \caption[Python code to make the newmint macros]{Python code to make the newmint macros.}\label{fig:make-newmint}
+[[caption:Python code to make the newmint macros][Python code to make the newmint macros.]]
+# <<fig:make-newmint>>
 #+END_listing
 
 The source block in Listing \ref{fig:make-newmint-code} is used to put the LaTeX macros into the class file.
@@ -3159,7 +3274,8 @@ The source block in Listing \ref{fig:make-newmint-code} is used to put the LaTeX
 #+begin_src latex :noweb tangle :exports code
 <<make-newmint(x=newmint-lookup)>>
 #+end_src
-#+LATEX: \caption[Put the newmint macros in the class file]{Put the newmint macros in the class file.}\label{fig:make-newmint-code}
+[[caption:Put the newmint macros in the class file][Put the newmint macros in the class file.]]
+# <<fig:make-newmint-code>>
 #+END_listing
 
 **** Configuration file
@@ -3174,7 +3290,8 @@ minted shortcuts into an Org-mode file that isn't using [[latex:classfile][Org-a
   <<make-newmint(x=newmint-lookup)>>
   <<make-newminted(x=newminted-lookup)>>  
 #+end_src
-#+LATEX: \caption[Make a configuration file for the minted package in Org-mode]{Make a configuration file for the minted package in Org-mode.}\label{fig:minted-cfg}
+[[caption:Make a configuration file for the minted package in Org-mode][Make a configuration file for the minted package in Org-mode.]]
+# <<fig:minted-cfg>>
 #+END_listing
 
 Typically, the configuration file would be input in the LaTeX header:
@@ -3252,7 +3369,8 @@ provided to load it (Listings \ref{fig:microtype-option}, \ref{fig:load-microtyp
   \newboolean{ORGART@microtype}
   \DeclareOption{microtype}{\setboolean{ORGART@microtype}{true}}
 #+end_src
-#+LATEX: \caption[Setting the microtype option]{Setting the microtype option.}\label{fig:microtype-option}
+[[caption:Setting the microtype option][Setting the microtype option.]]
+# <<fig:microtype-option>>
 #+END_listing
 
 #+BEGIN_listing
@@ -3265,7 +3383,8 @@ provided to load it (Listings \ref{fig:microtype-option}, \ref{fig:load-microtyp
     \fi}%
   {}
 #+end_src
-#+LATEX: \caption[Load the microtype package]{Load the microtype package.}\label{fig:load-microtype}
+[[caption:Load the microtype package][Load the microtype package.]]
+# <<fig:load-microtype>>
 #+END_listing
 *** Setspace
 # <<setspace>>
@@ -3283,7 +3402,8 @@ doublespacing (Listing \ref{fig:setspace-code}).
   \newboolean{ORGART@doublespace}
   \DeclareOption{doublespace}{\setboolean{ORGART@doublespace}{true}}
 #+end_src
-#+LATEX: \caption[Set up options for the setspace package]{Set up options for the setspace package.}\label{fig:setspace-options}
+[[caption:Set up options for the setspace package][Set up options for the setspace package.]]
+# <<fig:setspace-options>>
 #+END_listing
 
 #+BEGIN_listing
@@ -3293,7 +3413,8 @@ doublespacing (Listing \ref{fig:setspace-code}).
   {\RequirePackage{setspace}}
   {}
 #+end_src
-#+LATEX: \caption[Loading the setspace package]{Loading the setspace package.}\label{fig:load-setspace}
+[[caption:Loading the setspace package][Loading the setspace package.]]
+# <<fig:load-setspace>>
 #+END_listing
 
 #+BEGIN_listing
@@ -3303,7 +3424,8 @@ doublespacing (Listing \ref{fig:setspace-code}).
   {\doublespacing}
   {}%
 #+end_src
-#+LATEX: \caption[Setting the document line spacing]{Setting the document line spacing.}\label{fig:setspace-code}
+[[caption:Setting the document line spacing][Setting the document line spacing.]]
+# <<fig:setspace-code>>
 #+END_listing
 
 *** Paralist
@@ -3362,7 +3484,8 @@ for the list enumeration inside the paragraph:
         \renewenvironment{enumerate}{\begin{inparaenum}[(a)]}{\end{inparaenum}}}},
   }  
 #+end_src
-#+LATEX: \caption[Set up option for lists]{Set up options for lists.}\label{fig:paralist-option}
+[[caption:Set up option for lists][Set up options for lists.]]
+# <<fig:paralist-option>>
 #+END_listing
 
 *** XColor
@@ -3429,10 +3552,10 @@ X, Y and P are defined if the [[latex:package][tabularx]] package has been loade
     \setboolean{ORGART@tabularx}{true}
     \AtBeginDocument{
       \newcolumntype{Y}{>{\RaggedRight\arraybackslash}X}
-      \newcolumntype{P}[1]{>{\RaggedRight\arraybackslash}p{#1}}}}
+      \Newcolumntype{P}[1]{>{\RaggedRight\arraybackslash}p{#1}}}}
 #+end_src
 #+LaTeX: \caption[Define the tabularx option]{Define the tabularx option.}
-#+LaTeX: \label{fig:tabularx-option}
+# <<fig:tabularx-option>>
 #+END_listing
 
 If the [[latex:package][tabularx]] package is loaded, then the [[latex:package][ragged2e]] and [[latex:package][booktabs]]
@@ -3452,7 +3575,7 @@ rules (thin lines) for the top, bottom and middle of a table.
   {}
 #+end_src
 #+LaTeX: \caption[Load the tabularx and ragged2e packages]{Load the tabularx and ragged2e packages.}  
-#+LATEX: \label{fig:load-tabularx}
+# <<fig:load-tabularx>>
 #+END_listing
 
 *** GANTT charts
@@ -3476,7 +3599,8 @@ there.
 #+begin_src sh
   curl http://repo.or.cz/w/Worg.git/blob_plain/HEAD:/code/latex/gantt.sty > gantt.sty
 #+end_src
-#+LATEX: \caption[Download gantt.sty from Worg]{Download gantt.sty from Worg.}\label{fig:download-gantt}
+[[caption:Download gantt.sty from Worg][Download gantt.sty from Worg.]]
+# <<fig:download-gantt>>
 #+END_listing
 
 **** The GANTT Option
@@ -3490,7 +3614,8 @@ The [[latex:package][gantt.sty]] package can be loaded with the [[latex:progstru
   \newboolean{ORGART@gantt}
   \DeclareOption{gantt}{\setboolean{ORGART@gantt}{true}}
 #+end_src
-#+LATEX: \caption[Set up option for table-driven GANTT charts]{Set up option for table-driven GANTT charts.}\label{fig:option-gantt}
+[[caption:Set up option for table-driven GANTT charts][Set up option for table-driven GANTT charts.]]
+# <<fig:option-gantt>>
 #+END_listing
 
 #+BEGIN_listing
@@ -3500,7 +3625,8 @@ The [[latex:package][gantt.sty]] package can be loaded with the [[latex:progstru
   {\AtEndOfClass{\RequirePackage{gantt}}}
   {}
 #+end_src
-#+LATEX: \caption[Load the gantt package]{Load the gantt package.}\label{fig:load-gantt}
+[[caption:Load the gantt package][Load the gantt package.]]
+# <<fig:load-gantt>>
 #+END_listing
 
 **** Preparing the input table
@@ -3556,7 +3682,8 @@ in the function call.  The results are wrapped in =#+BEGIN_LaTeX]=
 #+begin_src org :exports code
 ,#+lob: elispgantt(table=gantttesttable) :results output latex
 #+end_src
-#+LATEX: \caption[Call to the elispgantt function in the Library of Babel]{Call to the elispgantt function in the Library of Babel.}\label{fig:elispgantt}
+[[caption:Call to the elispgantt function in the Library of Babel][Call to the elispgantt function in the Library of Babel.]]
+# <<fig:elispgantt>>
 #+END_listing
 
 
@@ -3629,7 +3756,8 @@ looks great, Eric!
 
 \end{tikzpicture}
 #+END_LaTeX
-#+LATEX: \caption[Eric Fraga's GANTT chart example]{Eric Fraga's GANTT chart example.}\label{fig:gantt}
+[[caption:Eric Fraga's GANTT chart example][Eric Fraga's GANTT chart example.]]
+# <<fig:gantt>>
 #+END_figure
 
 **** GANTT Emacs lisp source code block                            :noexport:
@@ -3915,7 +4043,10 @@ It should be possible to change the automatic conversion of Org-mode
 link syntax into HTML links.  The test here could be when the FOLLOW
 function assigned in org-add-link-type is nil.  This is an indication
 that the link is being used in an extended way, and not as a link.
-** TODO Take care of font clashes with amssymb
+** DONE Take care of font clashes with amssymb
+   :LOGBOOK:
+   - State "DONE"       from "TODO"       [2010-12-10 Fri 06:52]
+   :END:
 ** Buffer local variables
 What about making configuration variables buffer-local in the block
 you execute? Once the buffer is killed, you should be back to your
@@ -3931,7 +4062,10 @@ For example:
 Regards,
 
 -- Nicolas Goaziou
-** TODO Set up listings environment as separate code block
+** DONE Set up listings environment as separate code block
+   :LOGBOOK:
+   - State "DONE"       from "TODO"       [2010-12-10 Fri 06:53]
+   :END:
 ** Python script for listings
 \lstnewenvironment 
 {name}[⟨number ⟩][⟨opt. default arg.⟩] 
@@ -3954,3 +4088,62 @@ Regards,
 |                |                                   |
 
 
+
+
+** TODO LaTeX RESULT environment
+Make a framebox for results in LaTeX
+
+** TODO Ebib link
+#+source: ebib-setup
+#+begin_src emacs-lisp :exports code
+(autoload 'ebib "ebib" "Ebib, a BibTeX database manager." t)
+(org-add-link-type "citep" 'ebib
+   (lambda (path desc format)
+     (cond
+      ((eq format 'html)
+       (format "<span class=\"%s\">%s</span>" path desc))
+      ((eq format 'latex)
+       (format "\\citep[%s]{%s}" desc path)))))
+#+end_src
+
+#+results: ebib-setup
+| ebib | (lambda (path desc format) (cond ((eq format (quote html)) (format <span class="%s">%s</span> path desc)) ((eq format (quote latex)) (format \citep[%s]{%s} desc path)))) |
+
+Modify the link type so that it exports a natbib citation
+This could be very cool!
+
+Hi everyone,
+
+A while ago I asked on this list about connecting org-mode with ebib,
+which is a bibtex database manager for emacs. Thanks to Joost Kremers,
+there is now a solution.
+
+I asked the developer of ebib, Joost Kremers, if he could write a
+function that would start ebib on a given bibtex entry. He kindly
+added this functionality to the 'ebib' function (which starts ebib in
+emacs) and it is now available in the ebib git repository (see
+http://ebib.sourceforge.net). If you are using ebib and would like to
+get org-mode to open bibtex entries do the following:
+
+1) Install the latest development version of ebib.
+
+2) make sure ebib-preload-bib-files is set properly so that your .bib
+file is loaded by ebib when ebib starts
+
+3) add the following lines to your .emacs:
+(org-add-link-type "ebib" 'ebib)
+
+Now you can insert ebib links in your documents like this:
+[[ebib:Jones1998][some paper title]]. Opening this link should now
+result in ebib starting, loading your default bibtex database, and
+highlighting the bibtex entry Jones1998. Alternatively, if you already
+have started ebib, then opening the link will get you to the bibtex
+entry in your opened ebib database.
+
+/Ali Tofigh
+
+_______________________________________________
+Emacs-orgmode mailing list
+Please use `Reply All' to send replies to the list.
+Emacs-orgmode@gnu.org
+http://lists.gnu.org/mailman/listinfo/emacs-orgmode
