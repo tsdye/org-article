@@ -123,7 +123,7 @@ headings to the subparagraph level, which is the maximum defined by LaTeX.
   (require 'org-latex)
   (setq org-export-latex-listings t)
   (add-to-list 'org-export-latex-packages-alist
-               '(("AUTO" "inputenc" t)))
+               '("AUTO" "inputenc" t))
   (add-to-list 'org-export-latex-classes
             '("org-article"
                "\\documentclass{org-article}
