@@ -15,10 +15,10 @@
 #+XSLT: 
 #+BABEL: :exports code
 #+LaTeX_CLASS: org-article
-#+LaTeX_CLASS_OPTIONS: [koma,letterpaper,fontset=bera,11pt,source=listings,microtype,lists=inparaa,colorlinks=true,urlcolor=SteelBlue4,linkcolor=Firebrick4,secnum=section,gantt,tabularx,captions=tableheading]
+#+LaTeX_CLASS_OPTIONS: [koma,listof=flat,letterpaper,fontset=bera,11pt,source=listings,microtype,lists=inparaa,colorlinks=true,urlcolor=SteelBlue4,linkcolor=Firebrick4,secnum=section,gantt,tabularx,captions=tableheading,bib,natbib,hyperref]
 #+LATEX_HEADER: \usepackage[AUTO]{inputenc}
 
-# <<abstract_environment>>
+# <<abstract-environment>>
 #+BEGIN_abstract
 This document contains the code and documentation for the [[latex:classfile][Org-article]]
 LaTeX class.  The [[latex:classfile][Org-article]] class is designed to work with the
@@ -264,6 +264,8 @@ Both of the code blocks rely on [[latex:progstruct][noweb]] expansion.
   <<define-latex-link>>
   <<define-inline-link>>
   <<define-caption-link>>
+  <<natbib-links>>
+  <<biblatex-links>>
   <<format-no-toc>>
   <<babel-load-languages>>
   <<special-blocks>>
@@ -275,10 +277,12 @@ Both of the code blocks rely on [[latex:progstruct][noweb]] expansion.
 
 #+BEGIN_listing
 #+source: config-with-listings
-#+begin_src emacs-lisp :noweb tangle :exports code :results silent
+#+begin_src emacs-lisp :noweb tangle :results silent
   <<define-latex-link>>
   <<define-inline-link>>
   <<define-caption-link>>
+  <<natbib-links>>
+  <<biblatex-links>>
   <<format-no-toc>>
   <<babel-load-languages>>
   <<special-blocks>>
@@ -470,13 +474,12 @@ can achieve somewhat muted but traditionally colored links with
 options like =urlcolor=SteelBlue4= and =linkcolor=Firebrick4=.
 
 ** Marking up the Org-mode document
-
 *** Block-level markup
 If you want your source code blocks to have captions and (optionally)
 present your readers with a List of Listings following the Table of
 Contents, then you should [[special_blocks][follow the instructions here]].   
 
-This file also uses an [[latex:progstruct][abstract]] environment, which you can see [[abstract_environment][here]].
+This file also uses an [[latex:progstruct][abstract]] environment, which you can see [[abstract-environment][here]].
 
 *** Inline markup
 This file makes heavy use of inline markup for semantic elements in
@@ -485,6 +488,54 @@ syntax.  A new link type, [[latex:progstruct][latex]], is used to pass short bit
 LaTeX commands.  Another link type, [[latex:progstruct][inline]], is used to typeset and
 highlight the syntax code snippets inline using either the [[latex:package][listings]] or
 [[latex:package][minted]] packages.  Inline markup is described [[in-line_markup][here]].
+
+*** Captions
+The LaTeX caption command is typically passed two arguments: the
+required argument, which is typeset with the figure or table; and the
+optional argument, which appears in the List of Figures or List of
+Tables.  It is common nowadays, especially in the sciences, to have
+long captions (actually captions plus legends) with figures and much
+abbreviated versions, typically less than a line long, in the List of
+Figures.  In addition, many styles require that figure captions end
+with a period; the caption passed to the List of Figures should not
+end in a period.
+ 
+The Org-mode =#+CAPTION:= macro wraps its argument in =\caption{...}=
+but doesn't handle an optional argument.  It is most useful for
+tables, especially with style sheets that don't end table captions
+with a period.  The same caption serves equally well with the table
+and, assuming it fits on a line, with the List of Tables.
+
+Another option is to use =#+LATEX:= and just write the
+=\caption[...]{...}= directly.  This works well for LaTeX export, but
+it does nothing for HTML.
+
+[[latex:classfile][Org-article]] defines a [[latex:progstruct][caption]] link type that overcomes these various
+limitations.  Using a link like =[caption:To list][With figure.]= will
+export to LaTeX as =\caption[To list]{With figure.}=.  Note that you
+will have to enter these captions by hand rather than with
+[[latex:progstruct][org-insert-link]].  That function is designed to handle spaces in paths
+and it inserts =%20= in their stead, which don't make it through LaTex.
+
+*** Citations
+There are very many bibliography options in LaTeX.  [[latex:classfile][Org-article]] is set
+up to deal with the most popular variants.  By default it uses plain
+BibTeX, with its =\cite= command.  Using the [[latex:progstruct][bib]] key and passing the
+value =natbib=, the various citation commands defined by this package
+are made available.  If the =biblatex= value is passed to the [[latex:progstruct][bib]] key,
+then the citation commands of what will soon be the preferred LaTeX
+bibliography option will be made available.
+
+In any case, entering a citation uses the extended link syntax, e.g.,
+=[citep:jones][423]=.  This would export to LaTeX as
+=\citep[423]{jones}= and would result in a parenthetical citation
+using the [[latex:package][natbib]] package. 
+
+If =ebib= is set up on your system, then this process can be automated
+with lookup in the bibliography database and the link, when clicked,
+will take you to the entry in the bibliographic database.
+
+[[citep:aaa_diaconis:_theor_of_data_analy][citation]]
 
 ** Exporting tables
 With the [[latex:progstruct][tabularx]] option, [[latex:classfile][Org-article]] is able to harness the full
@@ -518,7 +569,7 @@ export them to LaTeX with the typographic touches evident in Table
 \centering
 \footnotesize
 \caption{A table to test the tabularx environment}
-# <<tab:test-table>>
+\label{tab:test-table}
 
 \begin{tabularx}{\textwidth}{lY}
 \toprule
@@ -738,6 +789,7 @@ useful.
   <<option-tabularx>>
   <<pgf-option-source>>
   <<pgf-option-mintedstyle>>
+  <<option-bibliography>>
   <<option-gantt>>
 #+end_src
 [[caption:Other package options][Other package options.]]
@@ -751,6 +803,7 @@ don't have to be declared here (Listing \ref{fig:pass-options}).
 #+BEGIN_listing
 #+source: pass-options-to-packages
 #+begin_src latex :noweb tangle :exports code
+  <<pass-to-biblatex>>
   <<pass-to-hyperref>>
 #+end_src
 [[caption:Pass options to packages][Pass options to packages.]]
@@ -814,6 +867,7 @@ package-specific code can be kept together in [[latex-packages][LaTeX packages]]
   <<load-xcolor>>
   <<load-tabularx>>
   <<load-gantt>>
+  <<load-bibliography>>
   <<load-hyperref>>  
 #+end_src
 [[caption:The package loading part][The package loading part.]]
@@ -893,7 +947,7 @@ than the curly braces typical of LaTeX.  This is handled by the
 #+BEGIN_listing
 # <<inline-link-type>>
 #+source: define-inline-link
-#+begin_src emacs-lisp :exports code :results silent
+#+begin_src emacs-lisp :exports code
   (org-add-link-type
    "inline" nil
    (lambda (path desc format)
@@ -918,7 +972,7 @@ spaces in the =PATH= argument.
 #+BEGIN_listing
 # <<caption-link-type>>
 #+source: define-caption-link
-#+begin_src emacs-lisp :exports code :results silent
+#+begin_src emacs-lisp :exports code
   (org-add-link-type
    "caption" nil
    (lambda (path desc format)
@@ -931,7 +985,6 @@ spaces in the =PATH= argument.
 [[caption:A new caption link type][A new caption link type.]]
 # <<fig:caption-link>>
 #+END_listing
-
 
 Using custom links in this way, it is possible to make the [[latex:proglang][Org-mode]]
 LaTeX exporter honor the semantic markup defined in arbitrary LaTeX
@@ -1316,7 +1369,6 @@ that gets rid of the need for [[latex:package][topcapt]]: =[captions=tableheadin
 This is left as an option so that default handling of table captions
 is the same, regardless of which base class is chosen and even though
 the default yields less than satisfactory results.  
-
 
 ** Org-mode default packages
 
@@ -1900,10 +1952,9 @@ option when typesetting those long [[latex:proglang][Emacs Lisp]] variable names
 #+source: load-hyperref
 #+begin_src latex :exports code
   \ifthenelse{\boolean{ORGART@nohyperref}}
-  {\AtEndOfClass{\RequirePackage[spaces,obeyspaces,hyphens]{url}
+  {\AtEndOfClass{\RequirePackage{url}
       \DeclareUrlCommand\lispvar{\urlstyle{tt}}}}
   {\AtBeginDocument{%
-      \RequirePackage[spaces,obeyspaces,hyphens]{url}
       \RequirePackage{hyperref}
       \DeclareUrlCommand\lispvar{\urlstyle{tt}}
       \def\theHfigure{\thesection.\arabic{figure}}
@@ -3344,6 +3395,398 @@ Typically, the configuration file would be input in the LaTeX header:
 | sql          | sql             |
 | sqlite       | sqlite3         |
 
+** Bibliography package
+[[latex:classfile][Org-article]] supports the [[latex:package][biblatex]] bibliobraphy package, which can be
+specified with the =bibliography= key (Listing
+\ref{fig:bibliography-option}).  The [[latex:package][biblatex]] package, which recently emerged
+from beta status, offers support for the full range of citation
+styles, including the numeric styles favored by scientists, the
+author-date styles used by social scientists, and the footnote styles
+popular in the humanities.
+
+
+#+BEGIN_listing
+#+source: option-bibliography
+#+begin_src latex :exports code
+  \newboolean{ORGART@bib}
+  \DeclareOption{bib}{%
+    \setboolean{ORGART@bib}{true}}
+#+end_src
+[[caption:The bibliography option][The bib option.]]
+# <<fig:bibliography-option>>
+#+END_listing
+
+#+source: pass-to-biblatex
+#+begin_src latex :exports none
+  \DeclareOption{style}{%
+    \PassOptionsToPackage{style}{biblatex}}
+  \DeclareOption{bibstyle}{%
+    \PassOptionsToPackage{bibstyle}{biblatex}}
+  \DeclareOption{citestyle}{%
+    \PassOptionsToPackage{citestyle}{biblatex}}
+  \DeclareOption{natbib}{%
+    \PassOptionsToPackage{natbib}{biblatex}}
+  \DeclareOption{sorting}{%
+    \PassOptionsToPackage{sorting}{biblatex}}
+  \DeclareOption{sortcase}{%
+    \PassOptionsToPackage{sortcase}{biblatex}}
+  \DeclareOption{sortupper}{%
+    \PassOptionsToPackage{sortupper}{biblatex}}
+  \DeclareOption{sortlocale}{%
+    \PassOptionsToPackage{sortlocale}{biblatex}}
+  \DeclareOption{sortlos}{%
+    \PassOptionsToPackage{sortlos}{biblatex}}
+  \DeclareOption{sortcites}{%
+    \PassOptionsToPackage{sortcites}{biblatex}}
+  \DeclareOption{maxnames}{%
+    \PassOptionsToPackage{maxnames}{biblatex}}
+  \DeclareOption{minnames}{%
+    \PassOptionsToPackage{minnames}{biblatex}}
+  \DeclareOption{maxitems}{%
+    \PassOptionsToPackage{maxitems}{biblatex}}
+  \DeclareOption{minitems}{%
+    \PassOptionsToPackage{minitems}{biblatex}}
+  \DeclareOption{autocite}{%
+    \PassOptionsToPackage{autocite}{biblatex}}
+  \DeclareOption{autopunct}{%
+    \PassOptionsToPackage{autopunct}{biblatex}}
+  \DeclareOption{language}{%
+    \PassOptionsToPackage{language}{biblatex}}
+  \DeclareOption{clearlang}{%
+    \PassOptionsToPackage{clearlang}{biblatex}}
+  \DeclareOption{babel}{%
+    \PassOptionsToPackage{babel}{biblatex}}
+  \DeclareOption{block}{%
+    \PassOptionsToPackage{block}{biblatex}}
+  \DeclareOption{notetype}{%
+    \PassOptionsToPackage{notetype}{biblatex}}
+  \DeclareOption{hyperref}{%
+    \PassOptionsToPackage{hyperref}{biblatex}}
+  \DeclareOption{backref}{%
+    \PassOptionsToPackage{backref}{biblatex}}
+  \DeclareOption{backrefstyle}{%
+    \PassOptionsToPackage{backrefstyle}{biblatex}}
+  \DeclareOption{style}{%
+    \PassOptionsToPackage{style}{biblatex}}
+  \DeclareOption{backrefsetstyle}{%
+    \PassOptionsToPackage{backrefsetstyle}{biblatex}}
+  \DeclareOption{indexing}{%
+    \PassOptionsToPackage{indexing}{biblatex}} 
+  \DeclareOption{loadfiles}{%
+    \PassOptionsToPackage{loadfiles}{biblatex}}
+  \DeclareOption{refsection}{%
+    \PassOptionsToPackage{refsection}{biblatex}}
+  \DeclareOption{refsegment}{%
+    \PassOptionsToPackage{refsegment}{biblatex}}
+  \DeclareOption{citerest}{%
+    \PassOptionsToPackage{citerest}{biblatex}}
+  \DeclareOption{abbreviate}{%
+    \PassOptionsToPackage{abbreviate}{biblatex}}
+  \DeclareOption{origdate}{%
+    \PassOptionsToPackage{origdate}{biblatex}}
+  \DeclareOption{eventdate}{%
+    \PassOptionsToPackage{eventdate}{biblatex}}
+  \DeclareOption{urldate}{%
+    \PassOptionsToPackage{urldate}{biblatex}}
+  \DeclareOption{alldates}{%
+    \PassOptionsToPackage{alldates}{biblatex}}
+  \DeclareOption{datezeros}{%
+    \PassOptionsToPackage{datezeros}{biblatex}}
+  \DeclareOption{dateabbrev}{%
+    \PassOptionsToPackage{dateabbrev}{biblatex}}
+  \DeclareOption{defernumbers}{%
+    \PassOptionsToPackage{defernumbers}{biblatex}}
+  \DeclareOption{punctfont}{%
+    \PassOptionsToPackage{punctfont}{biblatex}}
+  \DeclareOption{arxiv}{%
+    \PassOptionsToPackage{arxiv}{biblatex}}
+  \DeclareOption{backend}{%
+    \PassOptionsToPackage{backend}{biblatex}}
+  \DeclareOption{bibencoding}{%
+    \PassOptionsToPackage{bibencoding}{biblatex}}
+  \DeclareOption{bibwarn}{%
+    \PassOptionsToPackage{bibwarn}{biblatex}}
+  \DeclareOption{mincrossrefs}{%
+    \PassOptionsToPackage{mincrossrefs}{biblatex}}
+  \DeclareOption{useauthor}{%
+    \PassOptionsToPackage{useauthor}{biblatex}}
+  \DeclareOption{useeditor}{%
+    \PassOptionsToPackage{useeditor}{biblatex}}
+  \DeclareOption{usetranslator}{%
+    \PassOptionsToPackage{usetranslator}{biblatex}}
+  \DeclareOption{useprefix}{%
+    \PassOptionsToPackage{useprefix}{biblatex}}
+  \DeclareOption{spaces}{%
+    \PassOptionsToPackage{spaces}{url}}
+  \DeclareOption{hyphens}{%
+    \PassOptionsToPackage{hyphens}{url}}
+  \DeclareOption{obeyspaces}{%
+    \PassOptionsToPackage{obeyspaces}{url}}
+#+end_src
+
+
+#+source: load-bibliography
+#+begin_src latex :exports code
+  \ifthenelse{\boolean{ORGART@bib}}
+  {\AtEndOfClass{\RequirePackage{biblatex}
+      \bibliography{tsd}}}
+  {}
+#+end_src
+
+*** Natbib citation commands
+[[latex:classfile][Org-article]] supports the various citation commands implemented by
+[[latex:package][natbib]] (Listings
+\ref{fig:define-natbib-links}--\ref{fig:citetstar-link}).  To use
+these, you will need to pass the option =natbib=true= to toggle the
+[[latex:package][biblatex]] package's emulation of the [[latex:package][natbib]] commands.  The commands all
+start with =cite= and end with one or more letters that indicate a
+style.  The most commonly used commands are:
+  1. [[latex:progstruct][citep]] for parenthetical citations, e.g., (Jones, 1958);
+  2. [[latex:progstruct][citet]] for textual citations, e.g., Jones (1958);
+  3. [[latex:progstruct][citealt]] for textual citations without parentheses, e.g. Jones 1958.
+There are starred versions of most commands that will output the full
+author lists rather than use the abbreviation =et. al.=
+
+#+BEGIN_listing
+#+source: natbib-links
+#+begin_src emacs-lisp :noweb tangle
+  <<define-citep-link>>
+  <<define-citet-link>>
+  <<define-citealt-link>>
+  <<define-citealp-link>>
+  <<define-citealtstar-link>>
+  <<define-citealpstar-link>>
+  <<define-citepstar-link>>
+  <<define-citetstar-link>>
+#+end_src
+
+
+[[caption:Define the natbib link types][Define the natbib link types.]]
+# <<fig:define-natbib-links>>
+#+END_listing
+
+#+BEGIN_listing
+#+source: define-citep-link
+#+begin_src emacs-lisp 
+  (org-add-link-type 
+   "citep" 'ebib
+   (lambda (path desc format)
+     (cond
+      ((eq format 'latex)
+       (format "\\citep[%s]{%s}" desc path)))))
+#+end_src
+[[caption:The citep link type][The citep link type.]]
+# <<fig:citep-link>>
+#+END_listing
+
+#+BEGIN_listing
+#+source: define-citet-link
+#+begin_src emacs-lisp :exports code
+  (org-add-link-type 
+   "citet" 'ebib
+   (lambda (path desc format)
+     (cond
+      ((eq format 'latex)
+       (format "\\citet[%s]{%s}" desc path)))))
+#+end_src
+
+[[caption:The citet link type][The citet link type.]]
+# <<fig:citet-link>>
+#+END_listing
+
+#+BEGIN_listing
+#+source: define-citealt-link
+#+begin_src emacs-lisp 
+  (org-add-link-type 
+   "citealt" 'ebib
+   (lambda (path desc format)
+     (cond
+      ((eq format 'latex)
+       (format "\\citealt[%s]{%s}" desc path)))))
+#+end_src
+[[caption:The citealt link type][The citealt link type.]]
+# <<fig:citealt-link>>
+#+END_listing
+
+#+BEGIN_listing
+#+source: define-citealp-link
+#+begin_src emacs-lisp 
+  (org-add-link-type 
+   "citealp" 'ebib
+   (lambda (path desc format)
+     (cond
+      ((eq format 'latex)
+       (format "\\citealp[%s]{%s}" desc path)))))
+#+end_src
+[[caption:The citealp link type][The citealp link type.]]
+# <<fig:citealp-link>>
+#+END_listing
+
+#+BEGIN_listing
+#+source: define-citealtstar-link
+#+begin_src emacs-lisp 
+  (org-add-link-type 
+   "citealt*" 'ebib
+   (lambda (path desc format)
+     (cond
+      ((eq format 'latex)
+       (format "\\citealt*[%s]{%s}" desc path)))))
+#+end_src
+[[caption:The citealt* link type][The citealt* link type.]]
+# <<fig:citealtstar-link>>
+#+END_listing
+
+#+BEGIN_listing
+#+source: define-citealpstar-link
+#+begin_src emacs-lisp 
+  (org-add-link-type 
+   "citealp*" 'ebib
+   (lambda (path desc format)
+     (cond
+      ((eq format 'latex)
+       (format "\\citealp*[%s]{%s}" desc path)))))
+#+end_src
+[[caption:The citealp* link type][The citealp* link type.]]
+# <<fig:citealpstar-link>>
+#+END_listing
+
+#+BEGIN_listing
+#+source: define-citepstar-link
+#+begin_src emacs-lisp 
+  (org-add-link-type 
+   "citep*" 'ebib
+   (lambda (path desc format)
+     (cond
+      ((eq format 'latex)
+       (format "\\citep*[%s]{%s}" desc path)))))
+#+end_src
+[[caption:The citep* link type][The citep* link type.]]
+# <<fig:citepstar-link>>
+#+END_listing
+
+#+BEGIN_listing
+#+source: define-citetstar-link
+#+begin_src emacs-lisp 
+  (org-add-link-type 
+   "citet*" 'ebib
+   (lambda (path desc format)
+     (cond
+      ((eq format 'latex)
+       (format "\\citet*[%s]{%s}" desc path)))))
+#+end_src
+[[caption:The citet* link type][The citet* link type.]]
+# <<fig:citetstar-link>>
+#+END_listing
+
+
+*** Biblatex citation commands
+
+[[latex:classfile][Org-article]] supports the six citation commands standard in the
+[[latex:package][biblatex]] package (Listings
+\ref{fig:define-biblatex-link-types}--\ref{fig:cap-footcite-link}).
+Certain styles define other citation commands.  The user can easily
+extend [[latex:classfile][Org-article]] by adding new link types for these citation
+commands.
+
+#+BEGIN_listing
+#+source: biblatex-links
+#+begin_src emacs-lisp :noweb yes
+  <<define-cite-link>>
+  <<define-parencite-link>>
+  <<define-footcite-link>>
+  <<define-cap-cite-link>>
+  <<define-cap-parencite-link>>
+  <<define-cap-footcite-link>>
+#+end_src
+[[caption:Define%20the%20biblatex%20link%20types][Define the biblatex link types.]]
+# <<fig:define-biblatex-link-types>>
+#+END_listing
+
+#+BEGIN_listing
+#+source: define-cite-link
+#+begin_src emacs-lisp :exports code
+  (org-add-link-type 
+   "cite" 'ebib
+   (lambda (path desc format)
+     (cond
+      ((eq format 'latex)
+       (format "\\cite[%s]{%s}" desc path)))))
+#+end_src
+[[caption:The cite link type][The cite link type.]]
+# <<fig:cite-link>>
+#+END_listing
+
+#+BEGIN_listing
+#+source: define-parencite-link
+#+begin_src emacs-lisp :exports code
+  (org-add-link-type 
+   "parencite" 'ebib
+   (lambda (path desc format)
+     (cond
+      ((eq format 'latex)
+       (format "\\parencite[%s]{%s}" desc path)))))
+#+end_src
+[[caption:The parencite link type][The parencite link type.]]
+# <<fig:parencite-link>>
+#+END_listing
+
+#+BEGIN_listing
+#+source: define-footcite-link
+#+begin_src emacs-lisp :exports code
+  (org-add-link-type 
+   "footcite" 'ebib
+   (lambda (path desc format)
+     (cond
+      ((eq format 'latex)
+       (format "\\footcite[%s]{%s}" desc path)))))
+#+end_src
+[[caption:The footcite link type][The footcite link type.]]
+# <<fig:footcite-link>>
+#+END_listing
+
+#+BEGIN_listing
+#+source: define-cap-cite-link
+#+begin_src emacs-lisp :exports code
+  (org-add-link-type 
+   "Cite" 'ebib
+   (lambda (path desc format)
+     (cond
+      ((eq format 'latex)
+       (format "\\Cite[%s]{%s}" desc path)))))
+#+end_src
+[[caption:The Cite link type][The Cite link type.]]
+# <<fig:cap-cite-link>>
+#+END_listing
+
+#+BEGIN_listing
+#+source: define-cap-parencite-link
+#+begin_src emacs-lisp :exports code
+  (org-add-link-type 
+   "Parencite" 'ebib
+   (lambda (path desc format)
+     (cond
+      ((eq format 'latex)
+       (format "\\Parencite[%s]{%s}" desc path)))))
+#+end_src
+[[caption:The Parencite link type][The Parencite link type.]]
+# <<fig:cap-parencite-link>>
+#+END_listing
+
+#+BEGIN_listing
+#+source: define-cap-footcite-link
+#+begin_src emacs-lisp :exports code
+  (org-add-link-type 
+   "Footcite" 'ebib
+   (lambda (path desc format)
+     (cond
+      ((eq format 'latex)
+       (format "\\Footcite[%s]{%s}" desc path)))))
+#+end_src
+[[caption:The Footcite link type][The Footcite link type.]]
+# <<fig:cap-footcite-link>>
+#+END_listing
+
+
 ** Other packages
 Packages not included in the [[latex:proglang][Org-mode]] list of default packages are
 made available in [[latex:classfile][Org-article]].  These include facilities to apply
@@ -3552,7 +3995,7 @@ X, Y and P are defined if the [[latex:package][tabularx]] package has been loade
     \setboolean{ORGART@tabularx}{true}
     \AtBeginDocument{
       \newcolumntype{Y}{>{\RaggedRight\arraybackslash}X}
-      \Newcolumntype{P}[1]{>{\RaggedRight\arraybackslash}p{#1}}}}
+      \newcolumntype{P}[1]{>{\RaggedRight\arraybackslash}p{#1}}}}
 #+end_src
 #+LaTeX: \caption[Define the tabularx option]{Define the tabularx option.}
 # <<fig:tabularx-option>>
@@ -3760,6 +4203,8 @@ looks great, Eric!
 # <<fig:gantt>>
 #+END_figure
 
+#+LATEX: \printbibliography
+
 **** GANTT Emacs lisp source code block                            :noexport:
 
 The following source code block sent to the [[latex:proglang][Org-mode]] list by Eric
@@ -3838,6 +4283,7 @@ Fraga has been modified slightly.  It is installed in the [[http://orgmode.org/m
   %s
   \\end{tikzpicture}" projecttime ntasks tasks milestones dates))
 #+end_src
+
 
 *** Index                                                          :noexport:
 * Notes                                                            :noexport:
@@ -3978,7 +4424,10 @@ You can see all the characters with =describe-input-method=.
 
 Will need to let LaTeX know that the input is UTF-8.  It works out of
 the box for HTML.
-** TODO Semantic markup for blocks, Christian Moe
+** DONE Semantic markup for blocks, Christian Moe
+   :LOGBOOK:
+   - State "DONE"       from "TODO"       [2010-12-12 Sun 07:27]
+   :END:
 Use org-special-blocks
 
 On Oct 31, 2010, at 9:47 AM, Magnus Nilsson wrote:
@@ -4094,10 +4543,15 @@ Regards,
 Make a framebox for results in LaTeX
 
 ** TODO Ebib link
+   SCHEDULED: <2010-12-12 Sun>
+For some reason, the links aren't expanding with latex export.  I
+fixed this earlier by getting rid of :results silent, I think.  Now,
+it isn't working again.  Curious, because the link types like caption
+work just fine.  Perhaps it is because they are added over and over again?
+
 #+source: ebib-setup
 #+begin_src emacs-lisp :exports code
-(autoload 'ebib "ebib" "Ebib, a BibTeX database manager." t)
-(org-add-link-type "citep" 'ebib
+(org-add-link-type "cite" 'ebib
    (lambda (path desc format)
      (cond
       ((eq format 'html)
@@ -4108,6 +4562,8 @@ Make a framebox for results in LaTeX
 
 #+results: ebib-setup
 | ebib | (lambda (path desc format) (cond ((eq format (quote html)) (format <span class="%s">%s</span> path desc)) ((eq format (quote latex)) (format \citep[%s]{%s} desc path)))) |
+
+
 
 Modify the link type so that it exports a natbib citation
 This could be very cool!
@@ -4131,10 +4587,15 @@ get org-mode to open bibtex entries do the following:
 file is loaded by ebib when ebib starts
 
 3) add the following lines to your .emacs:
+#+source: ebib-link
+#+begin_src emacs-lisp :results silent :exports none
 (org-add-link-type "ebib" 'ebib)
+#+end_src
 
+
+This is now a citation [[citet:aaa_king_districts][135]]
 Now you can insert ebib links in your documents like this:
-[[ebib:Jones1998][some paper title]]. Opening this link should now
+[[ebib:aaa_king:_districts][some paper title]]. Opening this link should now
 result in ebib starting, loading your default bibtex database, and
 highlighting the bibtex entry Jones1998. Alternatively, if you already
 have started ebib, then opening the link will get you to the bibtex
