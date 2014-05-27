@@ -1,2 +1,6 @@
 * Org-article
   - Tangle an article class for Org-mode LaTeX export
+  - It is forked from https://github.com/tsdye/org-article.git
+  
+* Update info
+  - Changing "#+source" to "#+name" such that org-babel-tangle works in new version of org-mode
