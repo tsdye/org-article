@@ -56,6 +56,8 @@
 \DeclareOption{utopia}{\setboolean{ORGART@utopia}{true}}
 \newboolean{ORGART@charter}
 \DeclareOption{charter}{\setboolean{ORGART@charter}{true}}
+\newboolean{ORGART@ctex}
+\DeclareOption{ctex}{\setboolean{ORGART@ctex}{true}}
 
 % Base class options
 \newboolean{koma}
@@ -509,6 +511,17 @@
    \RequirePackage{courier} % tt
   \fi}%
 {}  
+\ifthenelse{\boolean{ORGART@ctex}}
+{%
+  \ifpdf
+   \RequirePackage[UTF8]{ctex}
+   \RequirePackage[T1]{fontenc}
+   \RequirePackage[adobe-utopia]{mathdesign}
+   \RequirePackage[scaled]{berasans}
+   \RequirePackage{inconsolata} % tt
+  \fi}%
+{}
+
 \ifthenelse{\boolean{ORGART@utopia}}
 {%
   \ifpdf
