@@ -3,6 +3,14 @@
   - It is forked from https://github.com/tsdye/org-article.git
   
 * Update info
-  - Changing "#+source" to "#+name" such that org-babel-tangle works in new version of org-mode
+  - adding support for Chinese characters using the famous ctex package
+  
+  Now, by adding the two lines at the beginning of you Org file, everything follows up:
+  #+LaTeX_CLASS: org-article
+  #+LaTeX_CLASS_OPTIONS: [koma,ctex,a5paper,DIV=15,landscape,10pt,listings-sv,microtype,paralist]
+ 
+  Notice, the key is the ctex, the other options are backward compatible.
+  
+  Enjoy Emacs, Enjoy Latex.
 
-Mar 2015
+2018
