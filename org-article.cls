@@ -535,7 +535,7 @@
 % Hyperref asks to be loaded last
 \ifthenelse{\boolean{ORGART@nohyperref}}
 {\RequirePackage{url}}
-{\RequirePackage{hyperref}}  
+{\RequirePackage[unicode]{hyperref}}  
 
 % End of package loading part
 %
